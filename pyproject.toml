@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ergate"
+version = "0.0.0a0"
+requires-python = ">=3.8"
+description = "Workflows made easy"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+authors = [{ name = "prryplatypus" }]
+
+[project.optional-dependencies]
+test = [
+    'mypy',
+    'ruff',
+    'flake8',
+    'flake8-pyproject'
+]
+
+[tool.ruff]
+preview = true
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
+extend-select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "N"   # pep8-naming
+]
+
+[tool.flake8]
+max-line-length = 88
