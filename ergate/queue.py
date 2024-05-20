@@ -7,5 +7,5 @@ class QueueWriteProtocol(Protocol):
     def put(self, job: Job) -> None: ...
 
 
-class QueueProtocol(QueueWriteProtocol):
+class QueueProtocol(QueueWriteProtocol, Protocol):
     def get_one(self) -> Job: ...
