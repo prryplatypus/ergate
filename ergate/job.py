@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from .constants import JSONABLE, JSONABLE_AS_TUPLE
 from .exceptions import ValidationError
 from .job_status import JobStatus
@@ -13,6 +15,7 @@ class Job:
         percent_completed: int = 0,
         initial_input_value: JSONABLE = None,
         last_return_value: JSONABLE = None,
+        requested_start_time: datetime | None = None,
         exception_traceback: str | None = None,
     ) -> None:
         self._validate_init_values(
@@ -23,6 +26,7 @@ class Job:
             percent_completed,
             initial_input_value,
             last_return_value,
+            requested_start_time,
             exception_traceback,
         )
 
@@ -33,18 +37,20 @@ class Job:
         self.percent_completed = percent_completed
         self.initial_input_value = initial_input_value
         self.last_return_value = last_return_value
+        self.requested_start_time = requested_start_time
         self.exception_traceback = exception_traceback
 
     def _validate_init_values(
         self,
         id: str,
         workflow_name: str,
-        status: JobStatus = JobStatus.QUEUED,
-        steps_completed: int = 0,
-        percent_completed: int = 0,
-        initial_input_value: JSONABLE = None,
-        last_return_value: JSONABLE = None,
-        exception_traceback: str | None = None,
+        status: JobStatus,
+        steps_completed: int,
+        percent_completed: int,
+        initial_input_value: JSONABLE,
+        last_return_value: JSONABLE,
+        requested_start_time: datetime | None,
+        exception_traceback: str | None,
     ) -> None:
         expected_var_types: dict[str, type | tuple[type, ...]] = {
             "id": str,
@@ -54,6 +60,7 @@ class Job:
             "percent_completed": int,
             "initial_input_value": JSONABLE_AS_TUPLE,
             "last_return_value": JSONABLE_AS_TUPLE,
+            "requested_start_time": (datetime, type(None)),
             "exception_traceback": (str, type(None)),
         }
 

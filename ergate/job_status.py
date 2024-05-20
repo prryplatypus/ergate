@@ -6,3 +6,4 @@ class JobStatus(IntEnum):
     RUNNING = auto()
     COMPLETED = auto()
     FAILED = auto()
+    CREATED = auto()
