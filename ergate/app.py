@@ -3,7 +3,7 @@ import asyncio
 from .factory import FACTORY_MODEL, Factory
 from .factory_registry import FactoryRegistry
 from .job_runner import JobRunner
-from .job_state_store import JobStateStoreProtocol
+from .job_state_store import JobStateStoreUpdateProtocol
 from .queue import QueueProtocol
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
@@ -13,7 +13,7 @@ class Ergate:
     def __init__(
         self,
         queue: QueueProtocol,
-        job_state_store: JobStateStoreProtocol,
+        job_state_store: JobStateStoreUpdateProtocol,
     ) -> None:
         self.factory_registry = FactoryRegistry()
         self.workflow_registry = WorkflowRegistry()

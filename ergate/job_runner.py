@@ -4,7 +4,7 @@ from typing import Callable
 from .exceptions import CompleteJob, SkipNSteps
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
-from .job_state_store import JobStateStoreProtocol
+from .job_state_store import JobStateStoreUpdateProtocol
 from .log import LOG
 from .queue import QueueProtocol
 from .workflow_registry import WorkflowRegistry
@@ -15,7 +15,7 @@ class JobRunner:
         self,
         queue: QueueProtocol,
         workflow_registry: WorkflowRegistry,
-        job_state_store: JobStateStoreProtocol,
+        job_state_store: JobStateStoreUpdateProtocol,
         on_error_callback: Callable[[Exception], None],
     ) -> None:
         self.queue = queue
@@ -25,7 +25,7 @@ class JobRunner:
 
     def _run_job(self, job: Job) -> None:
         job.mark_running()
-        self.job_state_store.save(job)
+        self.job_state_store.update(job)
 
         input_value = job.get_input_value()
 
@@ -48,7 +48,7 @@ class JobRunner:
             LOG.info("Step completed successfully - return value: %s", retval)
             job.mark_n_steps_completed(1, retval, len(workflow))
 
-        self.job_state_store.save(job)
+        self.job_state_store.update(job)
 
         if job.should_be_requeued():
             LOG.info("Requeuing job")
