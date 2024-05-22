@@ -9,7 +9,7 @@ from .job_status import JobStatus
 class Job:
     def __init__(
         self,
-        id: str,
+        id: JSONABLE,
         workflow_name: str,
         status: JobStatus = JobStatus.QUEUED,
         steps_completed: int = 0,
@@ -43,7 +43,7 @@ class Job:
 
     def _validate_init_values(
         self,
-        id: str,
+        id: JSONABLE,
         workflow_name: str,
         status: JobStatus,
         steps_completed: int,
@@ -54,7 +54,7 @@ class Job:
         exception_traceback: str | None,
     ) -> None:
         expected_var_types: dict[str, type | tuple[type, ...]] = {
-            "id": str,
+            "id": JSONABLE_AS_TUPLE,
             "workflow_name": str,
             "status": JobStatus,
             "steps_completed": int,
@@ -71,7 +71,6 @@ class Job:
                 raise ValidationError(f'"{var_name}" is not of type {expected_type}')
 
         constraints = {
-            "id": lambda x: x,
             "workflow_name": lambda x: x,
             "steps_completed": lambda x: x >= 0,
             "percent_completed": lambda x: 0 <= x <= 100,
