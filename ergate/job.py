@@ -123,9 +123,12 @@ class Job:
 
     def model_dump(
         self,
-        include: set[str] | None,
+        include: set[str] | None = None,
         exclude: set[str] | None = None,
     ) -> dict[str, JSONABLE]:
+        if include is not None and exclude is not None:
+            raise ValueError("Cannot provide both include and exclude")
+
         dump_values = {
             "id": self.id,
             "workflow_name": self.workflow_name,
