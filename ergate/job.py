@@ -150,7 +150,7 @@ class Job:
 
     def model_dump_json(
         self,
-        include: set[str] | None,
+        include: set[str] | None = None,
         exclude: set[str] | None = None,
     ) -> str:
         return dumps(self.model_dump(include, exclude))
