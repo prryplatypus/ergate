@@ -1,4 +1,5 @@
 from datetime import datetime
+from json import dumps
 
 from .constants import JSONABLE, JSONABLE_AS_TUPLE
 from .exceptions import ValidationError
@@ -119,3 +120,35 @@ class Job:
             JobStatus.COMPLETED,
             JobStatus.FAILED,
         )
+
+    def model_dump(
+        self,
+        include: set[str] | None,
+        exclude: set[str] | None = None,
+    ) -> dict[str, JSONABLE]:
+        dump_values = {
+            "id": self.id,
+            "workflow_name": self.workflow_name,
+            "status": self.status,
+            "steps_completed": self.steps_completed,
+            "percent_completed": self.percent_completed,
+            "initial_input_value": self.initial_input_value,
+            "last_return_value": self.last_return_value,
+            "requested_start_time": self.requested_start_time,
+            "exception_traceback": self.exception_traceback,
+        }
+
+        if include is not None:
+            dump_values = {k: v for k, v in dump_values.items() if k in include}
+
+        if exclude is not None:
+            dump_values = {k: v for k, v in dump_values.items() if k not in exclude}
+
+        return dump_values
+
+    def model_dump_json(
+        self,
+        include: set[str] | None,
+        exclude: set[str] | None = None,
+    ) -> str:
+        return dumps(self.model_dump(include, exclude))
