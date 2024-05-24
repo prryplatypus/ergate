@@ -4,7 +4,7 @@ from .log import LOG
 
 
 class DelayedKeyboardInterrupt:
-    def __enter__(self):
+    def __enter__(self) -> None:
         self.signals_received = []
         self.old_handlers = {
             signal.SIGTERM: signal.signal(signal.SIGTERM, self.handler),

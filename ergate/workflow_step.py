@@ -6,7 +6,11 @@ from typing import TYPE_CHECKING, Callable
 
 from .constants import JSONABLE
 from .depends import DependsArgument
-from .exceptions import InvalidDefinitionError
+from .inspect import (
+    validate_and_get_kwargs_defaults,
+    validate_and_get_pos_args,
+    validate_pos_or_kwrd_args,
+)
 
 if TYPE_CHECKING:
     from .workflow import Workflow
@@ -18,87 +22,21 @@ class WorkflowStep:
         self.callable = callable
 
         signature = inspect.signature(callable)
+        validate_pos_or_kwrd_args(signature)
 
-        self._validate_pos_or_kwrd_args(signature)
-        self._takes_input_arg = self._validate_and_get_positional_arg(signature)
-        self._kwarg_factories: dict[str, DependsArgument] = (
-            self._validate_and_get_kwargs(signature)
+        input_arg = validate_and_get_pos_args(signature, allow_one=True)
+        self._takes_input_arg = bool(input_arg)
+        self._kwarg_factories = validate_and_get_kwargs_defaults(
+            signature,
+            DependsArgument,
         )
-
-    def _validate_pos_or_kwrd_args(self, signature: inspect.Signature) -> None:
-        positional_or_keyword = [
-            param
-            for param in signature.parameters.values()
-            if param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        ]
-
-        if not positional_or_keyword:
-            return
-
-        raise InvalidDefinitionError(
-            f"{self} has arguments that are accepted as both positional "
-            "and keyword arguments. All arguments must be explicitly "
-            "defined as positional-only or keyword-only."
-        )
-
-    def _validate_and_get_positional_arg(self, signature: inspect.Signature) -> bool:
-        args = [
-            param
-            for param in signature.parameters.values()
-            if param.kind == inspect.Parameter.POSITIONAL_ONLY
-        ]
-
-        if not args:
-            return False
-
-        if len(args) > 1:
-            raise InvalidDefinitionError(
-                f"{self} takes more than one positional argument "
-                "- it must only take one"
-            )
-
-        arg = args[0]
-        if args[0].annotation == inspect.Parameter.empty:
-            raise InvalidDefinitionError(
-                f'Positional argument "{arg.name}" in {self} is missing a '
-                "type annotation"
-            )
-
-        return True
-
-    def _validate_and_get_kwargs(
-        self, signature: inspect.Signature
-    ) -> dict[str, DependsArgument]:
-        kwargs_depends: dict[str, DependsArgument] = {}
-        kwargs = (
-            (param_name, param)
-            for param_name, param in signature.parameters.items()
-            if param.kind == inspect.Parameter.KEYWORD_ONLY
-        )
-
-        for param_name, param in kwargs:
-            if not isinstance(param.default, DependsArgument):
-                raise InvalidDefinitionError(
-                    f'Keyword argument "{param_name}" in {self} is missing '
-                    "a Depends(...)"
-                )
-
-            if param.annotation == inspect.Parameter.empty:
-                raise InvalidDefinitionError(
-                    f'Keyword argument "{param_name}" in {self} is missing '
-                    "a type annotation"
-                )
-
-            kwargs_depends[param_name] = param.default
-
-        return kwargs_depends
 
     def __call__(self, last_return_value: JSONABLE) -> JSONABLE:
         args = (last_return_value,) if self._takes_input_arg else ()
 
         with ExitStack() as stack:
             kwargs = {
-                name: stack.enter_context(contextmanager(depends.callable)())
+                name: stack.enter_context(contextmanager(depends)(stack))
                 for name, depends in self._kwarg_factories.items()
             }
 
