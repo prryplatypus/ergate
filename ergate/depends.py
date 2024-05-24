@@ -14,7 +14,7 @@ class DependsArgument:
     def __init__(self, dependency: Callable[..., Any]) -> None:
         self.dependency = dependency
 
-        signature = inspect.signature(callable)
+        signature = inspect.signature(dependency)
         validate_pos_or_kwrd_args(signature)
         validate_and_get_pos_args(signature)
         self._kwarg_depends = validate_and_get_kwargs_defaults(

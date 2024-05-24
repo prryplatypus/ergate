@@ -30,7 +30,7 @@ def validate_and_get_pos_args(
     args = [
         param
         for name, param in signature.parameters.items()
-        if param.kind == inspect.Parameter.POSITIONAL_ONLY and name != "self"
+        if param.kind == inspect.Parameter.POSITIONAL_ONLY
     ]
 
     if not args:
