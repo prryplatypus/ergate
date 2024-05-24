@@ -1,7 +1,5 @@
 import asyncio
 
-from .factory import FACTORY_MODEL, Factory
-from .factory_registry import FactoryRegistry
 from .job_runner import JobRunner
 from .job_state_store import JobStateStoreUpdateProtocol
 from .queue import QueueProtocol
@@ -15,7 +13,6 @@ class Ergate:
         queue: QueueProtocol,
         job_state_store: JobStateStoreUpdateProtocol,
     ) -> None:
-        self.factory_registry = FactoryRegistry()
         self.workflow_registry = WorkflowRegistry()
         self.queue = queue
         self.job_runner = JobRunner(
@@ -29,28 +26,8 @@ class Ergate:
 
     def on_error(self, exc: Exception) -> None: ...
 
-    def register_factory(self, factory: Factory[FACTORY_MODEL]) -> None:
-        self.factory_registry.register(factory)
-
     def register_workflow(self, workflow: Workflow) -> None:
         self.workflow_registry.register(workflow)
 
-    def _initialize_steps(self) -> None:
-        workflows = self.workflow_registry
-        steps = (step for workflow in workflows for step in workflow._steps)
-
-        for step in steps:
-            try:
-                input_arg, kwarg_info = step.check_and_get_argument_info()
-                kwarg_factories = {
-                    kwarg_name: self.factory_registry[kwarg_type]
-                    for kwarg_name, kwarg_type in kwarg_info.items()
-                }
-                step.initialize(input_arg, kwarg_factories)
-            except Exception as exc:
-                self.on_error(exc)
-                raise
-
     def run(self) -> None:
-        self._initialize_steps()
         self.job_runner.run()
