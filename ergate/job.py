@@ -1,5 +1,6 @@
 from datetime import datetime
 from json import dumps
+from typing import Any
 
 from .constants import JSONABLE, JSONABLE_AS_TUPLE
 from .exceptions import ValidationError
@@ -94,11 +95,6 @@ class Job:
         self.status = JobStatus.FAILED
         self.exception_traceback = exception_traceback
 
-    def mark_completed(self, return_value: JSONABLE) -> None:
-        self.status = JobStatus.COMPLETED
-        self.percent_completed = 100
-        self.last_return_value = return_value
-
     def mark_n_steps_completed(
         self,
         n: int,
@@ -114,8 +110,12 @@ class Job:
         )
         self.last_return_value = return_value
 
+    def mark_aborted(self) -> None:
+        self.status = JobStatus.ABORTED
+
     def should_be_requeued(self) -> bool:
         return self.status not in (
+            JobStatus.ABORTED,
             JobStatus.COMPLETED,
             JobStatus.FAILED,
         )
@@ -124,7 +124,7 @@ class Job:
         self,
         include: set[str] | None = None,
         exclude: set[str] | None = None,
-    ) -> dict[str, JSONABLE]:
+    ) -> dict[str, Any]:
         if include is not None and exclude is not None:
             raise ValueError("Cannot provide both include and exclude")
 

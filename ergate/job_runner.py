@@ -1,7 +1,7 @@
 import traceback
 from typing import Callable
 
-from .exceptions import CompleteJob, SkipNSteps
+from .exceptions import AbortJob, SkipNSteps
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
 from .job_state_store import JobStateStoreUpdateProtocol
@@ -34,9 +34,9 @@ class JobRunner:
             step_to_run = workflow[job.steps_completed]
             LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
             retval = step_to_run(input_value)
-        except CompleteJob as exc:
-            LOG.info("User requested to mark job as complete")
-            job.mark_completed(exc.retval)
+        except AbortJob as exc:
+            LOG.info("User requested to abort job: %s", exc)
+            job.mark_aborted()
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
             job.mark_n_steps_completed(exc.n + 1, exc.retval, len(workflow))

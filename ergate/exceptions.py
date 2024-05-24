@@ -9,11 +9,11 @@ class InvalidDefinitionError(ErgateError):
     """Raised when a workflow/step definition is invalid."""
 
 
-class CompleteJob(ErgateError):  # noqa: N818
+class AbortJob(ErgateError):  # noqa: N818
     """Raised from a step to complete a workflow early."""
 
-    def __init__(self, retval: JSONABLE = None):
-        self.retval = retval
+    def __init__(self, message: str) -> None:
+        self.message = message
 
 
 class SkipNSteps(ErgateError):  # noqa: N818
