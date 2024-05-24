@@ -3,6 +3,7 @@ from collections.abc import Callable
 from contextlib import ExitStack, contextmanager
 from typing import Any
 
+from .depends_cache import DependsCache
 from .inspect import (
     validate_and_get_kwargs_defaults,
     validate_and_get_pos_args,
@@ -22,12 +23,12 @@ class DependsArgument:
             self.__class__,
         )
 
-    def __call__(self, exit_stack: ExitStack) -> Any:
+    def __call__(self, exit_stack: ExitStack, cache: DependsCache) -> Any:
         if not self._kwarg_depends:
             return self.dependency()
 
         kwargs = {
-            name: exit_stack.enter_context(contextmanager(depends)(exit_stack))
+            name: exit_stack.enter_context(contextmanager(depends)(exit_stack, cache))
             for name, depends in self._kwarg_depends.items()
         }
 

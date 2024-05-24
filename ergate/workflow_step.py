@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import inspect
-from contextlib import ExitStack, contextmanager
+from contextlib import ExitStack
 from typing import TYPE_CHECKING, Callable
 
 from .constants import JSONABLE
 from .depends import DependsArgument
+from .depends_cache import DependsCache
 from .inspect import (
     validate_and_get_kwargs_defaults,
     validate_and_get_pos_args,
@@ -35,8 +36,10 @@ class WorkflowStep:
         args = (last_return_value,) if self._takes_input_arg else ()
 
         with ExitStack() as stack:
+            cache = DependsCache(stack)
+
             kwargs = {
-                name: stack.enter_context(contextmanager(depends)(stack))
+                name: stack.enter_context(cache.get_or_create(depends))
                 for name, depends in self._kwarg_factories.items()
             }
 
