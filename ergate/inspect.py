@@ -29,8 +29,8 @@ def validate_and_get_pos_args(
 ) -> inspect.Parameter | None:
     args = [
         param
-        for param in signature.parameters.values()
-        if param.kind == inspect.Parameter.POSITIONAL_ONLY
+        for name, param in signature.parameters.items()
+        if param.kind == inspect.Parameter.POSITIONAL_ONLY and name != "self"
     ]
 
     if not args:
