@@ -1,17 +1,20 @@
 import inspect
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from contextlib import ExitStack, contextmanager
-from typing import Any
+from typing import Any, TypeVar
 
+from .depends_cache import DependsCache
 from .inspect import (
     validate_and_get_kwargs_defaults,
     validate_and_get_pos_args,
     validate_pos_or_kwrd_args,
 )
 
+T = TypeVar("T")
+
 
 class DependsArgument:
-    def __init__(self, dependency: Callable[..., Any]) -> None:
+    def __init__(self, dependency: Callable[..., Generator[T, None, None]]) -> None:
         self.dependency = dependency
 
         signature = inspect.signature(dependency)
@@ -22,17 +25,22 @@ class DependsArgument:
             self.__class__,
         )
 
-    def __call__(self, exit_stack: ExitStack) -> Any:
-        if not self._kwarg_depends:
-            return self.dependency()
+    @contextmanager
+    def create(self, stack: ExitStack, cache: DependsCache) -> Generator[T, None, None]:
+        if self.dependency in cache:
+            yield cache[self.dependency]
+            return
 
-        kwargs = {
-            name: exit_stack.enter_context(contextmanager(depends)(exit_stack))
+        kwargs: dict[str, Any] = {
+            name: stack.enter_context(depends.create(stack, cache))
             for name, depends in self._kwarg_depends.items()
         }
 
-        return self.dependency(**kwargs)
+        dependency = stack.enter_context(contextmanager(self.dependency)(**kwargs))
+        cache.set(self.dependency, dependency)
+        yield dependency
+        cache.delete(self.dependency)
 
 
-def Depends(dependency: Callable[[], Any]) -> Any:  # noqa: N802
+def Depends(dependency: Callable[..., Generator[Any, None, None]]) -> Any:  # noqa: N802
     return DependsArgument(dependency)
