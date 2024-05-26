@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from contextlib import ExitStack
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 from .constants import JSONABLE
 from .depends import DependsArgument
@@ -35,11 +35,10 @@ class WorkflowStep:
     def __call__(self, last_return_value: JSONABLE) -> JSONABLE:
         args = (last_return_value,) if self._takes_input_arg else ()
 
+        depends_cache = DependsCache()
         with ExitStack() as stack:
-            cache = DependsCache(stack)
-
-            kwargs = {
-                name: stack.enter_context(cache.get_or_create(depends))
+            kwargs: dict[str, Any] = {
+                name: stack.enter_context(depends.create(stack, depends_cache))
                 for name, depends in self._kwarg_factories.items()
             }
 

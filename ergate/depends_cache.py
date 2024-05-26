@@ -1,25 +1,15 @@
-from collections.abc import Callable
-from contextlib import ExitStack, contextmanager
 from typing import Any
 
 
 class DependsCache:
-    def __init__(self, exit_stack: ExitStack):
-        self.exit_stack = exit_stack
-        self._cache: dict = {}
+    def __init__(self) -> None:
+        self._cache: dict[Any, Any] = {}
 
-    @contextmanager
-    def get_or_create(self, callable_: Callable[..., Any]):
-        if callable_ in self._cache:
-            yield self._cache[callable_]
-            return
+    def get(self, key: Any) -> Any:
+        return self._cache.get(key)
 
-        item = self.exit_stack.enter_context(
-            contextmanager(callable_)(self.exit_stack, self)
-        )
-        self._cache[callable_] = item
+    def set(self, key: Any, value: Any) -> None:
+        self._cache[key] = value
 
-        try:
-            yield item
-        finally:
-            self._cache.pop(callable_)
+    def delete(self, key: Any) -> None:
+        self._cache.pop(key)
