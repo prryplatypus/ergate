@@ -15,7 +15,7 @@ T = TypeVar("T")
 
 class DependsArgument:
     def __init__(self, dependency: Callable[..., Generator[T, None, None]]) -> None:
-        self.dependency = contextmanager(dependency)
+        self.dependency = dependency
 
         signature = inspect.signature(dependency)
         validate_pos_or_kwrd_args(signature)
@@ -37,7 +37,7 @@ class DependsArgument:
             for name, depends in self._kwarg_depends.items()
         }
 
-        dependency = stack.enter_context(self.dependency(**kwargs))
+        dependency = stack.enter_context(contextmanager(self.dependency)(**kwargs))
         cache.set(self.dependency, dependency)
         yield dependency
         cache.delete(self.dependency)
