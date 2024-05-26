@@ -27,9 +27,8 @@ class DependsArgument:
 
     @contextmanager
     def create(self, stack: ExitStack, cache: DependsCache) -> Generator[T, None, None]:
-        cached_dependency = cache.get(self.dependency)
-        if cached_dependency is not None:
-            yield cached_dependency
+        if self.dependency in cache:
+            yield cache[self.dependency]
             return
 
         kwargs: dict[str, Any] = {
