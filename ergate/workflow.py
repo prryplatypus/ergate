@@ -1,6 +1,5 @@
-from typing import Callable, Iterator
+from typing import Any, Callable, Iterator
 
-from .constants import JSONABLE
 from .workflow_step import WorkflowStep
 
 
@@ -24,7 +23,7 @@ class Workflow:
     def __len__(self) -> int:
         return len(self._steps)
 
-    def step(self, callable: Callable[..., JSONABLE]) -> WorkflowStep:
+    def step(self, callable: Callable[..., Any]) -> WorkflowStep:
         step = WorkflowStep(self, callable)
         self._steps.append(step)
         return step

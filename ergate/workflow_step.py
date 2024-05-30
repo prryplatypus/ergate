@@ -4,7 +4,6 @@ import inspect
 from contextlib import ExitStack
 from typing import TYPE_CHECKING, Any, Callable
 
-from .constants import JSONABLE
 from .depends import DependsArgument
 from .depends_cache import DependsCache
 from .inspect import (
@@ -18,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class WorkflowStep:
-    def __init__(self, workflow: Workflow, callable: Callable[..., JSONABLE]) -> None:
+    def __init__(self, workflow: Workflow, callable: Callable[..., Any]) -> None:
         self.workflow = workflow
         self.callable = callable
 
@@ -32,7 +31,7 @@ class WorkflowStep:
             DependsArgument,
         )
 
-    def __call__(self, last_return_value: JSONABLE) -> JSONABLE:
+    def __call__(self, last_return_value: Any) -> Any:
         args = (last_return_value,) if self._takes_input_arg else ()
 
         depends_cache = DependsCache()

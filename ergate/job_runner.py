@@ -4,7 +4,7 @@ from typing import Callable
 from .exceptions import AbortJob, SkipNSteps
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
-from .job_state_store import JobStateStoreUpdateProtocol
+from .job_state_store import JobStateStoreWorkerProtocol
 from .log import LOG
 from .queue import QueueProtocol
 from .workflow_registry import WorkflowRegistry
@@ -15,7 +15,7 @@ class JobRunner:
         self,
         queue: QueueProtocol,
         workflow_registry: WorkflowRegistry,
-        job_state_store: JobStateStoreUpdateProtocol,
+        job_state_store: JobStateStoreWorkerProtocol,
         on_error_callback: Callable[[Exception], None],
     ) -> None:
         self.queue = queue

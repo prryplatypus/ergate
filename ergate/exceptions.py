@@ -1,4 +1,6 @@
-from .constants import JSONABLE
+from typing import Any
+
+from pydantic import ValidationError  # noqa: F401
 
 
 class ErgateError(Exception):
@@ -19,10 +21,6 @@ class AbortJob(ErgateError):  # noqa: N818
 class SkipNSteps(ErgateError):  # noqa: N818
     """Raised from a step to skip N steps."""
 
-    def __init__(self, n: int, retval: JSONABLE = None):
+    def __init__(self, n: int, retval: Any = None):
         self.n = n
         self.retval = retval
-
-
-class ValidationError(ErgateError):
-    """Raised when a value violates a schema."""

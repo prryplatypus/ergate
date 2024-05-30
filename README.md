@@ -1,1 +1,2 @@
-# ergate
+# Ergate
+Workflows made easy
