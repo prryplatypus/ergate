@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from contextlib import ExitStack
-from typing import Callable, ContextManager, Self
+from typing import Callable, ContextManager
 
 from .job_runner import JobRunner
 from .job_state_store import JobStateStoreUpdateProtocol
@@ -13,7 +15,7 @@ class Ergate:
         self,
         queue: QueueProtocol,
         job_state_store: JobStateStoreUpdateProtocol,
-        lifespan: Callable[[Self], ContextManager[None]] | None = None,
+        lifespan: Callable[[Ergate], ContextManager[None]] | None = None,
     ) -> None:
         self.lifespan = lifespan
 
