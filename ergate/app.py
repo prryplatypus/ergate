@@ -4,7 +4,7 @@ from contextlib import ExitStack
 from typing import Callable, ContextManager
 
 from .job_runner import JobRunner
-from .job_state_store import JobStateStoreUpdateProtocol
+from .job_state_store import JobStateStoreWorkerProtocol
 from .queue import QueueProtocol
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
@@ -14,7 +14,7 @@ class Ergate:
     def __init__(
         self,
         queue: QueueProtocol,
-        job_state_store: JobStateStoreUpdateProtocol,
+        job_state_store: JobStateStoreWorkerProtocol,
         lifespan: Callable[[Ergate], ContextManager[None]] | None = None,
     ) -> None:
         self.lifespan = lifespan
