@@ -1,4 +1,5 @@
-import asyncio
+from contextlib import ExitStack
+from typing import Callable, ContextManager, Self
 
 from .job_runner import JobRunner
 from .job_state_store import JobStateStoreUpdateProtocol
@@ -12,9 +13,11 @@ class Ergate:
         self,
         queue: QueueProtocol,
         job_state_store: JobStateStoreUpdateProtocol,
+        lifespan: Callable[[Self], ContextManager[None]] | None = None,
     ) -> None:
+        self.lifespan = lifespan
+
         self.workflow_registry = WorkflowRegistry()
-        self.queue = queue
         self.job_runner = JobRunner(
             queue,
             self.workflow_registry,
@@ -22,12 +25,13 @@ class Ergate:
             self.on_error,
         )
 
-        self._task: asyncio.Task | None = None
-
     def on_error(self, exc: Exception) -> None: ...
 
     def register_workflow(self, workflow: Workflow) -> None:
         self.workflow_registry.register(workflow)
 
     def run(self) -> None:
-        self.job_runner.run()
+        with ExitStack() as stack:
+            if self.lifespan:
+                stack.enter_context(self.lifespan(self))
+            self.job_runner.run()
