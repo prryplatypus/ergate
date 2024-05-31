@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 from contextlib import ExitStack
-from typing import Callable, ContextManager
+from typing import Callable, ContextManager, TypeVar
 
+from .job import Job
 from .job_runner import JobRunner
 from .job_state_store import JobStateStoreWorkerProtocol
 from .queue import QueueProtocol
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
 
+T = TypeVar("T", bound=Job)
+
 
 class Ergate:
     def __init__(
         self,
-        queue: QueueProtocol,
-        job_state_store: JobStateStoreWorkerProtocol,
+        queue: QueueProtocol[T],
+        job_state_store: JobStateStoreWorkerProtocol[T],
         lifespan: Callable[[Ergate], ContextManager[None]] | None = None,
     ) -> None:
         self.lifespan = lifespan

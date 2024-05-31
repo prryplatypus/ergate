@@ -1,5 +1,5 @@
 import traceback
-from typing import Callable
+from typing import Callable, TypeVar
 
 from .exceptions import AbortJob, SkipNSteps
 from .interrupt import DelayedKeyboardInterrupt
@@ -9,13 +9,15 @@ from .log import LOG
 from .queue import QueueProtocol
 from .workflow_registry import WorkflowRegistry
 
+T = TypeVar("T", bound=Job)
+
 
 class JobRunner:
     def __init__(
         self,
-        queue: QueueProtocol,
+        queue: QueueProtocol[T],
         workflow_registry: WorkflowRegistry,
-        job_state_store: JobStateStoreWorkerProtocol,
+        job_state_store: JobStateStoreWorkerProtocol[T],
         on_error_callback: Callable[[Exception], None],
     ) -> None:
         self.queue = queue
@@ -23,7 +25,7 @@ class JobRunner:
         self.job_state_store = job_state_store
         self.on_error_callback = on_error_callback
 
-    def _run_job(self, job: Job) -> None:
+    def _run_job(self, job: T) -> None:
         job.mark_running()
         self.job_state_store.update(job)
 
