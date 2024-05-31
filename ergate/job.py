@@ -10,8 +10,8 @@ class Job(BaseModel):
     id: Any = None
     workflow_name: str
     status: JobStatus = JobStatus.QUEUED
-    steps_completed: int = Field(0, ge=0)
-    percent_completed: int = Field(0, ge=0, le=100)
+    steps_completed: int = Field(default=0, ge=0)
+    percent_completed: int = Field(default=0, ge=0, le=100)
     initial_input_value: Any = None
     last_return_value: Any = None
     requested_start_time: datetime | None = None
