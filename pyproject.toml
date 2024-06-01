@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ergate"
+version = "0.0.dev0"
+requires-python = ">=3.10"
+description = "Workflows made easy, the agnostic way"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+authors = [{ name = "prryplatypus" }]
+keywords = ["workflow", "worker"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+    'pydantic>=2.0.0'
+]
+
+[project.urls]
+homepage = "https://github.com/prryplatypus/ergate"
+
+[project.optional-dependencies]
+test = [
+    'mypy',
+    'ruff',
+    'flake8',
+    'flake8-pyproject'
+]
+
+[tool.ruff]
+preview = true
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
+extend-select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "N"   # pep8-naming
+]
+
+[tool.flake8]
+max-line-length = 88
