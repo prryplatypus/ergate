@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import ExitStack
-from typing import Callable, ContextManager, TypeVar
+from typing import Callable, ContextManager, Generic, TypeVar
 
 from .job import Job
 from .job_runner import JobRunner
@@ -13,7 +13,7 @@ from .workflow_registry import WorkflowRegistry
 T = TypeVar("T", bound=Job)
 
 
-class Ergate:
+class Ergate(Generic[T]):
     def __init__(
         self,
         queue: QueueProtocol[T],
