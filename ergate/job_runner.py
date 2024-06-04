@@ -26,14 +26,13 @@ class JobRunner:
         self.on_error_callback = on_error_callback
 
     def _run_job(self, job: T) -> None:
-        job.mark_running()
-        self.job_state_store.update(job)
-
         input_value = job.get_input_value()
 
         try:
             workflow = self.workflow_registry[job.workflow_name]
             step_to_run = workflow[job.steps_completed]
+            job.mark_running(step_to_run.name)
+            self.job_state_store.update(job)
             LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
             retval = step_to_run(input_value)
         except AbortJob as exc:

@@ -8,6 +8,7 @@ from .job_status import JobStatus
 class Job(BaseModel):
     id: Any = None
     workflow_name: str
+    step_name: str | None = None
     status: JobStatus = JobStatus.QUEUED
     steps_completed: int = Field(default=0, ge=0)
     percent_completed: int = Field(default=0, ge=0, le=100)
@@ -23,11 +24,13 @@ class Job(BaseModel):
             else self.last_return_value
         )
 
-    def mark_running(self) -> None:
+    def mark_running(self, step_name: str) -> None:
         self.status = JobStatus.RUNNING
+        self.step_name = step_name
 
     def mark_failed(self, exception_traceback: str) -> None:
         self.status = JobStatus.FAILED
+        self.step_name = None
         self.exception_traceback = exception_traceback
 
     def mark_n_steps_completed(
@@ -43,10 +46,12 @@ class Job(BaseModel):
             if self.steps_completed == total_steps
             else JobStatus.QUEUED
         )
+        self.step_name = None
         self.last_return_value = return_value
 
     def mark_aborted(self) -> None:
         self.status = JobStatus.ABORTED
+        self.step_name = None
 
     def should_be_requeued(self) -> bool:
         return self.status not in (

@@ -31,6 +31,10 @@ class WorkflowStep:
             DependsArgument,
         )
 
+    @property
+    def name(self) -> str:
+        return self.callable.__name__
+
     def __call__(self, last_return_value: Any) -> Any:
         args = (last_return_value,) if self._takes_input_arg else ()
 
