@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -14,7 +13,6 @@ class Job(BaseModel):
     percent_completed: int = Field(default=0, ge=0, le=100)
     initial_input_value: Any = None
     last_return_value: Any = None
-    requested_start_time: datetime | None = None
     exception_traceback: str | None = None
     user_context: Any = None
 
