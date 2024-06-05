@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from contextlib import ExitStack
-from typing import TYPE_CHECKING, Any, Callable, TypeVar
+from typing import TYPE_CHECKING, Any, Callable
 
 from .depends import DependsArgument
 from .depends_cache import DependsCache
@@ -11,13 +11,9 @@ from .inspect import (
     validate_and_get_pos_args,
     validate_and_get_pos_or_kwrd_args,
 )
-from .job import Job
 
 if TYPE_CHECKING:
     from .workflow import Workflow
-
-
-T = TypeVar("T", bound=Job)
 
 
 class WorkflowStep:
@@ -30,7 +26,7 @@ class WorkflowStep:
         pos_or_kwrd_arg = validate_and_get_pos_or_kwrd_args(signature, allow_one=True)
 
         self._takes_input_arg = bool(input_arg)
-        self._job_arg = pos_or_kwrd_arg.name if pos_or_kwrd_arg else None
+        self._user_ctx_arg = pos_or_kwrd_arg.name if pos_or_kwrd_arg else None
         self._kwarg_factories = validate_and_get_kwargs_defaults(
             signature,
             DependsArgument,
@@ -40,12 +36,12 @@ class WorkflowStep:
     def name(self) -> str:
         return self.callable.__name__
 
-    def __call__(self, last_return_value: Any, job: T) -> Any:
+    def __call__(self, last_return_value: Any, user_context: Any) -> Any:
         args = (last_return_value,) if self._takes_input_arg else ()
 
         kwargs: dict[str, Any] = {}
-        if self._job_arg is not None:
-            kwargs[self._job_arg] = job
+        if self._user_ctx_arg is not None:
+            kwargs[self._user_ctx_arg] = user_context
 
         depends_cache = DependsCache()
         with ExitStack() as stack:

@@ -34,7 +34,7 @@ class JobRunner:
             job.mark_running(step_to_run.name)
             self.job_state_store.update(job)
             LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
-            retval = step_to_run(input_value, job)
+            retval = step_to_run(input_value, job.user_context)
         except AbortJob as exc:
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted()
