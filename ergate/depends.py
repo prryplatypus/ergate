@@ -7,7 +7,7 @@ from .depends_cache import DependsCache
 from .inspect import (
     validate_and_get_kwargs_defaults,
     validate_and_get_pos_args,
-    validate_pos_or_kwrd_args,
+    validate_and_get_pos_or_kwrd_args,
 )
 
 T = TypeVar("T")
@@ -18,7 +18,7 @@ class DependsArgument:
         self.dependency = dependency
 
         signature = inspect.signature(dependency)
-        validate_pos_or_kwrd_args(signature)
+        validate_and_get_pos_or_kwrd_args(signature)
         validate_and_get_pos_args(signature)
         self._kwarg_depends = validate_and_get_kwargs_defaults(
             signature,

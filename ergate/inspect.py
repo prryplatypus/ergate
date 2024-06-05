@@ -6,7 +6,10 @@ from .exceptions import InvalidDefinitionError
 T = TypeVar("T")
 
 
-def validate_pos_or_kwrd_args(signature: inspect.Signature) -> None:
+def validate_and_get_pos_or_kwrd_args(
+    signature: inspect.Signature,
+    allow_one: bool = False,
+) -> inspect.Parameter | None:
     positional_or_keyword = [
         param
         for param in signature.parameters.values()
@@ -14,13 +17,21 @@ def validate_pos_or_kwrd_args(signature: inspect.Signature) -> None:
     ]
 
     if not positional_or_keyword:
-        return
+        return None
 
-    raise InvalidDefinitionError(
-        "Arguments that are both positional and keyword are not "
-        "allowed. All arguments must be explicitly defined as "
-        "positional-only or keyword-only."
-    )
+    if not allow_one:
+        raise InvalidDefinitionError(
+            "Arguments that are both positional and keyword are not "
+            "allowed. All arguments must be explicitly defined as "
+            "positional-only or keyword-only."
+        )
+
+    if len(positional_or_keyword) > 1:
+        raise InvalidDefinitionError(
+            "Only one argument that can be both positional or keyword is allowed."
+        )
+
+    return positional_or_keyword[0]
 
 
 def validate_and_get_pos_args(
@@ -29,7 +40,7 @@ def validate_and_get_pos_args(
 ) -> inspect.Parameter | None:
     args = [
         param
-        for name, param in signature.parameters.items()
+        for param in signature.parameters.values()
         if param.kind == inspect.Parameter.POSITIONAL_ONLY
     ]
 

@@ -2,18 +2,22 @@ from __future__ import annotations
 
 import inspect
 from contextlib import ExitStack
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from .depends import DependsArgument
 from .depends_cache import DependsCache
 from .inspect import (
     validate_and_get_kwargs_defaults,
     validate_and_get_pos_args,
-    validate_pos_or_kwrd_args,
+    validate_and_get_pos_or_kwrd_args,
 )
+from .job import Job
 
 if TYPE_CHECKING:
     from .workflow import Workflow
+
+
+T = TypeVar("T", bound=Job)
 
 
 class WorkflowStep:
@@ -22,10 +26,11 @@ class WorkflowStep:
         self.callable = callable
 
         signature = inspect.signature(callable)
-        validate_pos_or_kwrd_args(signature)
-
         input_arg = validate_and_get_pos_args(signature, allow_one=True)
+        pos_or_kwrd_arg = validate_and_get_pos_or_kwrd_args(signature, allow_one=True)
+
         self._takes_input_arg = bool(input_arg)
+        self._job_arg = pos_or_kwrd_arg.name if pos_or_kwrd_arg else None
         self._kwarg_factories = validate_and_get_kwargs_defaults(
             signature,
             DependsArgument,
@@ -35,15 +40,19 @@ class WorkflowStep:
     def name(self) -> str:
         return self.callable.__name__
 
-    def __call__(self, last_return_value: Any) -> Any:
+    def __call__(self, last_return_value: Any, job: T) -> Any:
         args = (last_return_value,) if self._takes_input_arg else ()
+
+        kwargs: dict[str, Any] = {}
+        if self._job_arg is not None:
+            kwargs[self._job_arg] = job
 
         depends_cache = DependsCache()
         with ExitStack() as stack:
-            kwargs: dict[str, Any] = {
+            kwargs.update({
                 name: stack.enter_context(depends.create(stack, depends_cache))
                 for name, depends in self._kwarg_factories.items()
-            }
+            })
 
             result = self.callable(*args, **kwargs)
 
