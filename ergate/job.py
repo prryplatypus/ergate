@@ -11,7 +11,7 @@ class Job(BaseModel):
     step_name: str | None = None
     status: JobStatus = JobStatus.QUEUED
     steps_completed: int = Field(default=0, ge=0)
-    percent_completed: int = Field(default=0, ge=0, le=100)
+    percent_completed: float = Field(default=0.0, ge=0.0, le=100.0)
     initial_input_value: Any = None
     last_return_value: Any = None
     exception_traceback: str | None = None
