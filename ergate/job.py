@@ -40,7 +40,7 @@ class Job(BaseModel):
         total_steps: int,
     ) -> None:
         self.steps_completed = min(self.steps_completed + n, total_steps)
-        self.percent_completed = int((self.steps_completed / total_steps) * 100)
+        self.percent_completed = float((self.steps_completed / total_steps) * 100)
         self.status = (
             JobStatus.COMPLETED
             if self.steps_completed == total_steps
