@@ -1,5 +1,4 @@
 from .app import Ergate
-from .client import ErgateClient
 from .depends import Depends
 from .exceptions import (
     AbortJob,
@@ -9,9 +8,9 @@ from .exceptions import (
     ValidationError,
 )
 from .job import Job
-from .job_state_store import JobStateStoreClientProtocol, JobStateStoreWorkerProtocol
+from .job_state_store import JobStateStoreWorkerProtocol
 from .job_status import JobStatus
-from .queue import QueueProtocol, QueueWriteProtocol
+from .queue import QueueProtocol
 from .workflow import Workflow
 
 __all__ = [
