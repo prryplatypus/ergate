@@ -27,6 +27,5 @@ __all__ = [
     "JobStateStoreWorkerProtocol",
     "JobStatus",
     "QueueProtocol",
-    "QueueWriteProtocol",
     "Workflow",
 ]
