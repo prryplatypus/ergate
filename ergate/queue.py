@@ -2,9 +2,9 @@ from typing import Protocol, TypeVar
 
 from .job import Job
 
-T = TypeVar("T", bound=Job)
+JobType = TypeVar("JobType", bound=Job)
 
 
-class QueueProtocol(Protocol[T]):
-    def put(self, job: T) -> None: ...
-    def get_one(self) -> T: ...
+class QueueProtocol(Protocol[JobType]):
+    def put(self, job: JobType) -> None: ...
+    def get_one(self) -> JobType: ...
