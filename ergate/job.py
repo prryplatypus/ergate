@@ -1,3 +1,4 @@
+import traceback
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -28,10 +29,10 @@ class Job(BaseModel):
         self.status = JobStatus.RUNNING
         self.step_name = step_name
 
-    def mark_failed(self, exception_traceback: str) -> None:
+    def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
         self.step_name = None
-        self.exception_traceback = exception_traceback
+        self.exception_traceback = traceback.format_exc()
 
     def mark_n_steps_completed(
         self,

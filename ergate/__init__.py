@@ -15,7 +15,6 @@ from .workflow import Workflow
 
 __all__ = [
     "Ergate",
-    "ErgateClient",
     "Depends",
     "ErgateError",
     "InvalidDefinitionError",
@@ -23,7 +22,6 @@ __all__ = [
     "SkipNSteps",
     "ValidationError",
     "Job",
-    "JobStateStoreClientProtocol",
     "JobStateStoreWorkerProtocol",
     "JobStatus",
     "QueueProtocol",
