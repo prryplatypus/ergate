@@ -1,5 +1,5 @@
+from .annotations import Context, Depends, Input
 from .app import Ergate
-from .depends import Depends
 from .exceptions import (
     AbortJob,
     ErgateError,
@@ -14,8 +14,10 @@ from .queue import QueueProtocol
 from .workflow import Workflow
 
 __all__ = [
-    "Ergate",
+    "Context",
     "Depends",
+    "Input",
+    "Ergate",
     "ErgateError",
     "InvalidDefinitionError",
     "AbortJob",
