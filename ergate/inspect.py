@@ -92,7 +92,7 @@ def get_param_type(param: Parameter) -> Input | Depends | Context:
     if (dependencies and contexts) or len(dependencies) > 1 or len(contexts) > 1:
         raise ValueError(
             "Parameter annotations must contain no more than one dependency "
-            f"or one context marker ({param.name = })"
+            f"or one context marker ({param.name=})"
         )
 
     if dependencies:
