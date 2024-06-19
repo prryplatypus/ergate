@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-import inspect
 from contextlib import ExitStack
 from typing import TYPE_CHECKING, Any, Callable
 
-from .depends import DependsArgument
 from .depends_cache import DependsCache
-from .inspect import (
-    validate_and_get_kwargs_defaults,
-    validate_and_get_pos_args,
-    validate_and_get_pos_or_kwrd_args,
-)
+from .inspect import build_function_arg_info
 
 if TYPE_CHECKING:
     from .workflow import Workflow
@@ -20,35 +14,20 @@ class WorkflowStep:
     def __init__(self, workflow: Workflow, callable: Callable[..., Any]) -> None:
         self.workflow = workflow
         self.callable = callable
-
-        signature = inspect.signature(callable)
-        input_arg = validate_and_get_pos_args(signature, allow_one=True)
-        pos_or_kwrd_arg = validate_and_get_pos_or_kwrd_args(signature, allow_one=True)
-
-        self._takes_input_arg = bool(input_arg)
-        self._user_ctx_arg = pos_or_kwrd_arg.name if pos_or_kwrd_arg else None
-        self._kwarg_factories = validate_and_get_kwargs_defaults(
-            signature,
-            DependsArgument,
-        )
+        self.arg_info = build_function_arg_info(callable)
 
     @property
     def name(self) -> str:
         return self.callable.__name__
 
     def __call__(self, last_return_value: Any, user_context: Any) -> Any:
-        args = (last_return_value,) if self._takes_input_arg else ()
-
-        kwargs: dict[str, Any] = {}
-        if self._user_ctx_arg is not None:
-            kwargs[self._user_ctx_arg] = user_context
-
-        depends_cache = DependsCache()
         with ExitStack() as stack:
-            kwargs.update({
-                name: stack.enter_context(depends.create(stack, depends_cache))
-                for name, depends in self._kwarg_factories.items()
-            })
+            args, kwargs = self.arg_info.build_args(
+                stack,
+                DependsCache(),
+                user_context,
+                last_return_value,
+            )
 
             result = self.callable(*args, **kwargs)
 
