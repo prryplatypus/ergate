@@ -12,7 +12,9 @@ class InvalidDefinitionError(ErgateError):
 
 
 class AbortJob(ErgateError):  # noqa: N818
-    """Raised from a step to complete a workflow early."""
+    """Raised from a step to abort a workflow.
+    Should be interpreted as an expected failure.
+    """
 
     def __init__(self, message: str) -> None:
         self.message = message
