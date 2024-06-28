@@ -47,7 +47,6 @@ class Depends(Generic[DependencyReturn]):
         dependency = stack.enter_context(self.dependency_callable(*args, **kwargs))
         depends_cache.set(self.raw_dependency, dependency)
         yield dependency
-        depends_cache.delete(self.raw_dependency)
 
 
 class Input:

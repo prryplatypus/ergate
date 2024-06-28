@@ -13,6 +13,3 @@ class DependsCache:
 
     def set(self, key: Any, value: Any) -> None:
         self._cache[key] = value
-
-    def delete(self, key: Any) -> None:
-        self._cache.pop(key)
