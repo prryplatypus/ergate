@@ -1,3 +1,4 @@
+import copy
 from contextlib import ExitStack
 from inspect import Parameter
 from inspect import signature as get_signature
@@ -76,30 +77,28 @@ class FunctionArgumentInfo:
         return args, kwargs
 
 
-def get_param_type(param: Parameter) -> Input | Depends | Context:
+def get_param_info(param: Parameter) -> Input | Depends | Context:
     origin = get_origin(param.annotation)
     if origin is not Annotated:
         return Input()
 
-    args = get_args(param.annotation)
+    arguments = get_args(param.annotation)
+    ergate_annotations = [
+        argument
+        for argument in arguments
+        if isinstance(argument, (Input, Depends, Context))
+    ]
 
-    dependencies = [arg for arg in args if isinstance(arg, Depends)]
-    contexts = [arg for arg in args if isinstance(arg, Context)]
-
-    if not dependencies and not contexts:
+    if not ergate_annotations:
         return Input()
 
-    if (dependencies and contexts) or len(dependencies) > 1 or len(contexts) > 1:
+    if len(ergate_annotations) > 1:
         raise ValueError(
             "Parameter annotations must contain no more than one dependency "
             f"or one context marker ({param.name=})"
         )
 
-    if dependencies:
-        return dependencies[0]
-
-    assert contexts
-    return contexts[0]
+    return ergate_annotations[0]
 
 
 def build_function_arg_info(function: Callable[..., Any]) -> FunctionArgumentInfo:
@@ -107,13 +106,14 @@ def build_function_arg_info(function: Callable[..., Any]) -> FunctionArgumentInf
     function_wrapper = FunctionArgumentInfo()
 
     for param in signature.parameters.values():
-        param_type = get_param_type(param)
-        function_wrapper.add_param(param, param_type)
+        param_info = get_param_info(param)
 
-        if isinstance(param_type, Depends):
-            dependency_func_arg_info = build_function_arg_info(
-                param_type.raw_dependency
-            )
-            param_type.initialize(dependency_func_arg_info)
+        if isinstance(param_info, Depends):
+            depends_copy = copy.copy(param_info)
+            dependency_arg_info = build_function_arg_info(depends_copy.dependency)
+            depends_copy.initialize(dependency_arg_info)
+            param_info = depends_copy
+
+        function_wrapper.add_param(param, param_info)
 
     return function_wrapper
