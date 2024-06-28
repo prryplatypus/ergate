@@ -1,4 +1,5 @@
 import traceback
+from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -17,6 +18,7 @@ class Job(BaseModel):
     last_return_value: Any = None
     exception_traceback: str | None = None
     user_context: Any = None
+    requested_start_time: datetime | None = None
 
     def get_input_value(self) -> Any:
         return (
