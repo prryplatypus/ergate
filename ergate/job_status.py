@@ -5,6 +5,6 @@ class JobStatus(IntEnum):
     QUEUED = auto()
     RUNNING = auto()
     COMPLETED = auto()
+    SCHEDULED = auto()
     FAILED = auto()
-    CREATED = auto()
     ABORTED = auto()
