@@ -16,7 +16,7 @@ jobs:
       id-token: write
     steps:
       - name: Parse version tag
-        id: parse_version_tag
+        id: parse-version-tag
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
@@ -44,7 +44,7 @@ jobs:
 
       - name: Update package version
         run: |
-          echo "VERSION = \"${{ needs.generate_info.outputs.pypi-version }}\"" > ergate/__version__.py
+          echo "VERSION = \"${{ steps.parse-version-tag.outputs.pypi-version }}\"" > ergate/__version__.py
 
       - name: Build a binary wheel and a source tarball
         run: python -m build --sdist --wheel --outdir dist/ .
