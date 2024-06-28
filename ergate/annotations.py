@@ -16,8 +16,7 @@ class Depends(Generic[DependencyReturn]):
         self,
         dependency: Callable[..., Generator[DependencyReturn, None, None]],
     ) -> None:
-        self.raw_dependency = dependency
-        self.dependency_callable = contextmanager(dependency)
+        self.dependency = dependency
         self.argument_info: FunctionArgumentInfo | None = None
 
     def initialize(self, argument_info: FunctionArgumentInfo) -> None:
@@ -33,8 +32,8 @@ class Depends(Generic[DependencyReturn]):
     ) -> Generator[DependencyReturn, None, None]:
         assert self.argument_info is not None, "Depends not initialized"
 
-        if self.raw_dependency in depends_cache:
-            yield depends_cache[self.raw_dependency]
+        if self.dependency in depends_cache:
+            yield depends_cache[self.dependency]
             return
 
         args, kwargs = self.argument_info.build_args(
@@ -44,8 +43,10 @@ class Depends(Generic[DependencyReturn]):
             input_value,
         )
 
-        dependency = stack.enter_context(self.dependency_callable(*args, **kwargs))
-        depends_cache.set(self.raw_dependency, dependency)
+        dependency_callable = contextmanager(self.dependency)
+        dependency = stack.enter_context(dependency_callable(*args, **kwargs))
+        depends_cache.set(self.dependency, dependency)
+
         yield dependency
 
 
