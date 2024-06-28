@@ -36,7 +36,9 @@ class JobRunner(Generic[JobType]):
 
         try:
             LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
-            retval = step_to_run(input_value, job.user_context)
+            with step_to_run.build_args(job.user_context, input_value) as all_args:
+                args, kwargs = all_args
+                retval = step_to_run(*args, **kwargs)
         except AbortJob as exc:
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted()
