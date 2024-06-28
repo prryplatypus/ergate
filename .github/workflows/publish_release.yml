@@ -5,12 +5,12 @@ on:
     types: [created]
 
 env:
-  IS_TEST: true
+  IS_TEST: false
 
 jobs:
-  generate_info:
-    name: Generate info
-    environment: release
+  publish_release:
+    name: Publish release 🐍 🚀
+    environment: pypi
     runs-on: ubuntu-latest
     permissions:
       id-token: write
