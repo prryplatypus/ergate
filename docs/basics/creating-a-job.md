@@ -5,28 +5,23 @@ A job in Ergate represents the execution of a workflow. It is represented by the
 Ergate receives jobs through the queue implementation you provide when creating the app. Therefore, it is your responsibility to create a `Job` object from the data you receive from the queue.
 
 
-!!! tip
-
-    Whenever you serialize a `Job` model and put it into the queue, it's recommended that you include all of the model's data in it. Some of the metadata stored in the model is essential for Ergate to work as expected. Many of the model's defaults are only correct when the job is created for the first time.
-
-
 ## Attributes
 
 Here is a summary of all the attributes of the `Job` model.
 
-| Name                 | Type             | Required on initial run | Default          |
-|----------------------|------------------|-------------------------|------------------|
-| id                   | Any              | N                       | None             |
-| workflow_name        | str              | Y                       | -                |
-| step_name            | str \| None      | N                       | None             |
-| status               | JobStatus        | N                       | JobStatus.QUEUED |
-| steps_completed      | int              | N                       | 0                |
-| percent_completed    | float            | N                       | 0.0              |
-| initial_input_value  | Any              | N                       | None             |
-| last_return_value    | Any              | N                       | None             |
-| exception_traceback  | str \| None      | N                       | None             |
-| user_context         | Any              | N                       | None             |
-| requested_start_time | datetime \| None | N                       | None             |
+| Name                 | Type             | Required | Default          | User provided |
+|----------------------|------------------|----------|------------------|---------------|
+| id                   | Any              | N        | None             | Y             |
+| workflow_name        | str              | Y        | N/A              | Y             |
+| step_name            | str \| None      | N        | None             | N             |
+| status               | JobStatus        | N        | JobStatus.QUEUED | N             |
+| steps_completed      | int              | N        | 0                | N             |
+| percent_completed    | float            | N        | 0.0              | N             |
+| initial_input_value  | Any              | N        | None             | Y             |
+| last_return_value    | Any              | N        | None             | N             |
+| exception_traceback  | str \| None      | N        | None             | N             |
+| user_context         | Any              | N        | None             | Y             |
+| requested_start_time | datetime \| None | N        | None             | Y             |
 
 
 
@@ -61,6 +56,9 @@ Now that you know all about jobs, we propose you a simple challenge: using the p
 
 Give it a try and then check our solutions below!
 
+!!! tip
+
+    Whenever you serialize a `Job` model and put it into the queue, it's recommended that you include all of the model's data in it. Some of the metadata stored in the model is essential for Ergate to work as expected. Many of the model's defaults are only correct when the job is created for the first time.
 
 ??? success "Solution 1"
 
