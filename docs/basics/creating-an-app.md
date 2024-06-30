@@ -57,6 +57,12 @@ class MyStateStore:
 
 Now that we have our queue and state store implementations, we can finally create the application itself. Simply create an `Ergate` instance and pass in the queue and state store implementations that you created before.
 
+To run it, simply call the `run` method on the app instance. This will start the application and begin processing jobs.
+
+!!! info
+
+    Running this will make the app appear "stuck". The reason for this is that there's no jobs in the queue. However, it would be pointless to have any, as we have not defined any workflows yet. We'll cover that in the next section.
+
 ```py title="app.py"
 from ergate import Ergate
 from my_queue import MyQueue
@@ -66,15 +72,7 @@ app = Ergate(
     queue=MyQueue(),
     state_store=MyStateStore(),
 )
-```
 
-
-## Running the application
-
-To run the application, simply call the `run` method on the app instance. This will start the application and begin processing jobs. However, it won't do anything just yet, as we haven't defined any workflows. We'll cover that in the next section.
-
-```py title="app.py"
-...
 if __name__ == "__main__":
     app.run()
 ```

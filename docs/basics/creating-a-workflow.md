@@ -26,7 +26,11 @@ def step_2() -> None:
 
 ## Registering a workflow
 
-Once you've defined a workflow, you need to let your Ergate application know that it exists. To do so, simply call the `register_workflow` method in your app instance with the workflow object you've created, like so:
+Once you've defined a workflow, you need to let your Ergate application know that it exists. To do so, simply call the `register_workflow` method in your app instance with the workflow object you've created.
+
+!!! info
+
+    Running this will make the app appear "stuck". The reason for this is that there's no jobs in the queue. We'll cover that in the next section.
 
 ```py title="app.py"
 from ergate import Ergate
@@ -39,4 +43,7 @@ app = Ergate(
     state_store=MyStateStore(),
 )
 app.register_workflow(workflow)
+
+if __name__ == "__main__":
+    app.run()
 ```

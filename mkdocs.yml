@@ -33,9 +33,12 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - tables
 
 nav:
   - Getting started: index.md
   - Tutorial - user guide:
     - basics/creating-an-app.md
     - basics/creating-a-workflow.md
+    - basics/creating-a-job.md
+    - basics/input-values.md
