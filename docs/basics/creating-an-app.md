@@ -67,3 +67,14 @@ app = Ergate(
     state_store=MyStateStore(),
 )
 ```
+
+
+## Running the application
+
+To run the application, simply call the `run` method on the app instance. This will start the application and begin processing jobs. However, it won't do anything just yet, as we haven't defined any workflows. We'll cover that in the next section.
+
+```py title="app.py"
+...
+if __name__ == "__main__":
+    app.run()
+```
