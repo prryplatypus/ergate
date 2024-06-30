@@ -45,3 +45,4 @@ nav:
     - basics/creating-a-workflow.md
     - basics/creating-a-job.md
     - basics/input-values.md
+    - basics/dependencies.md

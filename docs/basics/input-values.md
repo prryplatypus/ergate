@@ -1,4 +1,4 @@
-# Receiving input values
+# Input values
 
 Being able to run workflows that don't depend on external data is cool and all, but most of the time you'll want to run workflows that use some variable input data. Ergate allows you to pass input values when running a workflow.
 
@@ -54,7 +54,7 @@ In this example, if we were processing a job with an initial input value of `21`
 
 ## Challenge
 
-Now that you know you can provide an initial input value to a job, how do you feel like about giving it a try? Modify your existing code to trigger a job so it also provides an initial input value of `21` to the workflow. Remember you can check back in the previous section if you need some help and then check our solutions below!
+Now that you know you can provide an initial input value to a job, how do you feel like about giving it a try? Modify your existing code to provide the job with an initial input value of `21`. Remember you can check back in the previous section if you need some help and then check our solutions below!
 
 ??? success "Solution 1"
 
