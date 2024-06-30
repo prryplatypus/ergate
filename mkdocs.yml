@@ -1,7 +1,6 @@
 site_name: Ergate
 site_description: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 site_url: https://ergate.prryplatypus.dev
-docs_dir: content
 
 theme:
   name: material
