@@ -5,5 +5,5 @@ from .job import Job
 JobType = TypeVar("JobType", bound=Job, contravariant=True)
 
 
-class JobStateStoreWorkerProtocol(Protocol[JobType]):
+class StateStoreProtocol(Protocol[JobType]):
     def update(self, job: JobType) -> None: ...
