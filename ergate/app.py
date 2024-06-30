@@ -7,8 +7,8 @@ from typing import Generic, TypeVar
 from .handler import ErrorHookHandler
 from .job import Job
 from .job_runner import JobRunner
-from .job_state_store import JobStateStoreWorkerProtocol
 from .queue import QueueProtocol
+from .state_store import StateStoreProtocol
 from .types import ExceptionHook, Lifespan
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
@@ -21,7 +21,7 @@ class Ergate(Generic[JobType]):
     def __init__(
         self: AppType,
         queue: QueueProtocol[JobType],
-        job_state_store: JobStateStoreWorkerProtocol[JobType],
+        state_store: StateStoreProtocol[JobType],
         lifespan: Lifespan[AppType] | None = None,
         error_hook_handler: ErrorHookHandler[JobType] | None = None,
     ) -> None:
@@ -34,7 +34,7 @@ class Ergate(Generic[JobType]):
         self.job_runner: JobRunner[JobType] = JobRunner(
             queue,
             self.workflow_registry,
-            job_state_store,
+            state_store,
             self.error_hook_handler,
         )
 

@@ -8,9 +8,9 @@ from .exceptions import (
     ValidationError,
 )
 from .job import Job
-from .job_state_store import JobStateStoreWorkerProtocol
 from .job_status import JobStatus
 from .queue import QueueProtocol
+from .state_store import StateStoreProtocol
 from .workflow import Workflow
 
 __all__ = [
@@ -24,7 +24,7 @@ __all__ = [
     "SkipNSteps",
     "ValidationError",
     "Job",
-    "JobStateStoreWorkerProtocol",
+    "StateStoreProtocol",
     "JobStatus",
     "QueueProtocol",
     "Workflow",
