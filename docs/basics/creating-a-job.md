@@ -34,7 +34,7 @@ Here is a summary of all the attributes of the `Job` model.
 
 !!! info
 
-    Ergate's `Job` model is a Pydantic model, so it will try to cast the given values to the expected types. If any of the data provided cannot be cast to the expected type, a `ValidationError` will be raised.
+    Ergate's `Job` model is a Pydantic model, so it will try to cast the given values to the expected types. If any of the data provided cannot be cast to the expected type, a `ValidationError` will be raised. Remember that you must handle all exceptions in your queue and state store implementations.
 
 ```py title="my_queue.py"
 from queue import Queue
@@ -82,7 +82,7 @@ Give it a try and then check our solutions below!
         app.run()
     ```
 
-    1. In this case, we're creating a `Job` object with the `workflow_name` attribute set to `"my_first_workflow"`. We then serialize the job and put all of its data into the queue.
+    1. In this case, we're creating a `Job` object with the `workflow_name` attribute set to `"my_first_workflow"`. The rest of the attributes are set to their defaults *before* submitting it to the queue, and therefore all of the job data is sent through the queue.
 
 
 ??? success "Solution 2"
@@ -104,4 +104,4 @@ Give it a try and then check our solutions below!
         app.run()
     ```
 
-    1. In this case, we're submitting directly the only required serialized data for a `Job`'s first run. It works because when we unpack the dictionary into a `Job` object, the missing attributes will be set to their default values.
+    1. In this case, we're submitting directly the only required serialized data for a `Job`'s first run. The default values for all the other attributes will be set when our queue implementation receives this data and creates the `Job` object.
