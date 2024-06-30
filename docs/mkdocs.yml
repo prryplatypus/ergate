@@ -6,6 +6,7 @@ docs_dir: content
 theme:
   name: material
   features:
+    - content.code.annotate
     - content.code.copy
   palette:
     # Palette toggle for light mode
@@ -23,7 +24,9 @@ theme:
         name: Switch to light mode
 
 markdown_extensions:
+  - admonition
   - attr_list
+  - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
@@ -35,5 +38,5 @@ markdown_extensions:
 nav:
   - Getting started: index.md
   - Tutorial - user guide:
-    - basic/first_steps.md
-    - basic/workflows.md
+    - basics/creating-an-app.md
+    - basics/creating-a-workflow.md
