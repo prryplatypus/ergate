@@ -31,7 +31,7 @@ class JobRunner(Generic[JobType]):
         workflow = self.workflow_registry[job.workflow_name]
         step_to_run = workflow[job.steps_completed]
 
-        job.mark_running(step_to_run.name)
+        job.mark_running(step_to_run)
         self.state_store.update(job)
 
         try:

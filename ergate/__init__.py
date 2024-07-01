@@ -11,7 +11,7 @@ from .job import Job
 from .job_status import JobStatus
 from .queue import QueueProtocol
 from .state_store import StateStoreProtocol
-from .workflow import Workflow
+from .workflow import Workflow, WorkflowStep
 
 __all__ = [
     "Context",
@@ -28,4 +28,5 @@ __all__ = [
     "JobStatus",
     "QueueProtocol",
     "Workflow",
+    "WorkflowStep",
 ]
