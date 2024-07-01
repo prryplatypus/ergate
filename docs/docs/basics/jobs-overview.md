@@ -1,4 +1,4 @@
-# Jobs
+# Jobs overview
 
 In Ergate, a job is an execution of a workflow. It is represented by the `Job` model, which contains all the necessary information to execute a given workflow.
 
@@ -24,6 +24,17 @@ Here is a summary of all the attributes of the `Job` model.
 | user_context         | Any              | N        | None             | Y             |
 | requested_start_time | datetime \| None | N        | None             | Y             |
 
+
+## Job status
+
+A `Job` can have any of the following statuses:
+
+- `JobStatus.SCHEDULED`
+- `JobStatus.QUEUED`
+- `JobStatus.RUNNING`
+- `JobStatus.COMPLETED`
+- `JobStatus.FAILED`
+- `JobStatus.ABORTED`
 
 
 ## Triggering/creating a job

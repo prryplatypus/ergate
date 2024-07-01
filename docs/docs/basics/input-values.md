@@ -52,14 +52,18 @@ In this example, if we were processing a job with an initial input value of `21`
 - "Hello, I am step 2 and I've received 22"
 
 
-## Challenge
+## Passing an initial input value
 
-Now that you know you can provide an initial input value to a job, how do you feel like about giving it a try? Modify your existing code to provide the job with an initial input value of `21`. Remember you can check back in the previous section if you need some help and then check our solutions below!
+Passing an initial input value to a job is simple. All you need to do is to provide the `initial_input_value` argument when creating the `Job` object.
 
-??? success "Solution 1"
+---
+
+Time for another small challenge. After replacing the demo workflow you have with the one above, can you modify the code from the previous section so that the job is triggered with an initial input value of `21`? Give it a try and then check our solution below!
+
+??? success "Solution"
 
     ```py title="app.py"
-    from ergate import Ergate
+    from ergate import Ergate, Job
     from my_queue import MyQueue, queue
     from my_state_store import MyStateStore
     from my_workflow import workflow
@@ -73,29 +77,5 @@ Now that you know you can provide an initial input value to a job, how do you fe
     if __name__ == "__main__":
         job = Job(workflow_name="my_first_workflow", initial_input_value=21)
         queue.put(job.model_dump(mode="json"))
-        app.run()
-    ```
-
-??? success "Solution 2"
-
-    ```py title="app.py"
-    from ergate import Ergate
-    from my_queue import MyQueue, queue
-    from my_state_store import MyStateStore
-    from my_workflow import workflow
-
-    app = Ergate(
-        queue=MyQueue(),
-        state_store=MyStateStore(),
-    )
-    app.register_workflow(workflow)
-
-    if __name__ == "__main__":
-        queue.put(
-            {
-                "workflow_name": "my_first_workflow",
-                "initial_input_value": 21,
-            }
-        )
         app.run()
     ```

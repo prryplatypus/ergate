@@ -1,9 +1,11 @@
 site_name: Ergate
 site_description: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 site_url: https://ergate.prryplatypus.dev
+docs_dir: docs/docs
 
 theme:
   name: material
+  custom_dir: docs/overrides
   features:
     - content.code.annotate
     - content.code.copy
@@ -43,6 +45,6 @@ nav:
   - Tutorial - user guide:
     - basics/creating-an-app.md
     - basics/creating-a-workflow.md
-    - basics/jobs.md
+    - basics/jobs-overview.md
     - basics/input-values.md
     - basics/dependencies.md
