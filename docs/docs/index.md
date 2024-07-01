@@ -17,7 +17,7 @@ Ergate is a fully-typed framework upon which you can build distributed workers t
 ## Installation
 
 Ergate is available on PyPi, and therefore all you need to do to use it is `pip install` it:
-```bash
+```console
 pip install ergate
 ```
 
