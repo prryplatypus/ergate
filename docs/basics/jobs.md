@@ -16,13 +16,11 @@ Here is a summary of all the attributes of the `Job` model.
 |----------------------|------------------|----------|------------------|---------------|
 | id                   | Any              | N        | None             | Y             |
 | workflow_name        | str              | Y        | N/A              | Y             |
-| step_name            | str \| None      | N        | None             | N             |
 | status               | JobStatus        | N        | JobStatus.QUEUED | N             |
 | steps_completed      | int              | N        | 0                | N             |
 | percent_completed    | float            | N        | 0.0              | N             |
 | initial_input_value  | Any              | N        | None             | Y             |
 | last_return_value    | Any              | N        | None             | N             |
-| exception_traceback  | str \| None      | N        | None             | N             |
 | user_context         | Any              | N        | None             | Y             |
 | requested_start_time | datetime \| None | N        | None             | Y             |
 

@@ -43,6 +43,6 @@ nav:
   - Tutorial - user guide:
     - basics/creating-an-app.md
     - basics/creating-a-workflow.md
-    - basics/creating-a-job.md
+    - basics/jobs.md
     - basics/input-values.md
     - basics/dependencies.md
