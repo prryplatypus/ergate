@@ -2,13 +2,18 @@ site_name: Ergate
 site_description: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 site_url: https://ergate.prryplatypus.dev
 docs_dir: docs/docs
+repo_url: https://github.com/prryplatypus/ergate
+repo_name: prryplatypus/ergate
+edit_uri: edit/docs/docs/docs/  # edit/<branch>/<folder>
 
 theme:
   name: material
   custom_dir: docs/overrides
   features:
+    - content.action.edit
     - content.code.annotate
     - content.code.copy
+    # - navigation.tabs
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
@@ -26,6 +31,7 @@ theme:
   icon:
     admonition:
       tip: fontawesome/regular/lightbulb
+    repo: fontawesome/brands/github
 
 markdown_extensions:
   - admonition
@@ -41,7 +47,7 @@ markdown_extensions:
   - tables
 
 nav:
-  - Getting started: index.md
+  - Home: index.md
   - Tutorial - user guide:
     - basics/creating-an-app.md
     - basics/creating-a-workflow.md
