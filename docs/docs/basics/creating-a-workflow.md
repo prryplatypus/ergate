@@ -26,7 +26,7 @@ def step_2() -> None:
 
 ## Registering a workflow
 
-Once you've defined a workflow, you need to let your Ergate application know that it exists. To do so, simply call the `register_workflow` method in your app instance with the workflow object you've created.
+Once you've defined a workflow, you need to let your **Ergate** application know that it exists. To do so, simply call the `register_workflow` method in your app instance with the workflow object you've created.
 
 !!! info
 

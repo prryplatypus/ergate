@@ -1,6 +1,6 @@
 # Input values
 
-Being able to run workflows that don't depend on external data is cool and all, but most of the time you'll want to run workflows that use some variable input data. Ergate allows you to pass input values when running a workflow.
+Being able to run workflows that don't depend on external data is cool and all, but most of the time you'll want to run workflows that use some variable input data. **Ergate** allows you to pass input values when running a workflow.
 
 
 ## Input values in the first step

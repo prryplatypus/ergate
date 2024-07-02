@@ -1,14 +1,14 @@
 # Creating an app
 
-Creating an Ergate application is simple, but you must first create our own queue and state store implementations for Ergate to be able to receive and process jobs.
+Creating an **Ergate** application is simple, but you must first create our own queue and state store implementations for **Ergate** to be able to receive and process jobs.
 
 
 !!! warning
-    You are responsible for handling any exceptions within your queue and state store implementations. Ergate will not handle any exceptions that occur within these classes, and they will crash your application.
+    You are responsible for handling any exceptions within your queue and state store implementations. **Ergate** will not handle any exceptions that occur within these classes, and they will crash your application.
 
 ## Implementing the queue
 
-Ergate requires queue implementations to implement two methods: `get_one` and `put`.
+**Ergate** requires queue implementations to implement two methods: `get_one` and `put`.
 
 - The `get_one` method should fetch data from your queue and return a `Job` instance. If no job data is found instantly in the queue, this method should block until it is available, at which point it will return a `Job`.
 
@@ -37,7 +37,7 @@ class MyQueue:
 
 ## Implementing the state store
 
-Ergate requires state store implementations to implement one method: `update`.
+**Ergate** requires state store implementations to implement one method: `update`.
 
 - The `update` method takes a `Job` model and should update the state of the job in your state store. It is called just before a step is executed and after a step execution is completed.
 

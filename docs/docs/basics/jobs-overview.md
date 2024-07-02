@@ -1,11 +1,11 @@
 # Jobs overview
 
-In Ergate, a job is an execution of a workflow. It is represented by the `Job` model, which contains all the necessary information to execute a given workflow.
+In **Ergate**, a job is an execution of a workflow. It is represented by the `Job` model, which contains all the necessary information to execute a given workflow.
 
 
 !!! note
 
-    Ergate receives jobs through the queue implementation you provide when creating the app. Therefore, how you trigger jobs and create `Job` objects depends only on your queue implementation. In this guide, we'll show you how to create a `Job` object and submit it to the queue using the queue implementation from the previous sections.
+    **Ergate** receives jobs through the queue implementation you provide when creating the app. Therefore, how you trigger jobs and create `Job` objects depends only on your queue implementation. In this guide, we'll show you how to create a `Job` object and submit it to the queue using the queue implementation from the previous sections.
 
 
 ## Job attributes
