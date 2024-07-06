@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 ## Accessing user context
 
-Accessing user context is very similar to using dependencies, except instead of using `Depends`, you must use `Context` instead, which doesn't take any arguments.
+Accessing user context is very similar to using dependencies, except instead of using `Depends(...)`, you must use `Context()` instead.
 
 ---
 
