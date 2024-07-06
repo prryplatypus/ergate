@@ -46,6 +46,8 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - tables
+  - toc:
+      permalink: true
 
 nav:
   - Home: index.md
@@ -57,3 +59,4 @@ nav:
     - basics/input-values.md
     - basics/dependencies.md
     - basics/user-context.md
+    - basics/flow-control.md

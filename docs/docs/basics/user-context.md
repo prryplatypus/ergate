@@ -47,7 +47,7 @@ As always, it's challenge time! Can you modify the second step in our workflow s
     ```py title="my_workflow.py"
     from datetime import datetime
     from typing import Annotated, Any
-    from ergate import Depends, Workflow, Context
+    from ergate import Context, Depends, Workflow
     from my_dependency import create_current_time
 
     workflow = Workflow(unique_name="my_first_workflow")
