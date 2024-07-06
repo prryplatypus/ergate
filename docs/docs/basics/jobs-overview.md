@@ -44,7 +44,7 @@ Triggering/creating a job is extremely simple. All you need to do it to submit t
 1. Create a `Job` object on the client, and then dump all of its data into the queue.
 1. Submit only the necessary data for a `Job`'s first run from the client into the queue, and let the queue implementation create the `Job` object with the default values for all the other fields.
 
-!!! info
+!!! note
 
     Our recommendation is to always use the first approach. The `Job` model's default values are only valid before the job's first run. After that, the job's metadata (`steps_completed`, `percent_completed`, etc...) is updated by Ergate, and it will no longer be valid to use the default values for subsequent runs, which means you will need to submit all of the data through the queue so it can be loaded in the next steps.
 
