@@ -41,7 +41,7 @@ class JobRunner(Generic[JobType]):
                 retval = step_to_run(*args, **kwargs)
         except AbortJob as exc:
             LOG.info("User requested to abort job: %s", exc)
-            job.mark_aborted()
+            job.mark_aborted(exc.message)
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
             job.mark_n_steps_completed(exc.n + 1, exc.retval, len(workflow))

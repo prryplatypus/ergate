@@ -46,7 +46,7 @@ class Job(BaseModel):
         )
         self.last_return_value = return_value
 
-    def mark_aborted(self) -> None:
+    def mark_aborted(self, message: str) -> None:
         self.status = JobStatus.ABORTED
 
     def should_be_requeued(self) -> bool:
