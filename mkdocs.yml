@@ -13,6 +13,7 @@ theme:
     - content.action.edit
     - content.code.annotate
     - content.code.copy
+    - navigation.indexes
     # - navigation.tabs
   palette:
     # Palette toggle for light mode
@@ -49,8 +50,10 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Tutorial - user guide:
+    - basics/index.md
     - basics/creating-an-app.md
     - basics/creating-a-workflow.md
     - basics/jobs-overview.md
     - basics/input-values.md
     - basics/dependencies.md
+    - basics/user-context.md
