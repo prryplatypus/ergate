@@ -23,7 +23,7 @@ def create_current_time() -> Generator[datetime, None, None]:
 ```
 
 !!! info
-    **Ergate** uses [contextmanagers](https://docs.python.org/3/library/contextlib.html#contextlib.contextmanager) under the hood, so any function that works with them can be used as a dependency.
+    **Ergate** uses [contextmanagers](https://docs.python.org/3/library/contextlib.html#contextlib.contextmanager){:target="_blank"} under the hood, so any function that works with them can be used as a dependency.
 
 
 ## Using a dependency
