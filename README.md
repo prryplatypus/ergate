@@ -1,9 +1,8 @@
 # Ergate
 Workflows made easy, your way.
 
-> [!NOTE]
-> There's plenty of more features that aren't yet documented. For example, Ergate supports dependency injection via `Depends(...)` in a similar way to FastAPI. Feel free to open a GitHub issue if you have any questions while we work on adding documentation to the project.
-
+## Documentation
+You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev).
 
 ## Acknowledgements
 - [Ziply Fiber](https://ziplyfiber.com): For giving me the initial idea to create this project and allowing me to turn it into a personal, open-source project.
