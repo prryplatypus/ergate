@@ -14,6 +14,14 @@ class FunctionArgumentInfo:
         self._args_types: list[Annotation] = []
         self._kwarg_types: dict[str, Annotation] = {}
 
+    @property
+    def args_types(self) -> list[Annotation]:
+        return self._args_types
+
+    @property
+    def kwarg_types(self) -> dict[str, Annotation]:
+        return self._kwarg_types
+
     def add_param(self, param: Parameter, type_: Annotation) -> None:
         if param.kind == Parameter.POSITIONAL_ONLY:
             self._args_types.append(type_)
