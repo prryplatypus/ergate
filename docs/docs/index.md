@@ -1,12 +1,17 @@
 <style>
     .md-content .md-typeset h1 { display: none; }
+    .logo { width: 100%; }
 </style>
 
 # Ergate
 
-<p align="center">
-    <em><b>Ergate</b>: workflows made easy, your way.</em>
-</p>
+<div align="center" class="logo-wrapper">
+    <img
+        src="img/splash.svg"
+        class="logo"
+        alt="Banner displaying Ergate's logo (an ant lifting a weight), name and the 'workflows made easy, your way' slogan"
+    >
+</div>
 
 
 ## About

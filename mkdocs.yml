@@ -8,9 +8,10 @@ edit_uri: edit/docs/docs/docs/  # edit/<branch>/<folder>
 
 theme:
   name: material
+  logo: img/icon.svg
+  favicon: img/icon.svg
   custom_dir: docs/overrides
   features:
-    - content.action.edit
     - content.code.annotate
     - content.code.copy
     - navigation.indexes
