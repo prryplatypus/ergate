@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Any
 
@@ -20,7 +21,7 @@ class Job(BaseModel):
 
     def get_input_value(self) -> Any:
         return (
-            self.initial_input_value
+            copy.deepcopy(self.initial_input_value)
             if self.steps_completed == 0
             else self.last_return_value
         )
