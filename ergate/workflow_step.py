@@ -18,7 +18,7 @@ class WorkflowStep:
     def __init__(
         self,
         workflow: Workflow,
-        callable: Callable[CallableSpec, Any],
+        callable: Callable[..., Any],
     ) -> None:
         self.workflow = workflow
         self.callable = callable
@@ -40,7 +40,7 @@ class WorkflowStep:
                 last_return_value,
             )
 
-    def __call__(self, *args: CallableSpec.args, **kwargs: CallableSpec.kwargs) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self.callable(*args, **kwargs)
 
     def __str__(self) -> str:

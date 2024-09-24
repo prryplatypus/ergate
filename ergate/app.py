@@ -13,16 +13,15 @@ from .types import ExceptionHook, Lifespan
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
 
-AppType = TypeVar("AppType", bound="Ergate")
 JobType = TypeVar("JobType", bound=Job)
 
 
 class Ergate(Generic[JobType]):
     def __init__(
-        self: AppType,
+        self,
         queue: QueueProtocol[JobType],
         state_store: StateStoreProtocol[JobType],
-        lifespan: Lifespan[AppType] | None = None,
+        lifespan: Lifespan[Ergate[JobType]] | None = None,
         error_hook_handler: ErrorHookHandler[JobType] | None = None,
     ) -> None:
         self.lifespan = lifespan
@@ -51,7 +50,7 @@ class Ergate(Generic[JobType]):
     def register_workflow(self, workflow: Workflow) -> None:
         self.workflow_registry.register(workflow)
 
-    def run(self: AppType) -> None:
+    def run(self: Ergate[JobType]) -> None:
         with ExitStack() as stack:
             if self.lifespan:
                 stack.enter_context(self.lifespan(self))
