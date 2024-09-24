@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
-from typing import TYPE_CHECKING, Any, Callable, ParamSpec
+from typing import TYPE_CHECKING, Any, Callable, Generic, ParamSpec, TypeVar
 
 from .depends_cache import DependsCache
 from .inspect import build_function_arg_info
@@ -12,13 +12,14 @@ if TYPE_CHECKING:
 
 
 CallableSpec = ParamSpec("CallableSpec")
+CallableRetval = TypeVar("CallableRetval")
 
 
-class WorkflowStep:
+class WorkflowStep(Generic[CallableSpec, CallableRetval]):
     def __init__(
         self,
         workflow: Workflow,
-        callable: Callable[..., Any],
+        callable: Callable[CallableSpec, CallableRetval],
     ) -> None:
         self.workflow = workflow
         self.callable = callable
@@ -40,7 +41,11 @@ class WorkflowStep:
                 last_return_value,
             )
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    def __call__(
+        self,
+        *args: CallableSpec.args,
+        **kwargs: CallableSpec.kwargs,
+    ) -> CallableRetval:
         return self.callable(*args, **kwargs)
 
     def __str__(self) -> str:

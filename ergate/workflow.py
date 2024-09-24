@@ -1,6 +1,9 @@
-from typing import Any, Callable, Iterator
+from typing import Callable, Iterator, ParamSpec, TypeVar
 
 from .workflow_step import WorkflowStep
+
+CallableSpec = ParamSpec("CallableSpec")
+CallableRetval = TypeVar("CallableRetval")
 
 
 class Workflow:
@@ -23,7 +26,10 @@ class Workflow:
     def __len__(self) -> int:
         return len(self._steps)
 
-    def step(self, callable: Callable[..., Any]) -> WorkflowStep:
+    def step(
+        self,
+        callable: Callable[CallableSpec, CallableRetval],
+    ) -> WorkflowStep[CallableSpec, CallableRetval]:
         step = WorkflowStep(self, callable)
         self._steps.append(step)
         return step

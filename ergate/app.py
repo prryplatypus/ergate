@@ -50,7 +50,7 @@ class Ergate(Generic[JobType]):
     def register_workflow(self, workflow: Workflow) -> None:
         self.workflow_registry.register(workflow)
 
-    def run(self: Ergate[JobType]) -> None:
+    def run(self) -> None:
         with ExitStack() as stack:
             if self.lifespan:
                 stack.enter_context(self.lifespan(self))
