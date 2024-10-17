@@ -23,8 +23,15 @@ class AbortJob(ErgateError):  # noqa: N818
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
-    def __init__(self, label: int | str, retval: Any = None):
+    def __init__(
+            self,
+            *,
+            n: int | None = None,
+            label: str | None = None,
+            retval: Any = None
+    ):
         self.label = label
+        self.n = n
         self.retval = retval
 
 
