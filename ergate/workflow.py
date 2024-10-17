@@ -56,9 +56,14 @@ class Workflow:
             def wrapper() -> WorkflowStep[CallableSpec, CallableRetval]:
                 step = WorkflowStep(self, func)
                 self._steps.append(step)
+
                 if label:
+                    if label in self._labels:
+                        err = f'A workflow step with label "{label}" is already registered'
+                        raise ValueError(err)
                     idx = len(self._steps) - 1
                     self._labels[label] = idx
+
                 return step
 
             return wrapper
