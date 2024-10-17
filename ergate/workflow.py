@@ -11,14 +11,15 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
-        self._labels: dict[int | str, WorkflowStep] = {}
+        self._labels: dict[int | str, int] = {}
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
         try:
             if isinstance(key, int):
                 return self._steps[key]
-            if isinstance(key, str):
-                return self._labels[key]
+            else:
+                idx = self._labels[key]
+                return self._steps[idx]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
@@ -49,7 +50,8 @@ class Workflow:
                 step = WorkflowStep(self, func)
                 self._steps.append(step)
                 if label:
-                    self._labels[label] = step
+                    idx = len(self._steps) - 1
+                    self._labels[label] = idx
                 return step
 
             return wrapper
