@@ -34,6 +34,10 @@ class GoToStep(ErgateError):  # noqa: N818
         self.n = n
         self.retval = retval
 
+    @property
+    def has_step(self) -> bool:
+        return self.n is not None or self.label is not None
+
 
 class SkipNSteps(ErgateError):  # noqa: N818
     """Raised from a step to skip N steps."""
