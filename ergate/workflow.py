@@ -11,7 +11,7 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
-        self._labels: dict[int | str, int] = {}
+        self._labels: dict[str, int] = {}
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
         try:
@@ -38,9 +38,13 @@ class Workflow:
         return len(self._steps)
 
     def step(self, *args):
-        label = None
-        if not callable(args[0]):
+        if callable(args[0]):
+            label = None
+        elif isinstance(args[0], str):
             label = args[0]
+        else:
+            err = f'A workflow step label must be a string value.'
+            raise ValueError(err)
 
         def _decorate(
             func: Callable[CallableSpec, CallableRetval],
