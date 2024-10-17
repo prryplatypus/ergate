@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar
 
-from .exceptions import AbortJob, GoToStep, SkipNSteps
+from .exceptions import AbortJob, GoToEnd, GoToStep, SkipNSteps
 from .handler import ErrorHookHandler
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
@@ -42,6 +42,8 @@ class JobRunner(Generic[JobType]):
         except AbortJob as exc:
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted(exc.message)
+        except GoToEnd as exc:
+            job.mark_step_n_completed(len(workflow), exc.retval, len(workflow))
         except GoToStep as exc:
             if not exc.has_step:
                 err = 'No label or index provided for GoToStep'
