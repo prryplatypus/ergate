@@ -20,10 +20,11 @@ class Job(BaseModel):
     requested_start_time: datetime | None = None
 
     def get_input_value(self) -> Any:
-        if not self.steps_completed:
-            input_val = self.initial_input_value
-        else:
-            input_val = self.last_return_value
+        input_val = (
+            self.initial_input_value
+            if self.steps_completed == 0
+            else self.last_return_value
+        )
 
         return copy.deepcopy(input_val)
 
