@@ -37,6 +37,9 @@ class Workflow:
     def __len__(self) -> int:
         return len(self._steps)
 
+    def get_label_index(self, label: str) -> int:
+        return self._labels[label]
+
     def step(self, *args):
         if callable(args[0]):
             label = None
