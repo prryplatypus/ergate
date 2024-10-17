@@ -3,6 +3,7 @@ from .app import Ergate
 from .exceptions import (
     AbortJob,
     ErgateError,
+    GoToEnd,
     GoToStep,
     InvalidDefinitionError,
     SkipNSteps,
@@ -22,6 +23,7 @@ __all__ = [
     "ErgateError",
     "InvalidDefinitionError",
     "AbortJob",
+    "GoToEnd",
     "GoToStep",
     "SkipNSteps",
     "ValidationError",

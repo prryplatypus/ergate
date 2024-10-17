@@ -20,6 +20,13 @@ class AbortJob(ErgateError):  # noqa: N818
         self.message = message
 
 
+class GoToEnd(ErgateError):
+    """Raised from a step to immediately complete the job."""
+
+    def __init__(self, retval: Any = None):
+        self.retval = retval
+
+
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
