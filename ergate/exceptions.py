@@ -20,6 +20,14 @@ class AbortJob(ErgateError):  # noqa: N818
         self.message = message
 
 
+class GoToStep(ErgateError):  # noqa: N818
+    """Raised from a step to go to a specific step by its index or string label."""
+
+    def __init__(self, label: int | str, retval: Any = None):
+        self.label = label
+        self.retval = retval
+
+
 class SkipNSteps(ErgateError):  # noqa: N818
     """Raised from a step to skip N steps."""
 
