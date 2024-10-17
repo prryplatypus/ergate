@@ -34,6 +34,18 @@ class Job(BaseModel):
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
 
+    def mark_step_n_completed(
+        self,
+        n: int,
+        return_value: Any,
+        total_steps: int,
+    ) -> None:
+        self.mark_n_steps_completed(
+            n - self.steps_completed,
+            return_value,
+            total_steps,
+        )
+
     def mark_n_steps_completed(
         self,
         n: int,
