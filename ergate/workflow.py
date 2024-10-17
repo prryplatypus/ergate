@@ -1,3 +1,4 @@
+import functools
 from typing import Callable, Iterator, ParamSpec, TypeVar
 
 from .workflow_step import WorkflowStep
@@ -10,15 +11,24 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
+        self._labels: dict[int | str, WorkflowStep] = {}
 
-    def __getitem__(self, index: int) -> WorkflowStep:
+    def __getitem__(self, key: int | str) -> WorkflowStep:
         try:
-            return self._steps[index]
+            if isinstance(key, int):
+                return self._steps[key]
+            if isinstance(key, str):
+                return self._labels[key]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
-                f"- tried to access step #{index}"
+                f"- tried to access step #{key}"
             ) from None
+        except KeyError:
+            raise KeyError(
+                f'No label named "{key}" is registered in '
+                f'Workflow "{self.unique_name}"'
+            )
 
     def __iter__(self) -> Iterator[WorkflowStep]:
         return iter(self._steps)
@@ -26,10 +36,25 @@ class Workflow:
     def __len__(self) -> int:
         return len(self._steps)
 
-    def step(
-        self,
-        callable: Callable[CallableSpec, CallableRetval],
-    ) -> WorkflowStep[CallableSpec, CallableRetval]:
-        step = WorkflowStep(self, callable)
-        self._steps.append(step)
-        return step
+    def step(self, *args):
+        label = None
+        if not callable(args[0]):
+            label = args[0]
+
+        def _decorate(
+            func: Callable[CallableSpec, CallableRetval],
+        ) -> Callable[CallableSpec, CallableRetval]:
+            @functools.wraps(func)
+            def wrapper() -> WorkflowStep[CallableSpec, CallableRetval]:
+                step = WorkflowStep(self, func)
+                self._steps.append(step)
+                if label:
+                    self._labels[label] = step
+                return step
+
+            return wrapper
+
+        if len(args) == 1 and callable(args[0]):
+            return _decorate(args[0])
+
+        return _decorate
