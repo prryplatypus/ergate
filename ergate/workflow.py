@@ -1,4 +1,3 @@
-import functools
 from typing import Callable, Iterator, ParamSpec, TypeVar
 
 from .workflow_step import WorkflowStep
@@ -53,15 +52,21 @@ class Workflow:
 
     def label(self, label: str) -> Callable[CallableSpec, CallableRetval]:
         def _decorate(
-            func: Callable[CallableSpec, CallableRetval],
+            func: WorkflowStep[CallableSpec, CallableRetval],
         ) -> WorkflowStep[CallableSpec, CallableRetval]:
-            @functools.wraps(func)
-            def wrapper() -> WorkflowStep[CallableSpec, CallableRetval]:
-                return func
-
             print("===111.1===", label)
             print("===111.2===", self._steps)
             print("===111.3===", self._labels)
+            print("===111.4===", func, isinstance(func, WorkflowStep))
+
+            if not isinstance(func, WorkflowStep):
+                # This guard clause isn't strictly necessary with the type hints.
+                # It is included as a helpful hint to the developer.
+                err = (
+                    "@label decorator method must be called on a WorkflowStep.  "
+                    "Did you remember to invoke @step first?"
+                )
+                raise ValueError(err)
 
             if label in self._labels:
                 print("===111.X===", label)
@@ -71,21 +76,13 @@ class Workflow:
                 )
                 raise ValueError(err)
 
-            if isinstance(func, WorkflowStep):
-                print("===113.1===", func, type(func), isinstance(func, WorkflowStep))
-                self._labels[label] = len(self._steps) - 1
-                print("===111.21===", self._labels[label])
-
-            result = wrapper()
-
-            if not isinstance(func, WorkflowStep):
-                print("===113.2===", func, type(func), isinstance(func, WorkflowStep))
-                self._labels[label] = len(self._steps) - 1
-                print("===111.22===", self._labels[label])
+            print("===113.1===", func, type(func), isinstance(func, WorkflowStep))
+            self._labels[label] = len(self._steps) - 1
+            print("===111.21===", self._labels[label])
 
             print("===112.1===", self._steps)
             print("===112.2===", self._labels)
-            return result
+            return func
 
         return _decorate
 
