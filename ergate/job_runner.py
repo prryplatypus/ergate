@@ -52,10 +52,10 @@ class JobRunner(Generic[JobType]):
 
             if exc.n is not None:
                 idx = exc.n
-                LOG.info("User requested to go to step: %s", idx)
+                LOG.info("User requested to go to step: %s - return value: %s", idx, exc.retval)
             else:
                 idx = workflow.get_label_index(exc.label)
-                LOG.info("User requested to go to step: %s (%s)", exc.label, idx)
+                LOG.info("User requested to go to step: %s (%s) - return value: %s", exc.label, idx, exc.retval)
 
             job.mark_step_n_completed(idx, exc.retval, len(workflow))
         except SkipNSteps as exc:
