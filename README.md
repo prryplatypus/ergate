@@ -1,7 +1,7 @@
 # Ergeats
 Workflows made easy, just the way Erg likes them.
 
-![Erg eats.  Ergate.](https://github.com/contrains/ergeats/blob/main/docs/docs/ergeats-logo.png?raw=true)
+![Erg eats.  Ergate.](https://github.com/contrains/ergeats/blob/main/docs/docs/img/ergeats-logo.png?raw=true)
 
 ## Documentation
 You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev).
