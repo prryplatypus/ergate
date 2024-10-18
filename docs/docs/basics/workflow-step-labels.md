@@ -22,17 +22,20 @@ workflow = Workflow(unique_name="my_second_workflow")
 def step_1() -> None:
     print("Hello, I am step 1")
 
-@workflow.step("step_2")
+@workflow.step
+@workflow.label("step_2")
 def step_2() -> None:
     print("Hello, I am step 2")
     raise GoToStep(label="step_3")
 
-@workflow.step("step_5")
+@workflow.step
+@workflow.label("step_5")
 def step_5() -> None:
     print("Hello, I am step 5")
     raise GoToEnd
 
-@workflow.step("step_3")
+@workflow.step
+@workflow.label("step_3")
 def step_3() -> None:
     print("Hello, I am step 3")
 
@@ -87,12 +90,14 @@ def step_1(input_value) -> None:
         case _:
             raise GoToStep("step_default2")
 
-@workflow.step("step_default")
+@workflow.step
+@workflow.label("step_default")
 def step_default2() -> None:
     print("Hello, I am step default.2")
     raise GoToStep(label="step_4")
 
-@workflow.step("step_a2")
+@workflow.step
+@workflow.label("step_a2")
 def step_a2() -> None:
     print("Hello, I am step a.2")
 
@@ -100,7 +105,8 @@ def step_a3() -> None:
     print("Hello, I am step a.3")
     raise GoToStep(label="step_4")
 
-@workflow.step("step_b2")
+@workflow.step
+@workflow.label("step_b2")
 def step_b2() -> None:
     print("Hello, I am step b.2")
 
@@ -108,7 +114,8 @@ def step_b3() -> None:
     print("Hello, I am step b.3")
     raise GoToStep(label="step_4")
 
-@workflow.step("step_4")
+@workflow.step
+@workflow.label("step_4")
 def step_4() -> None:
     print("Hello, I am step 4")
 ```
