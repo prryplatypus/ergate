@@ -92,6 +92,7 @@ class Workflow:
     def step(
         self, func: Callable[CallableSpec, CallableRetval]
     ) -> WorkflowStep[CallableSpec, CallableRetval]:
+        print("===711.1===", "in @step for", func)
         step = WorkflowStep(self, func)
         self._steps.append(step)
         return step
