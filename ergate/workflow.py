@@ -38,7 +38,13 @@ class Workflow:
         return len(self._steps)
 
     def get_label_index(self, label: str) -> int:
-        return self._labels[label]
+        try:
+            return self._labels[label]
+        except KeyError:
+            raise KeyError(
+                f'No label named "{label}" is registered in '
+                f'Workflow "{self.unique_name}"'
+            )
 
     def step(self, *args):
         if callable(args[0]):
