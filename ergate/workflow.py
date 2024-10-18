@@ -46,38 +46,22 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def step(self, *args):
-        if callable(args[0]):
-            label = None
-        elif isinstance(args[0], str):
-            label = args[0]
-        else:
-            err = "A workflow step label must be a string value."
-            raise ValueError(err)
-
-        def _decorate(
-            func: Callable[CallableSpec, CallableRetval],
-        ) -> Callable[CallableSpec, CallableRetval]:
+    def label(self, label: str) -> Callable[CallableSpec, CallableRetval]:
+        def _decorate(func: Callable[CallableSpec, CallableRetval]) -> Callable[CallableSpec, CallableRetval]:
             @functools.wraps(func)
-            def wrapper() -> WorkflowStep[CallableSpec, CallableRetval]:
-                step = WorkflowStep(self, func)
-                self._steps.append(step)
+            def wrapper(*args, **kwargs) -> WorkflowStep[CallableSpec, CallableRetval]:
+                if label in self._labels:
+                    err = (f'A workflow step with label "{label}" '
+                           "is already registered.")
+                    raise ValueError(err)
 
-                if label:
-                    if label in self._labels:
-                        err = (
-                            f'A workflow step with label "{label}" '
-                            "is already registered."
-                        )
-                        raise ValueError(err)
-                    idx = len(self._steps) - 1
-                    self._labels[label] = idx
-
-                return step
-
+                result = func(*args, **kwargs)
+                self._labels[label] = len(self._steps) - 1
+                return result
             return wrapper
-
-        if len(args) == 1 and callable(args[0]):
-            return _decorate(args[0])
-
         return _decorate
+
+    def step(self, func: Callable[CallableSpec, CallableRetval]) -> WorkflowStep[CallableSpec, CallableRetval]:
+        step = WorkflowStep(self, func)
+        self._steps.append(step)
+        return step
