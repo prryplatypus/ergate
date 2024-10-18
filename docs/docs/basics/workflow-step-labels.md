@@ -22,20 +22,20 @@ workflow = Workflow(unique_name="my_second_workflow")
 def step_1() -> None:
     print("Hello, I am step 1")
 
-@workflow.step
 @workflow.label("step_2")
+@workflow.step
 def step_2() -> None:
     print("Hello, I am step 2")
     raise GoToStep(label="step_3")
 
-@workflow.step
 @workflow.label("step_5")
+@workflow.step
 def step_5() -> None:
     print("Hello, I am step 5")
     raise GoToEnd
 
-@workflow.step
 @workflow.label("step_3")
+@workflow.step
 def step_3() -> None:
     print("Hello, I am step 3")
 
@@ -90,14 +90,14 @@ def step_1(input_value) -> None:
         case _:
             raise GoToStep("step_default2")
 
-@workflow.step
 @workflow.label("step_default")
+@workflow.step
 def step_default2() -> None:
     print("Hello, I am step default.2")
     raise GoToStep(label="step_4")
 
-@workflow.step
 @workflow.label("step_a2")
+@workflow.step
 def step_a2() -> None:
     print("Hello, I am step a.2")
 
@@ -105,8 +105,8 @@ def step_a3() -> None:
     print("Hello, I am step a.3")
     raise GoToStep(label="step_4")
 
-@workflow.step
 @workflow.label("step_b2")
+@workflow.step
 def step_b2() -> None:
     print("Hello, I am step b.2")
 
@@ -114,8 +114,8 @@ def step_b3() -> None:
     print("Hello, I am step b.3")
     raise GoToStep(label="step_4")
 
-@workflow.step
 @workflow.label("step_4")
+@workflow.step
 def step_4() -> None:
     print("Hello, I am step 4")
 ```
@@ -146,6 +146,9 @@ If `input_value` is anything else, the workflow path is:
 Note that the length of the workflows can vary.
 
 ## Errata
-Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and these 
+* Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and these 
 exceptions can cause the percentage and step calculations to be inaccurate.  However, since the workflow will always 
 reach the end, either by normal sequence order or by use of `GoToEnd`, the final step will always complete as 100%.
+
+* `@workflow.label` must precede `@workflow.step` in the source code (i.e. `label` wraps `step`), since `label` depends 
+upon values generated within `step`.   A `ValueError` will be raised if they are put out of order.
