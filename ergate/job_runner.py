@@ -57,7 +57,7 @@ class JobRunner(Generic[JobType]):
                 idx = workflow.get_label_index(exc.label)
                 LOG.info("User requested to go to step: %s (%s)", exc.label, idx)
 
-            job.mark_step_n_completed(idx - 1, exc.retval, len(workflow))
+            job.mark_step_n_completed(idx, exc.retval, len(workflow))
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
             job.mark_n_steps_completed(exc.n + 1, exc.retval, len(workflow))
