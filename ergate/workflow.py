@@ -46,7 +46,7 @@ class Workflow:
         elif isinstance(args[0], str):
             label = args[0]
         else:
-            err = f"A workflow step label must be a string value."
+            err = "A workflow step label must be a string value."
             raise ValueError(err)
 
         def _decorate(
