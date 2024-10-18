@@ -52,20 +52,13 @@ class Job(BaseModel):
         return_value: Any,
         total_steps: int,
     ) -> None:
-        print(f"===111.1=== n: {n}")
-        print(f"===111.2=== steps_completed: {self.steps_completed}")
-        print(f"===111.3=== steps_completed + n: {self.steps_completed + n}")
-        print(f"===111.4=== total_steps: {total_steps}")
         self.steps_completed = min(self.steps_completed + n, total_steps)
-        print(f"===112.1=== steps_completed: {self.steps_completed}")
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
-        print(f"===112.2=== percent_completed: {self.percent_completed}")
         self.status = (
             JobStatus.COMPLETED
             if self.steps_completed == total_steps
             else JobStatus.QUEUED
         )
-        print(f"===112.2=== status: {self.status}")
         self.last_return_value = return_value
 
     def mark_aborted(self, message: str) -> None:
