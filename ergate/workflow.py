@@ -57,17 +57,29 @@ class Workflow:
         ) -> Callable[CallableSpec, CallableRetval]:
             @functools.wraps(func)
             def wrapper(*args, **kwargs) -> WorkflowStep[CallableSpec, CallableRetval]:
+                print("===111.1===", label)
+                print("===111.1===", self._steps)
+                print("===111.2===", self._labels)
+
                 if label in self._labels:
+                    print("===111.X===", label)
                     err = (
                         f'A workflow step with label "{label}" '
                         "is already registered."
                     )
                     raise ValueError(err)
 
+                if isinstance(func, WorkflowStep):
+                    print("===113.1===", func, type(func), isinstance(func, WorkflowStep))
+                    self._labels[label] = len(self._steps) - 1
+                    print("===111.21===", self._labels[label])
+
                 result = func(*args, **kwargs)
-                print("===111.1===", label)
-                self._labels[label] = len(self._steps) - 1
-                print("===111.2===", self._labels[label])
+
+                if not isinstance(func, WorkflowStep):
+                    print("===113.2===", func, type(func), isinstance(func, WorkflowStep))
+                    self._labels[label] = len(self._steps) - 1
+                    print("===111.22===", self._labels[label])
 
                 print("===112.1===", self._steps)
                 print("===112.2===", self._labels)
