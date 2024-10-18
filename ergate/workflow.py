@@ -37,11 +37,6 @@ class Workflow:
         return len(self._steps)
 
     def get_label_index(self, label: str) -> int:
-        print("===211.1===", label)
-        print("===212.1===", self._steps)
-        print("===212.2===", self._labels)
-        print("===211.2===", label in self._labels)
-
         try:
             return self._labels[label]
         except KeyError:
@@ -54,11 +49,6 @@ class Workflow:
         def _decorate(
             func: WorkflowStep[CallableSpec, CallableRetval],
         ) -> WorkflowStep[CallableSpec, CallableRetval]:
-            print("===111.1===", label)
-            print("===111.2===", self._steps)
-            print("===111.3===", self._labels)
-            print("===111.4===", func, isinstance(func, WorkflowStep))
-
             if not isinstance(func, WorkflowStep):
                 # This guard clause isn't strictly necessary with the type hints.
                 # It is included as a helpful hint to the developer.
@@ -69,19 +59,14 @@ class Workflow:
                 raise ValueError(err)
 
             if label in self._labels:
-                print("===111.X===", label)
                 err = (
                     f'A workflow step with label "{label}" '
                     "is already registered."
                 )
                 raise ValueError(err)
 
-            print("===113.1===", func, type(func), isinstance(func, WorkflowStep))
             self._labels[label] = len(self._steps) - 1
-            print("===111.21===", self._labels[label])
 
-            print("===112.1===", self._steps)
-            print("===112.2===", self._labels)
             return func
 
         return _decorate
@@ -89,7 +74,6 @@ class Workflow:
     def step(
         self, func: Callable[CallableSpec, CallableRetval]
     ) -> WorkflowStep[CallableSpec, CallableRetval]:
-        print("===711.1===", "in @step for", func)
         step = WorkflowStep(self, func)
         self._steps.append(step)
         return step
