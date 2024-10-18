@@ -60,8 +60,8 @@ class Workflow:
                 return func
 
             print("===111.1===", label)
-            print("===111.1===", self._steps)
-            print("===111.2===", self._labels)
+            print("===111.2===", self._steps)
+            print("===111.3===", self._labels)
 
             if label in self._labels:
                 print("===111.X===", label)
