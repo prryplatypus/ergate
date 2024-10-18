@@ -46,7 +46,7 @@ class JobRunner(Generic[JobType]):
             job.mark_step_n_completed(len(workflow), exc.retval, len(workflow))
         except GoToStep as exc:
             if not exc.has_step:
-                err = 'No label or index provided for GoToStep'
+                err = "No label or index provided for GoToStep."
                 raise ValueError(err)
 
             if exc.n is not None:

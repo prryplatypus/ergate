@@ -46,7 +46,7 @@ class Workflow:
         elif isinstance(args[0], str):
             label = args[0]
         else:
-            err = f'A workflow step label must be a string value.'
+            err = f"A workflow step label must be a string value."
             raise ValueError(err)
 
         def _decorate(
@@ -59,7 +59,10 @@ class Workflow:
 
                 if label:
                     if label in self._labels:
-                        err = f'A workflow step with label "{label}" is already registered'
+                        err = (
+                            f'A workflow step with label "{label}" '
+                            "is already registered."
+                        )
                         raise ValueError(err)
                     idx = len(self._steps) - 1
                     self._labels[label] = idx
