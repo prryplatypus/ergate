@@ -44,7 +44,9 @@ class JobRunner(Generic[JobType]):
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
             job.mark_step_n_completed(len(workflow), exc.retval, len(workflow))
-            LOG.info("User requested to go to end of workflow - return value: %s", exc.retval)
+            LOG.info(
+                "User requested to go to end of workflow - return value: %s", exc.retval
+            )
         except GoToStep as exc:
             if not exc.has_step:
                 err = "No label or index provided for GoToStep."
@@ -52,10 +54,19 @@ class JobRunner(Generic[JobType]):
 
             if exc.n is not None:
                 idx = exc.n
-                LOG.info("User requested to go to step: %s - return value: %s", idx, exc.retval)
+                LOG.info(
+                    "User requested to go to step: %s - return value: %s",
+                    idx,
+                    exc.retval,
+                )
             else:
                 idx = workflow.get_label_index(exc.label)
-                LOG.info("User requested to go to step: %s (%s) - return value: %s", exc.label, idx, exc.retval)
+                LOG.info(
+                    "User requested to go to step: %s (%s) - return value: %s",
+                    exc.label,
+                    idx,
+                    exc.retval,
+                )
 
             job.mark_step_n_completed(idx, exc.retval, len(workflow))
         except SkipNSteps as exc:
