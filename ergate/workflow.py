@@ -47,21 +47,29 @@ class Workflow:
             )
 
     def label(self, label: str) -> Callable[CallableSpec, CallableRetval]:
-        def _decorate(func: Callable[CallableSpec, CallableRetval]) -> Callable[CallableSpec, CallableRetval]:
+        def _decorate(
+            func: Callable[CallableSpec, CallableRetval],
+        ) -> Callable[CallableSpec, CallableRetval]:
             @functools.wraps(func)
             def wrapper(*args, **kwargs) -> WorkflowStep[CallableSpec, CallableRetval]:
                 if label in self._labels:
-                    err = (f'A workflow step with label "{label}" '
-                           "is already registered.")
+                    err = (
+                        f'A workflow step with label "{label}" '
+                        "is already registered."
+                    )
                     raise ValueError(err)
 
                 result = func(*args, **kwargs)
                 self._labels[label] = len(self._steps) - 1
                 return result
+
             return wrapper
+
         return _decorate
 
-    def step(self, func: Callable[CallableSpec, CallableRetval]) -> WorkflowStep[CallableSpec, CallableRetval]:
+    def step(
+        self, func: Callable[CallableSpec, CallableRetval]
+    ) -> WorkflowStep[CallableSpec, CallableRetval]:
         step = WorkflowStep(self, func)
         self._steps.append(step)
         return step
