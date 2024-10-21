@@ -29,8 +29,8 @@ class JobRunner(Generic[JobType]):
         input_value = job.get_input_value()
 
         workflow = self.workflow_registry[job.workflow_name]
-        step_to_run = workflow[job.steps_completed]
-        paths = workflow.calculate_paths(job.steps_completed)
+        step_to_run = workflow[job.current_step]
+        paths = workflow.calculate_paths(job.current_step)
 
         job.mark_running(step_to_run)
         self.state_store.update(job)
@@ -44,7 +44,7 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
-            job.mark_step_n_completed(job.steps_completed + 1, exc.retval, job.steps_completed + 1)
+            job.mark_step_n_completed(job.current_step + 1, exc.retval, job.current_step + 1)
             LOG.info(
                 "User requested to go to end of workflow - return value: %s", exc.retval
             )
@@ -70,7 +70,7 @@ class JobRunner(Generic[JobType]):
                 )
 
             remaining_steps = max(map(len, filter(lambda steps: isinstance(steps[0][1], GoToStep) and steps[0][1].next_step == exc.next_step, paths)), default=0)
-            job.mark_step_n_completed(idx, exc.retval, job.steps_completed + 1 + remaining_steps)
+            job.mark_step_n_completed(idx, exc.retval, job.current_step + 1 + remaining_steps)
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
 

@@ -12,6 +12,7 @@ class Job(BaseModel):
     id: Any = None
     workflow_name: str
     status: JobStatus = JobStatus.QUEUED
+    current_step: int = Field(default=0, ge=0)
     steps_completed: int = Field(default=0, ge=0)
     percent_completed: float = Field(default=0.0, ge=0.0, le=100.0)
     initial_input_value: Any = None
@@ -41,7 +42,7 @@ class Job(BaseModel):
         total_steps: int,
     ) -> None:
         self.mark_n_steps_completed(
-            n - self.steps_completed,
+            n - self.current_step,
             return_value,
             total_steps,
         )
@@ -52,7 +53,8 @@ class Job(BaseModel):
         return_value: Any,
         total_steps: int,
     ) -> None:
-        self.steps_completed = min(self.steps_completed + n, total_steps)
+        self.current_step = min(self.current_step + n, total_steps)
+        self.steps_completed = min(self.steps_completed + 1, total_steps)
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
         self.status = (
             JobStatus.COMPLETED

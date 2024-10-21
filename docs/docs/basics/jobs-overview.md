@@ -17,6 +17,7 @@ Here is a summary of all the attributes of the `Job` model.
 | id                   | Any              | N        | None             | Y             |
 | workflow_name        | str              | Y        | N/A              | Y             |
 | status               | JobStatus        | N        | JobStatus.QUEUED | N             |
+| current_step         | int              | N        | 0                | N
 | steps_completed      | int              | N        | 0                | N             |
 | percent_completed    | float            | N        | 0.0              | N             |
 | initial_input_value  | Any              | N        | None             | Y             |
