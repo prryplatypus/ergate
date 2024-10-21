@@ -72,7 +72,7 @@ class Workflow:
             print("===211.41=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_exc": next_exc})
             for next_path in self._calculate_paths(next_idx, depth + 1, exc=next_exc):
                 print("===211.4=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_idx": next_idx, "next_path": next_path, "next_exc": next_exc})
-                paths.append([(next_exc, next_idx), *next_path])
+                paths.append([(exc, idx), *next_path])
 
         print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
         return paths
