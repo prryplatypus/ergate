@@ -31,9 +31,9 @@ class JobRunner(Generic[JobType]):
         workflow = self.workflow_registry[job.workflow_name]
         step_to_run = workflow[job.current_step]
         paths = workflow.calculate_paths(job.current_step)
-        print("===311.1===", len(paths))
+        print("===311.1=== [_run_job] len(paths): ", len(paths))
         for i, path in enumerate(paths):
-            print(f"===311.2.{i}===", path)
+            print(f"===311.2=== [_run_job] ", {"i": i, "path": path})
 
         job.mark_running(step_to_run)
         self.state_store.update(job)
@@ -47,7 +47,7 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
-            print("===311.3===", exc, job.current_step + 1, job.current_step + 1)
+            print("===311.3=== [_run_job] ", {"exc": exc, "n": job.current_step + 1, "total_steps": job.current_step + 1})
             job.mark_step_n_completed(
                 job.current_step + 1, exc.retval, job.current_step + 1
             )
@@ -88,10 +88,12 @@ class JobRunner(Generic[JobType]):
             )
 
             print(
-                "===311.4===",
-                exc,
-                remaining_steps,
-                job.current_step + 1 + remaining_steps,
+                "===311.4=== [_run_job] ",
+                {
+                    "exc": exc,
+                    "n": remaining_steps,
+                    "total_steps": job.current_step + 1 + remaining_steps,
+                }
             )
 
             job.mark_step_n_completed(
@@ -113,10 +115,12 @@ class JobRunner(Generic[JobType]):
             )
 
             print(
-                "===311.5===",
-                exc,
-                exc.n + 1,
-                job.steps_completed + 1 + remaining_steps,
+                "===311.5=== [_run_job] ",
+                {
+                    "exc": exc,
+                    "n": exc.n + 1,
+                    "total_steps": job.steps_completed + 1 + remaining_steps,
+                }
             )
 
             job.mark_n_steps_completed(
@@ -132,7 +136,11 @@ class JobRunner(Generic[JobType]):
                 map(len, filter(lambda steps: steps[0][1] is None, paths)), default=0
             )
 
-            print("===311.6===", None, 1, job.steps_completed + 1 + remaining_steps)
+            print("===311.6=== [_run_job] ", {
+                "exc": None,
+                "n": 1,
+                "total_steps": job.steps_completed + 1 + remaining_steps,
+            })
 
             job.mark_n_steps_completed(
                 1, retval, job.steps_completed + 1 + remaining_steps
