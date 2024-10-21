@@ -60,18 +60,25 @@ class Workflow:
         paths: list[list[WorkflowPath]] = []
 
         next_idx = idx if all else self._find_next_step(idx, exc)
-        print("===211.12=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_idx": next_idx, "len(self)": len(self)})
+        print(
+            "===211.12=== [_calculate_paths] ",
+            {"idx": idx, "depth": depth, "next_idx": next_idx, "len(self)": len(self)},
+        )
         if next_idx >= len(self):
             print("===211.2=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
             return paths
 
-        print("===211.3=== [_calculate_paths] ",
-              {"next_idx": next_idx, "step": self._steps[next_idx], "paths": self._steps[next_idx].paths},
-          )
+        print(
+            "===211.3=== [_calculate_paths] ",
+            {"next_idx": next_idx, "step": self._steps[next_idx], "paths": self._steps[next_idx].paths},
+        )
         for next_exc in self._steps[next_idx].paths:
             print("===211.41=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_exc": next_exc})
             for next_path in self._calculate_paths(next_idx, depth + 1, exc=next_exc):
-                print("===211.4=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_idx": next_idx, "next_path": next_path, "next_exc": next_exc})
+                print(
+                    "===211.4=== [_calculate_paths] ",
+                    {"idx": idx, "depth": depth, "next_idx": next_idx, "next_path": next_path, "next_exc": next_exc}
+                )
                 paths.append([(exc, idx), *next_path])
 
         print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
