@@ -1,4 +1,5 @@
 from typing import Callable, Iterator, ParamSpec, TypeVar
+
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
 
@@ -38,12 +39,7 @@ class Workflow:
         return len(self._steps)
 
     def _calculate_paths(
-            self,
-            idx: int,
-            depth: int,
-            *,
-            exc: ErgateError | None = None,
-            all: bool = False
+        self, idx: int, depth: int, *, exc: ErgateError | None = None, all: bool = False
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
         print("===211.1===", idx, depth, exc)
@@ -78,8 +74,8 @@ class Workflow:
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
         ret = self._calculate_paths(idx, depth=0, all=True)
         print("===111.1===", len(ret))
-        for i, l in enumerate(ret):
-            print("===111.2.{i}===", l)
+        for i, path in enumerate(ret):
+            print("===111.2.{i}===", path)
         return ret
 
     def _find_next_step(self, idx: int, exc: ErgateError) -> int:
@@ -93,11 +89,7 @@ class Workflow:
                 )
                 raise ValueError(err)
 
-            return (
-                exc.n
-                if exc.n is not None
-                else self.get_label_index(exc.label)
-            )
+            return exc.n if exc.n is not None else self.get_label_index(exc.label)
         if isinstance(exc, SkipNSteps):
             return idx + 1 + exc.n
 
@@ -112,7 +104,9 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def paths(self, paths: list[ErgateError | None] | None = None) -> Callable[CallableSpec, CallableRetval]:
+    def paths(
+        self, paths: list[ErgateError | None] | None = None
+    ) -> Callable[CallableSpec, CallableRetval]:
         def _decorate(
             func: WorkflowStep[CallableSpec, CallableRetval],
         ) -> WorkflowStep[CallableSpec, CallableRetval]:
