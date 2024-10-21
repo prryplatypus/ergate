@@ -126,7 +126,7 @@ class JobRunner(Generic[JobType]):
         else:
             LOG.info("Step completed successfully - return value: %s", retval)
             remaining_steps = max(
-                map(len, filter(lambda steps: steps[0][1] is None)), default=0
+                map(len, filter(lambda steps: steps[0][1] is None, paths)), default=0
             )
 
             print("===311.6===", None, 1, job.steps_completed + 1 + remaining_steps)
