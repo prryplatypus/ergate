@@ -79,8 +79,8 @@ class JobRunner(Generic[JobType]):
                 map(
                     len,
                     filter(
-                        lambda steps: isinstance(steps[0][1], GoToStep)
-                        and steps[0][1].next_step == exc.next_step,
+                        lambda steps: isinstance(steps[0][0], GoToStep)
+                        and steps[0][0].next_step == exc.next_step,
                         paths,
                     ),
                 ),
@@ -106,8 +106,8 @@ class JobRunner(Generic[JobType]):
                 map(
                     len,
                     filter(
-                        lambda steps: isinstance(steps[0][1], SkipNSteps)
-                        and steps[0][1].n == exc.n,
+                        lambda steps: isinstance(steps[0][0], SkipNSteps)
+                        and steps[0][0].n == exc.n,
                         paths,
                     ),
                 ),
@@ -133,7 +133,7 @@ class JobRunner(Generic[JobType]):
         else:
             LOG.info("Step completed successfully - return value: %s", retval)
             remaining_steps = max(
-                map(len, filter(lambda steps: steps[0][1] is None, paths)), default=0
+                map(len, filter(lambda steps: steps[0][0] is None, paths)), default=0
             )
 
             print("===311.6=== [_run_job] ", {
