@@ -42,7 +42,7 @@ class Workflow:
         self, idx: int, depth: int, *, exc: ErgateError | None = None, all: bool = False
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
-        print("===211.1===", idx, depth, exc)
+        print("===211.11===", idx, all, depth, exc)
         if depth > max(len(self) * 5, 100):
             err = (
                 "Aborting path calculation due to potential infinite loop: "
@@ -60,6 +60,7 @@ class Workflow:
         paths: list[list[WorkflowPath]] = []
 
         next_idx = idx if all else self._find_next_step(idx, exc)
+        print("===211.12===", next_idx)
         if next_idx >= len(self):
             print("===211.2===", paths)
             return paths
@@ -79,9 +80,12 @@ class Workflow:
         return ret
 
     def _find_next_step(self, idx: int, exc: ErgateError) -> int:
+        print("===411.1===", idx, exc)
         if isinstance(exc, GoToEnd):
+            print("===411.2===", len(self))
             return len(self)
         if isinstance(exc, GoToStep):
+            print("===411.31===")
             if not exc.has_step:
                 err = (
                     f"Failed to calculate workflow path from step {idx}: "
@@ -89,10 +93,17 @@ class Workflow:
                 )
                 raise ValueError(err)
 
+            print(
+                "===411.32===",
+                exc.next_step,
+                exc.n if exc.n is not None else self.get_label_index(exc.label),
+            )
             return exc.n if exc.n is not None else self.get_label_index(exc.label)
         if isinstance(exc, SkipNSteps):
+            print("===411.4===", idx + 1 + exc.n)
             return idx + 1 + exc.n
 
+        print("===411.5===", idx + 1)
         return idx + 1
 
     def get_label_index(self, label: str) -> int:

@@ -113,7 +113,10 @@ class JobRunner(Generic[JobType]):
             )
 
             print(
-                "===311.5===", exc, exc.n + 1, job.steps_completed + 1 + remaining_steps
+                "===311.5===",
+                exc,
+                exc.n + 1,
+                job.steps_completed + 1 + remaining_steps,
             )
 
             job.mark_n_steps_completed(
