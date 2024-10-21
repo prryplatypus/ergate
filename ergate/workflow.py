@@ -45,6 +45,25 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
+    def paths(self, paths: list[ErgateError | None] | None = None) -> Callable[CallableSpec, CallableRetval]:
+        def _decorate(
+            func: WorkflowStep[CallableSpec, CallableRetval],
+        ) -> WorkflowStep[CallableSpec, CallableRetval]:
+            if not isinstance(func, WorkflowStep):
+                # This guard clause isn't strictly necessary with the type hints.
+                # It is included as a helpful hint to the developer.
+                err = (
+                    "@label decorator method must be called on a WorkflowStep.  "
+                    "Did you remember to invoke @step first?"
+                )
+                raise ValueError(err)
+
+            func.paths = paths
+
+            return func
+
+        return _decorate
+
     def label(self, label: str) -> Callable[CallableSpec, CallableRetval]:
         def _decorate(
             func: WorkflowStep[CallableSpec, CallableRetval],
