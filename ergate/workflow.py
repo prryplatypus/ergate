@@ -1,9 +1,10 @@
 from typing import Callable, Iterator, ParamSpec, TypeVar
-
+from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
 
 CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
+WorkflowPath = tuple[ErgateError | None, int]
 
 
 class Workflow:
@@ -35,6 +36,65 @@ class Workflow:
 
     def __len__(self) -> int:
         return len(self._steps)
+
+    def _calculate_paths(
+            self,
+            idx: int,
+            depth: int,
+            *,
+            exc: ErgateError | None = None,
+            all: bool = False
+    ) -> list[list[WorkflowPath]]:
+        # TODO: better way of determining range for infinite loop detection.
+        if depth > max(len(self) * 5, 100):
+            err = (
+                "Aborting path calculation due to potential infinite loop: "
+                f"(depth: {depth})"
+            )
+            raise RecursionError(err)
+
+        if not all and exc not in self._steps[idx].paths:
+            err = (
+                f"Failed to calculate workflow path from step {idx}: "
+                f"exception not supported: {exc}"
+            )
+            raise ValueError(err)
+
+        paths: list[list[WorkflowPath]] = []
+
+        next_idx = idx if all else self._find_next_step(idx, exc)
+        if next_idx >= len(self):
+            return paths
+
+        for next_exc in self._steps[next_idx].paths:
+            for next_path in self._calculate_paths(next_idx, depth + 1, exc=next_exc):
+                paths.append([(next_exc, next_idx), *next_path])
+
+        return paths
+
+    def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
+        return self._calculate_paths(idx, depth=0, all=True)
+
+    def _find_next_step(self, idx: int, exc: ErgateError) -> int:
+        if isinstance(exc, GoToEnd):
+            return len(self)
+        if isinstance(exc, GoToStep):
+            if not exc.has_step:
+                err = (
+                    f"Failed to calculate workflow path from step {idx}: "
+                    "No label or index provided for GoToStep."
+                )
+                raise ValueError(err)
+
+            return (
+                exc.n
+                if exc.n is not None
+                else self.get_label_index(exc.label)
+            )
+        if isinstance(exc, SkipNSteps):
+            return idx + 1 + exc.n
+
+        return idx + 1
 
     def get_label_index(self, label: str) -> int:
         try:
