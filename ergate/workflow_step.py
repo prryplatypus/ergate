@@ -24,6 +24,7 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
+        self.paths = [None]
 
     @property
     def name(self) -> str:
