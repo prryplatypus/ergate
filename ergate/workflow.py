@@ -43,7 +43,7 @@ class Workflow:
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
         print("===211.11=== [_calculate_paths] ", {"idx": idx, "depth": depth, "all": all, "exc": exc})
-        if depth > max(len(self) * 5, 100):
+        if depth >= max(len(self) * 5, 100):
             err = (
                 "Aborting path calculation due to potential infinite loop: "
                 f"(depth: {depth})"
