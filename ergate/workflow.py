@@ -82,7 +82,8 @@ class Workflow:
                 {"idx": idx, "depth": depth, "next_idx": next_idx, "next_exc": next_exc, "paths": paths},
             )
 
-        paths = [[current_step, *next_path] for next_path in paths]
+        if not all:
+            paths = [[current_step, *next_path] for next_path in paths]
 
         print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
 
