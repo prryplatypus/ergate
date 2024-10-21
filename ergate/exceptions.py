@@ -41,6 +41,16 @@ class GoToStep(ErgateError):  # noqa: N818
     def has_step(self) -> bool:
         return self.n is not None or self.label is not None
 
+    @property
+    def next_step(self) -> int | str | None:
+        if not self.has_step:
+            return None
+
+        if self.n is not None:
+            return self.n
+
+        return self.label
+
 
 class SkipNSteps(ErgateError):  # noqa: N818
     """Raised from a step to skip N steps."""
