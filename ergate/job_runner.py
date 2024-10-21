@@ -49,7 +49,7 @@ class JobRunner(Generic[JobType]):
         except GoToEnd as exc:
             print("===311.3=== [_run_job] ", {"exc": exc, "n": job.current_step + 1, "total_steps": job.current_step + 1})
             job.mark_step_n_completed(
-                job.current_step + 1, exc.retval, job.current_step + 1
+                job.steps_completed + 1, exc.retval, job.steps_completed + 1
             )
             LOG.info(
                 "User requested to go to end of workflow - return value: %s", exc.retval
@@ -92,12 +92,12 @@ class JobRunner(Generic[JobType]):
                 {
                     "exc": exc,
                     "n": remaining_steps,
-                    "total_steps": job.current_step + 1 + remaining_steps,
+                    "total_steps": job.steps_completed + remaining_steps,
                 }
             )
 
             job.mark_step_n_completed(
-                idx, exc.retval, job.current_step + 1 + remaining_steps
+                idx, exc.retval, job.steps_completed + remaining_steps
             )
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
@@ -119,12 +119,12 @@ class JobRunner(Generic[JobType]):
                 {
                     "exc": exc,
                     "n": exc.n + 1,
-                    "total_steps": job.steps_completed + 1 + remaining_steps,
+                    "total_steps": job.steps_completed + remaining_steps,
                 }
             )
 
             job.mark_n_steps_completed(
-                exc.n + 1, exc.retval, job.steps_completed + 1 + remaining_steps
+                exc.n + 1, exc.retval, job.steps_completed + remaining_steps
             )
         except Exception as exc:
             LOG.exception("Job raised an exception")
@@ -139,11 +139,11 @@ class JobRunner(Generic[JobType]):
             print("===311.6=== [_run_job] ", {
                 "exc": None,
                 "n": 1,
-                "total_steps": job.steps_completed + 1 + remaining_steps,
+                "total_steps": job.steps_completed + remaining_steps,
             })
 
             job.mark_n_steps_completed(
-                1, retval, job.steps_completed + 1 + remaining_steps
+                1, retval, job.steps_completed + remaining_steps
             )
 
         self.state_store.update(job)
