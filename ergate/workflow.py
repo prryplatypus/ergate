@@ -66,6 +66,7 @@ class Workflow:
             {"idx": idx, "depth": depth, "next_idx": next_idx, "len(self)": len(self)},
         )
         if next_idx >= len(self):
+            paths.append([current_step])
             print("===211.2=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
             return paths
 
@@ -85,11 +86,6 @@ class Workflow:
 
         print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
 
-        if not len(paths):
-            print("===211.6=== [_calculate_paths]")
-            paths.append([current_step])
-
-        print("===211.7=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
         return paths
 
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
