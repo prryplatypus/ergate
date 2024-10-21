@@ -30,6 +30,7 @@ class JobRunner(Generic[JobType]):
 
         workflow = self.workflow_registry[job.workflow_name]
         step_to_run = workflow[job.steps_completed]
+        paths = workflow.calculate_paths(job.steps_completed)
 
         job.mark_running(step_to_run)
         self.state_store.update(job)
@@ -43,7 +44,7 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
-            job.mark_step_n_completed(len(workflow), exc.retval, len(workflow))
+            job.mark_step_n_completed(job.steps_completed + 1, exc.retval, job.steps_completed + 1)
             LOG.info(
                 "User requested to go to end of workflow - return value: %s", exc.retval
             )
@@ -68,17 +69,21 @@ class JobRunner(Generic[JobType]):
                     exc.retval,
                 )
 
-            job.mark_step_n_completed(idx, exc.retval, len(workflow))
+            remaining_steps = max(map(len, filter(lambda steps: isinstance(steps[0][1], GoToStep) and steps[0][1].next_step == exc.next_step, paths)), default=0)
+            job.mark_step_n_completed(idx, exc.retval, job.steps_completed + 1 + remaining_steps)
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
-            job.mark_n_steps_completed(exc.n + 1, exc.retval, len(workflow))
+
+            remaining_steps = max(map(len, filter(lambda steps: isinstance(steps[0][1], SkipNSteps) and steps[0][1].n == exc.n, paths)), default=0)
+            job.mark_n_steps_completed(exc.n + 1, exc.retval, job.steps_completed + 1 + remaining_steps)
         except Exception as exc:
             LOG.exception("Job raised an exception")
             job.mark_failed(exc)
             self.error_hook_handler.notify(job, exc)
         else:
             LOG.info("Step completed successfully - return value: %s", retval)
-            job.mark_n_steps_completed(1, retval, len(workflow))
+            remaining_steps = max(map(len, filter(lambda steps: steps[0][1] is None)), default=0)
+            job.mark_n_steps_completed(1, retval, job.steps_completed + 1 + remaining_steps)
 
         self.state_store.update(job)
 
