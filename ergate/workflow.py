@@ -46,6 +46,7 @@ class Workflow:
             all: bool = False
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
+        print("===211.1===", idx, depth, exc)
         if depth > max(len(self) * 5, 100):
             err = (
                 "Aborting path calculation due to potential infinite loop: "
@@ -64,16 +65,22 @@ class Workflow:
 
         next_idx = idx if all else self._find_next_step(idx, exc)
         if next_idx >= len(self):
+            print("===211.2===", paths)
             return paths
 
         for next_exc in self._steps[next_idx].paths:
             for next_path in self._calculate_paths(next_idx, depth + 1, exc=next_exc):
                 paths.append([(next_exc, next_idx), *next_path])
 
+        print("===211.3===", paths)
         return paths
 
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
-        return self._calculate_paths(idx, depth=0, all=True)
+        ret = self._calculate_paths(idx, depth=0, all=True)
+        print("===111.1===", len(ret))
+        for i, l in enumerate(ret):
+            print("===111.2.{i}===", l)
+        return ret
 
     def _find_next_step(self, idx: int, exc: ErgateError) -> int:
         if isinstance(exc, GoToEnd):
