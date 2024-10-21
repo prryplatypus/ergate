@@ -57,6 +57,7 @@ class Workflow:
             )
             raise ValueError(err)
 
+        current_step = (exc, idx)
         paths: list[list[WorkflowPath]] = []
 
         next_idx = idx if all else self._find_next_step(idx, exc)
@@ -80,9 +81,15 @@ class Workflow:
                 {"idx": idx, "depth": depth, "next_idx": next_idx, "next_exc": next_exc, "paths": paths},
             )
 
-        paths = [[(exc, idx), *next_path] for next_path in paths]
+        paths = [[current_step, *next_path] for next_path in paths]
 
         print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
+
+        if not len(paths):
+            print("===211.6=== [_calculate_paths]")
+            paths.append([current_step])
+
+        print("===211.7=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
         return paths
 
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
