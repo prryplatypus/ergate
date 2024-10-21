@@ -62,7 +62,7 @@ class Workflow:
                 err = f'A workflow step with label "{label}" is already registered.'
                 raise ValueError(err)
 
-            self._labels[label] = len(self._steps) - 1
+            self._labels[label] = len(self) - 1
 
             return func
 
