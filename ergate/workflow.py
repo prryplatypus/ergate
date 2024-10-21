@@ -42,7 +42,6 @@ class Workflow:
         self, idx: int, depth: int, *, exc: ErgateError | None = None, all: bool = False
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
-        print("===211.11=== [_calculate_paths] ", {"idx": idx, "depth": depth, "all": all, "exc": exc})
         if depth >= max(len(self) * 5, 100):
             err = (
                 "Aborting path calculation due to potential infinite loop: "
@@ -61,48 +60,25 @@ class Workflow:
         paths: list[list[WorkflowPath]] = []
 
         next_idx = idx if all else self._find_next_step(idx, exc)
-        print(
-            "===211.12=== [_calculate_paths] ",
-            {"idx": idx, "depth": depth, "next_idx": next_idx, "len(self)": len(self)},
-        )
         if next_idx >= len(self):
             paths.append([current_step])
-            print("===211.2=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
             return paths
 
-        print(
-            "===211.3=== [_calculate_paths] ",
-            {"next_idx": next_idx, "step": self._steps[next_idx], "paths": self._steps[next_idx].paths},
-        )
         for next_exc in self._steps[next_idx].paths:
-            print("===211.41=== [_calculate_paths] ", {"idx": idx, "depth": depth, "next_exc": next_exc})
             paths += self._calculate_paths(next_idx, depth + 1, exc=next_exc)
-            print(
-                "===211.42=== [_calculate_paths] ",
-                {"idx": idx, "depth": depth, "next_idx": next_idx, "next_exc": next_exc, "paths": paths},
-            )
 
         if not all:
             paths = [[current_step, *next_path] for next_path in paths]
 
-        print("===211.5=== [_calculate_paths] ", {"idx": idx, "depth": depth, "paths": paths})
-
         return paths
 
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
-        ret = self._calculate_paths(idx, depth=0, all=True)
-        print("===111.1=== [calculate_paths] ", {"len(ret)": len(ret)})
-        for i, path in enumerate(ret):
-            print("===111.2=== [calculate_paths] ", {"i": i, "path": path})
-        return ret
+        return self._calculate_paths(idx, depth=0, all=True)
 
     def _find_next_step(self, idx: int, exc: ErgateError) -> int:
-        print("===411.1=== [_find_next_step] ", idx, exc)
         if isinstance(exc, GoToEnd):
-            print("===411.2=== [_find_next_step] ", len(self))
             return len(self)
         if isinstance(exc, GoToStep):
-            print("===411.31=== [_find_next_step] ")
             if not exc.has_step:
                 err = (
                     f"Failed to calculate workflow path from step {idx}: "
@@ -110,17 +86,10 @@ class Workflow:
                 )
                 raise ValueError(err)
 
-            print(
-                "===411.32=== [_find_next_step] ",
-                exc.next_step,
-                exc.n if exc.n is not None else self.get_label_index(exc.label),
-            )
             return exc.n if exc.n is not None else self.get_label_index(exc.label)
         if isinstance(exc, SkipNSteps):
-            print("===411.4=== [_find_next_step] ", idx + 1 + exc.n)
             return idx + 1 + exc.n
 
-        print("===411.5=== [_find_next_step] ", idx + 1)
         return idx + 1
 
     def get_label_index(self, label: str) -> int:
