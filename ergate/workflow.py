@@ -79,13 +79,6 @@ class Workflow:
         if isinstance(exc, GoToEnd):
             return len(self)
         if isinstance(exc, GoToStep):
-            if not exc.has_step:
-                err = (
-                    f"Failed to calculate workflow path from step {idx}: "
-                    "No label or index provided for GoToStep."
-                )
-                raise ValueError(err)
-
             return exc.n if exc.n is not None else self.get_label_index(exc.label)
         if isinstance(exc, SkipNSteps):
             return idx + 1 + exc.n

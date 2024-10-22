@@ -51,10 +51,6 @@ class JobRunner(Generic[JobType]):
                 "User requested to go to end of workflow - return value: %s", exc.retval
             )
         except GoToStep as exc:
-            if not exc.has_step:
-                err = "No label or index provided for GoToStep."
-                raise ValueError(err)
-
             if exc.n is not None:
                 idx = exc.n
                 LOG.info(
@@ -76,7 +72,7 @@ class JobRunner(Generic[JobType]):
                     len(path)
                     for path in paths
                     if isinstance(path[0][0], GoToStep)
-                    and path[0][0].next_step == exc.next_step
+                    and path[0][0].value == exc.value
                 ),
                 default=0,
             )

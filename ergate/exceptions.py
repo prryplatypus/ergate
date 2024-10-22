@@ -30,26 +30,17 @@ class GoToEnd(ErgateError):  # noqa: N818
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
-    def __init__(
-        self, *, n: int | None = None, label: str | None = None, retval: Any = None
-    ):
-        self.label = label
-        self.n = n
+    def __init__(self, value: int | str, *, retval: Any = None):
+        self.value = value
         self.retval = retval
 
     @property
-    def has_step(self) -> bool:
-        return self.n is not None or self.label is not None
+    def n(self) -> int | None:
+        return self.value if isinstance(self.value, int) else None
 
     @property
-    def next_step(self) -> int | str | None:
-        if not self.has_step:
-            return None
-
-        if self.n is not None:
-            return self.n
-
-        return self.label
+    def label(self) -> str | None:
+        return self.value if isinstance(self.value, int) else None
 
 
 class SkipNSteps(ErgateError):  # noqa: N818

@@ -25,7 +25,7 @@ def step_1() -> None:
 @workflow.step(label="step_2")
 def step_2() -> None:
     print("Hello, I am step 2")
-    raise GoToStep(label="step_3")
+    raise GoToStep("step_3")
 
 @workflow.step(label="step_5")
 def step_5() -> None:
@@ -39,7 +39,7 @@ def step_3() -> None:
 @workflow.step
 def step_4() -> None:
     print("Hello, I am step 4")
-    raise GoToStep(label="step_5")
+    raise GoToStep("step_5")
 ```
 
 `step_1` and `step_2` execute in normal sequence order.  However, `step_2` raises the `GoToStep` exception for `step_3`,
@@ -90,7 +90,7 @@ def step_1(input_value) -> None:
 @workflow.step(label="step_default")
 def step_default2() -> None:
     print("Hello, I am step default.2")
-    raise GoToStep(label="step_4")
+    raise GoToStep("step_4")
 
 @workflow.step(label="step_a2")
 def step_a2() -> None:
@@ -99,7 +99,7 @@ def step_a2() -> None:
 @workflow.step
 def step_a3() -> None:
     print("Hello, I am step a.3")
-    raise GoToStep(label="step_4")
+    raise GoToStep("step_4")
 
 @workflow.step(label="step_b2")
 def step_b2() -> None:
@@ -108,7 +108,7 @@ def step_b2() -> None:
 @workflow.step
 def step_b3() -> None:
     print("Hello, I am step b.3")
-    raise GoToStep(label="step_4")
+    raise GoToStep("step_4")
 
 @workflow.step(label="step_4")
 def step_4() -> None:
