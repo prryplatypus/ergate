@@ -63,6 +63,7 @@ class Workflow:
         next_idx = idx if all else self._find_next_step(idx, exc)
         if next_idx >= len(self):
             paths.append([current_step])
+            print("===311.1===", idx, depth, paths[0])
             return paths
 
         for next_exc in self._steps[next_idx].paths:
@@ -70,6 +71,9 @@ class Workflow:
 
         if not all:
             paths = [[current_step, *next_path] for next_path in paths]
+
+        for path in paths:
+            print("===311.2===", idx, depth, path)
 
         return paths
 
@@ -122,6 +126,8 @@ class Workflow:
             hints = get_type_hints(func)
             if hints["return"] is not NoneType and None not in step.paths:
                 step.paths.append(None)
+
+            print("===111.1===", self._labels[label], step.paths)
 
             return step
 
