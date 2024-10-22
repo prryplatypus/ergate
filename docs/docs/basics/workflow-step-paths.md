@@ -90,8 +90,9 @@ The resulting workflow order from above is:
 6. `step_7`
 
 Note that the `return` path wasn't explicitly specified for `step_4`, but it is automatically deduced and included from
-the function's return type hinting.  If however a work step function ever intentionally returns `None` as a valid workflow path, but additional has `paths` defined 
-for other paths, then `None` must be manually included in the list of paths.
+the function's return type hinting.  If however a work step function ever intentionally returns `None` as a valid 
+workflow path, but additionally has `paths` defined for other paths, then `None` must be manually included in the list of 
+paths.
 
 For example:
 
