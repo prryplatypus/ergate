@@ -2,11 +2,11 @@
 
 Workflow steps may be manually ordered and redirected by use of `GoToStep` and step labels.
 
-Workflow steps can be labelled by passing a label string as an argument to the `step` decorator.
+Workflow steps can be labelled by passing a `label` string as a keyword argument to the `step` decorator.
 
 Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step label or its numeric index.
 
-Workflows may also be advanced directly to completion by rasing the `GoToEnd` exceptions.
+Workflows may also be advanced directly to completion by raising the `GoToEnd` exceptions.
 
 
 ## Defining workflow labels
@@ -22,20 +22,17 @@ workflow = Workflow(unique_name="my_second_workflow")
 def step_1() -> None:
     print("Hello, I am step 1")
 
-@workflow.label("step_2")
-@workflow.step
+@workflow.step(label="step_2")
 def step_2() -> None:
     print("Hello, I am step 2")
     raise GoToStep(label="step_3")
 
-@workflow.label("step_5")
-@workflow.step
+@workflow.step(label="step_5")
 def step_5() -> None:
     print("Hello, I am step 5")
     raise GoToEnd
 
-@workflow.label("step_3")
-@workflow.step
+@workflow.step(label="step_3")
 def step_3() -> None:
     print("Hello, I am step 3")
 
@@ -86,36 +83,34 @@ def step_1(input_value) -> None:
         case "a":
             raise GoToStep("step_a2")
         case "b":
-            raise GoToStep("step_a2")
+            raise GoToStep("step_b2")
         case _:
             raise GoToStep("step_default2")
 
-@workflow.label("step_default")
-@workflow.step
+@workflow.step(label="step_default")
 def step_default2() -> None:
     print("Hello, I am step default.2")
     raise GoToStep(label="step_4")
 
-@workflow.label("step_a2")
-@workflow.step
+@workflow.step(label="step_a2")
 def step_a2() -> None:
     print("Hello, I am step a.2")
 
+@workflow.step
 def step_a3() -> None:
     print("Hello, I am step a.3")
     raise GoToStep(label="step_4")
 
-@workflow.label("step_b2")
-@workflow.step
+@workflow.step(label="step_b2")
 def step_b2() -> None:
     print("Hello, I am step b.2")
 
+@workflow.step
 def step_b3() -> None:
     print("Hello, I am step b.3")
     raise GoToStep(label="step_4")
 
-@workflow.label("step_4")
-@workflow.step
+@workflow.step(label="step_4")
 def step_4() -> None:
     print("Hello, I am step 4")
 ```
@@ -149,6 +144,3 @@ Note that the length of the workflows can vary.
 * Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and these 
 exceptions can cause the percentage and step calculations to be inaccurate.  However, since the workflow will always 
 reach the end, either by normal sequence order or by use of `GoToEnd`, the final step will always complete as 100%.
-
-* `@workflow.label` must precede `@workflow.step` in the source code (i.e. `label` wraps `step`), since `label` depends 
-upon values generated within `step`.   A `ValueError` will be raised if they are put out of order.
