@@ -6,7 +6,7 @@ Workflows made easy, just the way Erg likes them.
 Ergeats is the spiritual successor of Ergate, ever since its developer disappeared and the original project became dormant.
 
 ## Documentation
-You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev).
+You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev), for as long as this website remains online.
 
 ## Acknowledgements
 Ergeats stands on the shoulder of giants:
