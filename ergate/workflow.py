@@ -101,53 +101,33 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def paths(
-        self, paths: list[ErgateError | None] | None = None
-    ) -> Callable[CallableSpec, CallableRetval]:
+    def step(self,
+            func: Callable[CallableSpec, CallableRetval] | None = None,
+            *,
+            label: str = None,
+            paths: list[ErgateError | None] | None = None,
+          ) -> Callable[CallableSpec, CallableRetval]:
+
         def _decorate(
-            func: WorkflowStep[CallableSpec, CallableRetval],
+            func: Callable[CallableSpec, CallableRetval]
         ) -> WorkflowStep[CallableSpec, CallableRetval]:
-            if not isinstance(func, WorkflowStep):
-                # This guard clause isn't strictly necessary with the type hints.
-                # It is included as a helpful hint to the developer.
-                err = (
-                    "@label decorator method must be called on a WorkflowStep.  "
-                    "Did you remember to invoke @step first?"
-                )
-                raise ValueError(err)
-
-            func.paths = paths
-
-            return func
-
-        return _decorate
-
-    def label(self, label: str) -> Callable[CallableSpec, CallableRetval]:
-        def _decorate(
-            func: WorkflowStep[CallableSpec, CallableRetval],
-        ) -> WorkflowStep[CallableSpec, CallableRetval]:
-            if not isinstance(func, WorkflowStep):
-                # This guard clause isn't strictly necessary with the type hints.
-                # It is included as a helpful hint to the developer.
-                err = (
-                    "@label decorator method must be called on a WorkflowStep.  "
-                    "Did you remember to invoke @step first?"
-                )
-                raise ValueError(err)
-
-            if label in self._labels:
+            if label and label in self._labels:
                 err = f'A workflow step with label "{label}" is already registered.'
                 raise ValueError(err)
 
-            self._labels[label] = len(self) - 1
+            step = WorkflowStep(self, func)
 
-            return func
+            if label:
+                self._labels[label] = len(self)
 
-        return _decorate
+            self._steps.append(step)
 
-    def step(
-        self, func: Callable[CallableSpec, CallableRetval]
-    ) -> WorkflowStep[CallableSpec, CallableRetval]:
-        step = WorkflowStep(self, func)
-        self._steps.append(step)
-        return step
+            if paths:
+                step.paths = paths
+
+            return step
+
+        if func is None:
+            return _decorate
+
+        return _decorate(func)
