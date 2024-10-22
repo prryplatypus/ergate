@@ -115,6 +115,7 @@ class Workflow:
 
             step = WorkflowStep(self, func)
 
+            idx = len(self)  # ===
             if label:
                 self._labels[label] = len(self)
 
@@ -127,7 +128,7 @@ class Workflow:
             if hints["return"] is not NoneType and None not in step.paths:
                 step.paths.append(None)
 
-            print("===111.1===", self._labels[label], step.paths)
+            print("===111.1===", idx, step.paths)
 
             return step
 
