@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, ParamSpec, TypeVar
+from typing import Callable, Iterator, ParamSpec, TypeVar, get_type_hints
 
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
@@ -124,6 +124,10 @@ class Workflow:
 
             if paths:
                 step.paths = paths
+
+            hints = get_type_hints(func)
+            if not isinstance(None, hints["return"]) and None not in step.paths:
+                step.paths.append(None)
 
             return step
 
