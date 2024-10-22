@@ -84,6 +84,7 @@ class Workflow:
         if isinstance(exc, GoToEnd):
             return len(self)
         if isinstance(exc, GoToStep):
+            print("===212.1===", exc, exc.value, exc.n, exc.label)
             return exc.n if exc.n is not None else self.get_label_index(exc.label)
         if isinstance(exc, SkipNSteps):
             return idx + 1 + exc.n

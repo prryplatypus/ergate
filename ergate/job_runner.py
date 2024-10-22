@@ -51,7 +51,9 @@ class JobRunner(Generic[JobType]):
                 "User requested to go to end of workflow - return value: %s", exc.retval
             )
         except GoToStep as exc:
+            print("===211.1===", exc, exc.value, exc.n, exc.label)
             if exc.n is not None:
+                print("===211.2===")
                 idx = exc.n
                 LOG.info(
                     "User requested to go to step: %s - return value: %s",
@@ -59,6 +61,7 @@ class JobRunner(Generic[JobType]):
                     exc.retval,
                 )
             else:
+                print("===211.3===")
                 idx = workflow.get_label_index(exc.label)
                 LOG.info(
                     "User requested to go to step: %s (%s) - return value: %s",
