@@ -141,6 +141,8 @@ If `input_value` is anything else, the workflow path is:
 Note that the length of the workflows can vary.
 
 ## Errata
-* Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and these 
-exceptions can cause the percentage and step calculations to be inaccurate.  However, since the workflow will always 
-reach the end, either by normal sequence order or by use of `GoToEnd`, the final step will always complete as 100%.
+* Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and the related 
+exceptions can cause the percentage and total step calculations to be inaccurate.  It is recommended when utilising 
+these features to define the `paths` each step may follow, to allow Ergate to better calculate and predict values for 
+`percent_completed` and `total_steps`.  Although they will still not be fully accurate, they will be progressive (never 
+reducing back to a lower count of steps completed) and grow in accuracy as the workflow progresses. 
