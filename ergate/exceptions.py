@@ -40,7 +40,7 @@ class GoToStep(ErgateError):  # noqa: N818
 
     @property
     def label(self) -> str | None:
-        return self.value if isinstance(self.value, int) else None
+        return self.value if isinstance(self.value, str) else None
 
 
 class SkipNSteps(ErgateError):  # noqa: N818
