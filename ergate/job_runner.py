@@ -72,13 +72,11 @@ class JobRunner(Generic[JobType]):
                 )
 
             remaining_steps = max(
-                map(
-                    len,
-                    filter(
-                        lambda steps: isinstance(steps[0][0], GoToStep)
-                        and steps[0][0].next_step == exc.next_step,
-                        paths,
-                    ),
+                (
+                    len(path)
+                    for path in paths
+                    if isinstance(path[0][0], GoToStep)
+                    and path[0][0].next_step == exc.next_step
                 ),
                 default=0,
             )
@@ -90,13 +88,10 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to skip %d steps", exc.n)
 
             remaining_steps = max(
-                map(
-                    len,
-                    filter(
-                        lambda steps: isinstance(steps[0][0], SkipNSteps)
-                        and steps[0][0].n == exc.n,
-                        paths,
-                    ),
+                (
+                    len(path)
+                    for path in paths
+                    if isinstance(path[0][0], SkipNSteps) and path[0][0].n == exc.n
                 ),
                 default=0,
             )
@@ -114,9 +109,7 @@ class JobRunner(Generic[JobType]):
                 map(len, filter(lambda steps: steps[0][0] is None, paths)), default=0
             )
 
-            job.mark_n_steps_completed(
-                1, retval, job.steps_completed + remaining_steps
-            )
+            job.mark_n_steps_completed(1, retval, job.steps_completed + remaining_steps)
 
         self.state_store.update(job)
 

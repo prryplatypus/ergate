@@ -101,15 +101,15 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def step(self,
-            func: Callable[CallableSpec, CallableRetval] | None = None,
-            *,
-            label: str = None,
-            paths: list[ErgateError | None] | None = None,
-          ) -> Callable[CallableSpec, CallableRetval]:
-
+    def step(
+        self,
+        func: Callable[CallableSpec, CallableRetval] | None = None,
+        *,
+        label: str = None,
+        paths: list[ErgateError | None] | None = None,
+    ) -> Callable[CallableSpec, CallableRetval]:
         def _decorate(
-            func: Callable[CallableSpec, CallableRetval]
+            func: Callable[CallableSpec, CallableRetval],
         ) -> WorkflowStep[CallableSpec, CallableRetval]:
             if label and label in self._labels:
                 err = f'A workflow step with label "{label}" is already registered.'
