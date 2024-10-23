@@ -22,8 +22,8 @@ class Workflow:
             if isinstance(key, int):
                 return self._steps[key]
             else:
-                idx = self._labels[key]
-                return self._steps[idx]
+                index = self._labels[key]
+                return self._steps[index]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
@@ -42,7 +42,12 @@ class Workflow:
         return len(self._steps)
 
     def _calculate_paths(
-        self, idx: int, depth: int, *, exc: ErgateError | None = None, all: bool = False
+        self,
+        index: int,
+        depth: int,
+        *,
+        all: bool = False,
+        exc: ErgateError | None = None,
     ) -> list[list[WorkflowPath]]:
         # TODO: better way of determining range for infinite loop detection.
         if depth >= max(len(self) * 5, 100):
@@ -52,33 +57,33 @@ class Workflow:
             )
             raise RecursionError(err)
 
-        if not all and exc not in self._steps[idx].paths:
+        if not all and exc not in self._steps[index].paths:
             err = (
-                f"Failed to calculate workflow path from step {idx}: "
+                f"Failed to calculate workflow path from step {index}: "
                 f"exception not supported: {exc}"
             )
             raise ValueError(err)
 
-        current_step = (exc, idx)
+        current_step = (exc, index)
         paths: list[list[WorkflowPath]] = []
 
-        next_idx = idx if all else self._find_next_step(idx, exc)
-        if next_idx >= len(self):
+        next_index = index if all else self._find_next_step(index, exc)
+        if next_index >= len(self):
             paths.append([current_step])
             return paths
 
-        for next_exc in self._steps[next_idx].paths:
-            paths += self._calculate_paths(next_idx, depth + 1, exc=next_exc)
+        for next_exc in self._steps[next_index].paths:
+            paths += self._calculate_paths(next_index, depth + 1, exc=next_exc)
 
         if not all:
             paths = [[current_step, *next_path] for next_path in paths]
 
         return paths
 
-    def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
-        return self._calculate_paths(idx, depth=0, all=True)
+    def calculate_paths(self, index: int) -> list[list[WorkflowPath]]:
+        return self._calculate_paths(index, depth=0, all=True)
 
-    def _find_next_step(self, idx: int, exc: ErgateError | None) -> int:
+    def _find_next_step(self, index: int, exc: ErgateError | None) -> int:
         if isinstance(exc, GoToEnd):
             return len(self)
 
@@ -86,9 +91,9 @@ class Workflow:
             return self.get_label_index(exc.label) if exc.is_label else exc.n
 
         if isinstance(exc, SkipNSteps):
-            return idx + 1 + exc.n
+            return index + 1 + exc.n
 
-        return idx + 1
+        return index + 1
 
     def get_label_index(self, label: str) -> int:
         try:

@@ -35,7 +35,7 @@ class GoToStep(ErgateError):  # noqa: N818
         self.retval = retval
 
     @property
-    def is_idx(self) -> bool:
+    def is_index(self) -> bool:
         return isinstance(self.value, int)
 
     @property

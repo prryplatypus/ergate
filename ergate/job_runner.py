@@ -52,19 +52,19 @@ class JobRunner(Generic[JobType]):
                 exc.retval,
             )
         except GoToStep as exc:
-            if exc.is_idx:
-                idx = exc.n
+            if exc.is_index:
+                index = exc.n
                 LOG.info(
                     "User requested to go to step: %s - return value: %s",
-                    idx,
+                    index,
                     exc.retval,
                 )
             else:
-                idx = workflow.get_label_index(exc.label)
+                index = workflow.get_label_index(exc.label)
                 LOG.info(
                     "User requested to go to step: %s (%s) - return value: %s",
                     exc.label,
-                    idx,
+                    index,
                     exc.retval,
                 )
 
@@ -79,7 +79,7 @@ class JobRunner(Generic[JobType]):
             )
 
             job.mark_step_n_completed(
-                idx, exc.retval, job.steps_completed + remaining_steps
+                index, exc.retval, job.steps_completed + remaining_steps
             )
         except SkipNSteps as exc:
             LOG.info("User requested to skip %d steps", exc.n)
