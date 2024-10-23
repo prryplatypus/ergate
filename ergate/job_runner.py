@@ -48,7 +48,8 @@ class JobRunner(Generic[JobType]):
                 job.steps_completed, exc.retval, job.steps_completed
             )
             LOG.info(
-                "User requested to go to end of workflow - return value: %s", exc.retval
+                "User requested to go to end of workflow - return value: %s",
+                exc.retval,
             )
         except GoToStep as exc:
             if exc.is_idx:
