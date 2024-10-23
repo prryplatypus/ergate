@@ -5,6 +5,7 @@ from contextlib import ExitStack, contextmanager
 from typing import TYPE_CHECKING, Any, Callable, Generic, ParamSpec, TypeVar
 
 from .depends_cache import DependsCache
+from .exceptions import ErgateError
 from .inspect import build_function_arg_info
 
 if TYPE_CHECKING:
@@ -24,7 +25,7 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
-        self.paths = [None]
+        self.paths: list[ErgateError | None] = [None]
 
     @property
     def name(self) -> str:

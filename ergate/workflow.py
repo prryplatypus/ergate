@@ -6,6 +6,8 @@ from .workflow_step import WorkflowStep
 
 CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
+CallableTypeHint = Callable[CallableSpec, CallableRetval]
+WorkflowStepTypeHint = WorkflowStep[CallableSpec, CallableRetval]
 WorkflowPath = tuple[ErgateError | None, int]
 
 
@@ -76,7 +78,7 @@ class Workflow:
     def calculate_paths(self, idx: int) -> list[list[WorkflowPath]]:
         return self._calculate_paths(idx, depth=0, all=True)
 
-    def _find_next_step(self, idx: int, exc: ErgateError) -> int:
+    def _find_next_step(self, idx: int, exc: ErgateError | None) -> int:
         if isinstance(exc, GoToEnd):
             return len(self)
 
@@ -99,14 +101,12 @@ class Workflow:
 
     def step(
         self,
-        func: Callable[CallableSpec, CallableRetval] | None = None,
+        func: CallableTypeHint | None = None,
         *,
-        label: str = None,
+        label: str | None = None,
         paths: list[ErgateError | None] | None = None,
-    ) -> Callable[CallableSpec, CallableRetval]:
-        def _decorate(
-            func: Callable[CallableSpec, CallableRetval],
-        ) -> WorkflowStep[CallableSpec, CallableRetval]:
+    ) -> CallableTypeHint | WorkflowStepTypeHint:
+        def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
             if label and label in self._labels:
                 err = f'A workflow step with label "{label}" is already registered.'
                 raise ValueError(err)
