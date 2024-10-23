@@ -51,7 +51,7 @@ class JobRunner(Generic[JobType]):
                 "User requested to go to end of workflow - return value: %s", exc.retval
             )
         except GoToStep as exc:
-            if exc.n is not None:
+            if exc.is_idx:
                 idx = exc.n
                 LOG.info(
                     "User requested to go to step: %s - return value: %s",

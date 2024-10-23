@@ -79,8 +79,10 @@ class Workflow:
     def _find_next_step(self, idx: int, exc: ErgateError) -> int:
         if isinstance(exc, GoToEnd):
             return len(self)
+
         if isinstance(exc, GoToStep):
-            return exc.n if exc.n is not None else self.get_label_index(exc.label)
+            return self.get_label_index(exc.label) if exc.is_label else exc.n
+
         if isinstance(exc, SkipNSteps):
             return idx + 1 + exc.n
 

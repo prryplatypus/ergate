@@ -35,12 +35,22 @@ class GoToStep(ErgateError):  # noqa: N818
         self.retval = retval
 
     @property
-    def n(self) -> int | None:
-        return self.value if isinstance(self.value, int) else None
+    def is_idx(self) -> bool:
+        return isinstance(self.value, int)
 
     @property
-    def label(self) -> str | None:
-        return self.value if isinstance(self.value, str) else None
+    def n(self) -> int:
+        assert isinstance(self.value, int)
+        return self.value
+
+    @property
+    def is_label(self) -> bool:
+        return isinstance(self.value, str)
+
+    @property
+    def label(self) -> str:
+        assert isinstance(self.value, str)
+        return self.value
 
 
 class SkipNSteps(ErgateError):  # noqa: N818
