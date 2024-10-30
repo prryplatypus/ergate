@@ -1,4 +1,4 @@
-from overloading import overload
+from functools import singledispatchmethod
 from types import NoneType
 from typing import Callable, Iterator, ParamSpec, TypeVar, get_type_hints
 
@@ -105,19 +105,7 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    @overload
-    def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
-        ...
-
-    @overload
-    def step(
-        self,
-        *,
-        label: str | None = None,
-        paths: list[ErgateError | None] | None = None,
-    ) -> CallableTypeHint:
-        ...
-
+    @singledispatchmethod
     def step(
         self,
         func: CallableTypeHint | None = None,
@@ -150,3 +138,16 @@ class Workflow:
             return _decorate
 
         return _decorate(func)
+
+    @step.register
+    def _(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
+        ...
+
+    @step.register
+    def _(
+        self,
+        *,
+        label: str | None = None,
+        paths: list[ErgateError | None] | None = None,
+    ) -> CallableTypeHint:
+        ...
