@@ -1,5 +1,13 @@
 from types import NoneType
-from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_overloads, get_type_hints, overload
+from typing import (
+    Callable,
+    Iterator,
+    ParamSpec,
+    TypeAlias,
+    TypeVar,
+    get_type_hints,
+    overload,
+)
 
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
@@ -105,8 +113,7 @@ class Workflow:
             )
 
     @overload
-    def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
-        ...
+    def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
 
     @overload
     def step(
@@ -114,8 +121,7 @@ class Workflow:
         *,
         label: str | None = None,
         paths: list[ErgateError | None] | None = None,
-    ) -> CallableTypeHint:
-        ...
+    ) -> CallableTypeHint: ...
 
     def step(
         self,
