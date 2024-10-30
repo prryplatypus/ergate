@@ -104,6 +104,19 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
+    @overload
+    def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
+        ...
+
+    @overload
+    def step(
+        self,
+        *,
+        label: str | None = None,
+        paths: list[ErgateError | None] | None = None,
+    ) -> CallableTypeHint:
+        ...
+
     def step(
         self,
         func: CallableTypeHint | None = None,
