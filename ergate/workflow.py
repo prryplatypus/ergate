@@ -1,5 +1,5 @@
 from types import NoneType
-from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_type_hints, overload
+from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_overloads, get_type_hints, overload
 
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
@@ -16,6 +16,9 @@ class Workflow:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
         self._labels: dict[str, int] = {}
+
+        for over in get_overloads(self.path):
+            print("===111.1===", over)
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
         try:
