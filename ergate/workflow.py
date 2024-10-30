@@ -1,6 +1,5 @@
-from functools import singledispatchmethod
 from types import NoneType
-from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_type_hints
+from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_type_hints, overload
 
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
@@ -105,7 +104,19 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    @singledispatchmethod
+    @overload
+    def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
+        ...
+
+    @overload
+    def step(
+        self,
+        *,
+        label: str | None = None,
+        paths: list[ErgateError | None] | None = None,
+    ) -> CallableTypeHint:
+        ...
+
     def step(
         self,
         func: CallableTypeHint | None = None,
@@ -138,16 +149,3 @@ class Workflow:
             return _decorate
 
         return _decorate(func)
-
-    @step.register
-    def _(self, func: CallableTypeHint) -> WorkflowStepTypeHint:
-        ...
-
-    @step.register
-    def _(
-        self,
-        *,
-        label: str | None = None,
-        paths: list[ErgateError | None] | None = None,
-    ) -> CallableTypeHint:
-        ...
