@@ -9,7 +9,7 @@ CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
 CallableTypeHint: TypeAlias = Callable[CallableSpec, CallableRetval]
 WorkflowStepTypeHint: TypeAlias = WorkflowStep[CallableSpec, CallableRetval]
-WorkflowPath: TypeAlias = tuple[ErgateError | None, int]
+WorkflowPathTypeHint: TypeAlias = tuple[ErgateError | None, int]
 
 
 class Workflow:
@@ -49,7 +49,7 @@ class Workflow:
         *,
         all: bool = False,
         exc: ErgateError | None = None,
-    ) -> list[list[WorkflowPath]]:
+    ) -> list[list[WorkflowPathTypeHint]]:
         # TODO: better way of determining range for infinite loop detection.
         if depth >= max(len(self) * 5, 100):
             err = (
@@ -66,7 +66,7 @@ class Workflow:
             raise ValueError(err)
 
         current_step = (exc, index)
-        paths: list[list[WorkflowPath]] = []
+        paths: list[list[WorkflowPathTypeHint]] = []
 
         next_index = index if all else self._find_next_step(index, exc)
         if next_index >= len(self):
@@ -81,7 +81,7 @@ class Workflow:
 
         return paths
 
-    def calculate_paths(self, index: int) -> list[list[WorkflowPath]]:
+    def calculate_paths(self, index: int) -> list[list[WorkflowPathTypeHint]]:
         return self._calculate_paths(index, depth=0, all=True)
 
     def _find_next_step(self, index: int, exc: ErgateError | None) -> int:
