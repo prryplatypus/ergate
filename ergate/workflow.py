@@ -1,15 +1,15 @@
 from functools import singledispatchmethod
 from types import NoneType
-from typing import Callable, Iterator, ParamSpec, TypeVar, get_type_hints
+from typing import Callable, Iterator, ParamSpec, TypeAlias, TypeVar, get_type_hints
 
 from .exceptions import ErgateError, GoToEnd, GoToStep, SkipNSteps
 from .workflow_step import WorkflowStep
 
 CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
-CallableTypeHint = Callable[CallableSpec, CallableRetval]
-WorkflowStepTypeHint = WorkflowStep[CallableSpec, CallableRetval]
-WorkflowPath = tuple[ErgateError | None, int]
+CallableTypeHint: TypeAlias = Callable[CallableSpec, CallableRetval]
+WorkflowStepTypeHint: TypeAlias = WorkflowStep[CallableSpec, CallableRetval]
+WorkflowPath: TypeAlias = tuple[ErgateError | None, int]
 
 
 class Workflow:
