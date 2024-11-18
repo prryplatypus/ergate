@@ -39,8 +39,7 @@ class Workflow:
             ) from None
         except KeyError:
             raise KeyError(
-                f'No label named "{key}" is registered in '
-                f'Workflow "{self.unique_name}"'
+                f'No label named "{key}" is registered in Workflow "{self.unique_name}"'
             )
 
     def __iter__(self) -> Iterator[WorkflowStep]:
