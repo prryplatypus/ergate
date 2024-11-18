@@ -60,10 +60,10 @@ class JobRunner(Generic[JobType]):
                     exc.retval,
                 )
             else:
-                index = workflow.get_label_index(exc.label)
+                index = workflow.get_index_by_step_name(exc.step_name)
                 LOG.info(
                     "User requested to go to step: %s (%s) - return value: %s",
-                    exc.label,
+                    exc.step_name,
                     index,
                     exc.retval,
                 )

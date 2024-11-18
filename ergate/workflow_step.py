@@ -21,13 +21,11 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self,
         workflow: Workflow,
         callable: Callable[CallableSpec, CallableRetval],
-        label: str | None = None,
     ) -> None:
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
         self.paths: list[ErgateError | None] = [None]
-        self.label: str | None = label
 
     @property
     def name(self) -> str:
