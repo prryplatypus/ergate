@@ -1,38 +1,36 @@
-# Using workflow step labels
+# Using workflow step names for manual ordering
 
-Workflow steps may be manually ordered and redirected by use of `GoToStep` and step labels.
+Workflow steps may be manually ordered and redirected by use of `GoToStep` and step names.
 
-Workflow steps can be labelled by passing a `label` string as a keyword argument to the `step` decorator.
-
-Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step label or its numeric index.
+Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step function name or its numeric index.
 
 Workflows may also be advanced directly to completion by raising the `GoToEnd` exceptions.
 
 
-## Defining workflow labels
+## Defining manual workflow order
 
-The following workflow contains five steps in total, which are executed in a specific order as directed by the labels.
+The following workflow contains five steps in total, which are executed in a specific order as directed by the step names.
 
-```py title="my_labelled_workflow.py"
+```py title="my_ordered_workflow.py"
 from ergate import GoToEnd, GoToStep, Workflow
 
-workflow = Workflow(unique_name="my_second_workflow")
+workflow = Workflow(unique_name="my_ordered_workflow")
 
 @workflow.step
 def step_1() -> None:
     print("Hello, I am step 1")
 
-@workflow.step(label="step_2")
+@workflow.step
 def step_2() -> None:
     print("Hello, I am step 2")
     raise GoToStep("step_3")
 
-@workflow.step(label="step_5")
+@workflow.step
 def step_5() -> None:
     print("Hello, I am step 5")
     raise GoToEnd
 
-@workflow.step(label="step_3")
+@workflow.step
 def step_3() -> None:
     print("Hello, I am step 3")
 
@@ -65,15 +63,15 @@ Without the `GoToStep` and `GoToEnd` exceptions being utilised, this workflow wo
 5. `step_4`
 
 This trivial example may seem pointless, as one could readily move `step_5` to the end of the file and negate the need 
-for these exceptions and labels.  However, these features allow for branching of workflows according to arbitrary 
-conditions.
+for manual ordering with these exceptions.  However, these features allow for branching of workflows according to 
+arbitrary conditions.
 
 Consider the following bifurcated workflow.
 
-```py title="my_labelled_workflow.py"
+```py title="my_ordered_workflow_2.py"
 from ergate import GoToEnd, GoToStep, Workflow
 
-workflow = Workflow(unique_name="my_second_workflow")
+workflow = Workflow(unique_name="my_ordered_workflow_2")
 
 @workflow.step
 def step_1(input_value) -> None:
@@ -87,12 +85,12 @@ def step_1(input_value) -> None:
         case _:
             raise GoToStep("step_default2")
 
-@workflow.step(label="step_default")
+@workflow.step
 def step_default2() -> None:
     print("Hello, I am step default.2")
     raise GoToStep("step_4")
 
-@workflow.step(label="step_a2")
+@workflow.step
 def step_a2() -> None:
     print("Hello, I am step a.2")
 
@@ -101,7 +99,7 @@ def step_a3() -> None:
     print("Hello, I am step a.3")
     raise GoToStep("step_4")
 
-@workflow.step(label="step_b2")
+@workflow.step
 def step_b2() -> None:
     print("Hello, I am step b.2")
 
@@ -110,7 +108,7 @@ def step_b3() -> None:
     print("Hello, I am step b.3")
     raise GoToStep("step_4")
 
-@workflow.step(label="step_4")
+@workflow.step
 def step_4() -> None:
     print("Hello, I am step 4")
 ```
@@ -141,8 +139,8 @@ If `input_value` is anything else, the workflow path is:
 Note that the length of the workflows can vary.
 
 ## Errata
-* Because of how the `percent_completed` and `total_steps` values are calculated, utilising step labels and the related 
-exceptions can cause the percentage and total step calculations to be inaccurate.  It is recommended when utilising 
-these features to define the `paths` each step may follow, to allow Ergate to better calculate and predict values for 
-`percent_completed` and `total_steps`.  Although they will still not be fully accurate, they will be progressive (never 
-reducing back to a lower count of steps completed) and grow in accuracy as the workflow progresses. 
+* Because of how the `percent_completed` and `total_steps` values are calculated, utilising manual step ordering with 
+the related exceptions can cause the percentage and total step calculations to be inaccurate.  It is recommended when 
+utilising this feature to define the `paths` each step may follow, to allow Ergate to better calculate and predict 
+values for `percent_completed` and `total_steps`.  Although they will still not always be fully accurate, they will be 
+progressive (never reducing back to a lower count of steps completed) and grow in accuracy as the workflow progresses. 
