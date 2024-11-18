@@ -135,6 +135,8 @@ class Workflow:
                 raise ValueError(err)
 
             step = WorkflowStep(self, func, label)
+            print("===111.1===", step, step.name)
+            print("===111.2===", step, step.label)
 
             if label:
                 self._labels[label] = len(self)
