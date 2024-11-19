@@ -46,7 +46,7 @@ class JobRunner(Generic[JobType]):
         except GoToEnd as exc:
             print("===311.1===", "GoToEnd", dict(step_val=job.steps_completed, current_step=job.current_step, steps_completed=job.steps_completed, remaining_steps=0, total_steps=job.steps_completed))
             job.mark_step_n_completed(
-                job.steps_completed, exc.retval, job.steps_completed
+                job.steps_completed, exc.retval, job.steps_completed + 1
             )
             LOG.info(
                 "User requested to go to end of workflow - return value: %s",
