@@ -44,7 +44,7 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to abort job: %s", exc)
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
-            print("===311.1===", "GoToEnd", dict(step_val=job.steps_completed, current_step=job.current_step, steps_completed=job.steps_completed, remaining_steps=0, total_steps=job.steps_completed))
+            print("===311.1===", "GoToEnd", dict(step_val=job.steps_completed, current_step=job.current_step, steps_completed=job.steps_completed, remaining_steps=0, total_steps=job.steps_completed + 1))
             job.mark_step_n_completed(
                 job.steps_completed, exc.retval, job.steps_completed + 1
             )
