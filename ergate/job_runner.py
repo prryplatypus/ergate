@@ -45,7 +45,7 @@ class JobRunner(Generic[JobType]):
             job.mark_aborted(exc.message)
         except GoToEnd as exc:
             job.mark_step_n_completed(
-                job.steps_completed, exc.retval, job.steps_completed
+                job.steps_completed, exc.retval, job.steps_completed + 1
             )
             LOG.info(
                 "User requested to go to end of workflow - return value: %s",
