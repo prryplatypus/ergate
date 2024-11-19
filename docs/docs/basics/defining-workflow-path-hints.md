@@ -1,7 +1,7 @@
 # Defining workflow paths
 
-In order to facilitate labelled workflow steps with branching paths, speculative logic was included to predict the total
-number of steps for the workflow and thereby calculate the completion percentage.
+In order to facilitate manually-ordered workflow steps with branching paths, speculative logic was included to predict 
+the total number of steps for the workflow and thereby calculate the completion percentage.
 
 These may be seen as similar to Python type hints, in that they do not directly affect the flow and operation of the 
 workflow, but provide metadata allowing the engine to better determine information about the workflow operaion, viz. the
@@ -22,7 +22,7 @@ When defining `paths`, each potential path should be specified by its Exception.
 ```py title="workflow_with_paths.py"
 from ergate import GoToEnd, GoToStep, Workflow
 
-workflow = Workflow(unique_name="my_third_workflow")
+workflow = Workflow(unique_name="workflow_with_paths")
 
 @workflow.step
 def step_1() -> int:
@@ -34,12 +34,12 @@ def step_2(number: int) -> None:
     print("Hello, I am step 2")
     raise GoToStep("step_3", retval=2)
 
-@workflow.step(label="step_5")
+@workflow.step
 def step_5() -> None:
     print("Hello, I am step 5")
     raise GoToEnd
 
-@workflow.step(label="step_3")
+@workflow.step
 def step_3(number: int) -> int:
     print("Hello, I am step 3")
     return 3
@@ -91,20 +91,35 @@ The resulting workflow order from above is:
 
 Note that the `return` path wasn't explicitly specified for `step_4`, but it is automatically deduced and included from
 the function's return type hinting.  If however a work step function ever intentionally returns `None` as a valid 
-workflow path, but additionally has `paths` defined for other paths, then `None` must be manually included in the list of 
-paths.
+workflow path, but additionally has `paths` defined for other paths, then `None` must be manually included in the list 
+of paths.
 
 For example:
 
-```py title="workflow_with_paths.py"
+```py title="workflow_with_paths_2.py"
 from ergate import GoToEnd, GoToStep, Workflow
 from datetime import date
 
-workflow = Workflow(unique_name="my_third_workflow")
+workflow = Workflow(unique_name="workflow_with_paths_2")
 
-@workflow.step(paths=[GoToStep("weekday"), GoToStep("Saturday")])
-def step_1() -> None:
-    print("Hello, I am step 1")
+@workflow.step(paths=[GoToStep("step_two")])
+def step_one() -> None:
+    print("Hello, I am step 1.")
+    raise GoToStep("step_two")
+
+@workflow.step(paths=[GoToStep("step_three")])
+def weekday() -> None:
+    print("Hello, I am the extra weekday step.")
+    raise GoToStep("step_three")
+
+@workflow.step(paths=[GoToStep("step_three")])
+def saturday() -> None:
+    print("Hello, I am the extra saturday step.")
+    raise GoToStep("step_three")
+
+@workflow.step(paths=[GoToStep("weekday"), GoToStep("saturday")])
+def step_2() -> None:
+    print("Hello, I am step 2.")
 
     today = date.today()
     
@@ -113,23 +128,27 @@ def step_1() -> None:
         raise GoToStep("weekday")
     if today.weekday() == 5:
         print("Today is a weekday.  Do a Saturday task.")
-        raise GoToStep("Saturday")
+        raise GoToStep("saturday")
         
     print("Today is a Sunday.  Nothing to do.")
     return None
 
 @workflow.step
-def step_2() -> None:
-    print("Hello, I am step 2")
+def step_three() -> None:
+    print("Hello, I am step 3.")
+
 ```
 
-In this case, `step_1` can go to two separate `GoToStep` destinations, but also can return `None`.  However,
-the `return` path would be ignored due to its `None` type hinting, since `paths` were manually specified.
+In this case, `step_two` can go to two separate `GoToStep` destinations, but also can return `None`.  However, the 
+natural `return` path would be ignored due to its `None` type hinting, since `paths` were manually specified.
 
 To rectify this in this specific instance, one should include `None` in the list of `paths`: 
-`@workflow.step(paths=[GoToStep("weekday"), GoToStep("Saturday"), None])`
+`@workflow.step(paths=[GoToStep("weekday"), GoToStep("saturday"), None])`
 
-_Nota bene_: this omission would not affect the workflow's operation, and it would still execute nominally.
-This only affects the path calculations for predicting completion percentages and total steps.  Further, once the step
-is executed, branch calculations for future steps (which are recalculated at each step for and from the current step 
-onwards) would regain their accuracy.
+Steps were organised in such a way to prevent the natural sequencing of `step_two` or `step_three` from inadvertently 
+executing named steps for specific conditions, by placing those conditional steps subsequent to a `GoToStep` step. 
+
+_Nota bene_: the omission of `None` from the `paths` would not affect the workflow's operation, and it would still 
+execute nominally.  This only affects the path calculations for predicting completion percentages and total steps.  
+Further, once the step is executed, branch calculations for future steps (which are recalculated at each step for and 
+from the current step onwards) would regain their accuracy.

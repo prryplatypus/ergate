@@ -44,11 +44,11 @@ class GoToStep(ErgateError):  # noqa: N818
         return self.value
 
     @property
-    def is_label(self) -> bool:
+    def is_step_name(self) -> bool:
         return isinstance(self.value, str)
 
     @property
-    def label(self) -> str:
+    def step_name(self) -> str:
         assert isinstance(self.value, str)
         return self.value
 

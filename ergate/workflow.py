@@ -23,24 +23,17 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
-        self._labels: dict[str, int] = {}
+        self._step_names: dict[str, int] = {}
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
         try:
-            if isinstance(key, int):
-                return self._steps[key]
-            else:
-                index = self._labels[key]
-                return self._steps[index]
+            index = self.get_index_by_step_name(key) if isinstance(key, str) else key
+            return self._steps[index]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
                 f"- tried to access step #{key}"
             ) from None
-        except KeyError:
-            raise KeyError(
-                f'No label named "{key}" is registered in Workflow "{self.unique_name}"'
-            )
 
     def __iter__(self) -> Iterator[WorkflowStep]:
         return iter(self._steps)
@@ -95,19 +88,19 @@ class Workflow:
             return len(self)
 
         if isinstance(exc, GoToStep):
-            return self.get_label_index(exc.label) if exc.is_label else exc.n
+            return exc.n if exc.is_index else self.get_index_by_step_name(exc.step_name)
 
         if isinstance(exc, SkipNSteps):
             return index + 1 + exc.n
 
         return index + 1
 
-    def get_label_index(self, label: str) -> int:
+    def get_index_by_step_name(self, step_name: str) -> int:
         try:
-            return self._labels[label]
+            return self._step_names[step_name]
         except KeyError:
             raise KeyError(
-                f'No label named "{label}" is registered in '
+                f'No step named "{step_name}" is registered in '
                 f'Workflow "{self.unique_name}"'
             )
 
@@ -118,7 +111,6 @@ class Workflow:
     def step(
         self,
         *,
-        label: str | None = None,
         paths: list[ErgateError | None] | None = None,
     ) -> CallableTypeHint: ...
 
@@ -126,18 +118,12 @@ class Workflow:
         self,
         func: CallableTypeHint | None = None,
         *,
-        label: str | None = None,
         paths: list[ErgateError | None] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            if label and label in self._labels:
-                err = f'A workflow step with label "{label}" is already registered.'
-                raise ValueError(err)
+            step = WorkflowStep(self, func)
 
-            step = WorkflowStep(self, func, label)
-
-            if label:
-                self._labels[label] = len(self)
+            self._step_names[step.name] = len(self)
 
             self._steps.append(step)
 
