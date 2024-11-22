@@ -94,7 +94,7 @@ class JobRunner(Generic[JobType]):
                         if isinstance(path[0][0], GoToStepPath)
                         and path[0][0].value == exc.value
                     ),
-                    default=0,
+                    default=len(workflow) - job.current_step + 1,
                 )
 
                 print(
@@ -123,7 +123,7 @@ class JobRunner(Generic[JobType]):
                         if isinstance(path[0][0], SkipNStepsPath)
                         and path[0][0].n == exc.n
                     ),
-                    default=0,
+                    default=len(workflow) - job.current_step + 1,
                 )
 
                 print(
@@ -154,7 +154,7 @@ class JobRunner(Generic[JobType]):
                         for path in paths
                         if isinstance(path[0][0], NextStepPath)
                     ),
-                    default=0,
+                    default=len(workflow) - job.current_step + 1,
                 )
 
                 print(
