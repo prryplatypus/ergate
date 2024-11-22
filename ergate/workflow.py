@@ -45,36 +45,45 @@ class Workflow:
     def _calculate_paths(
         self,
         index: int,
-        depth: int,
         *,
         initial: bool = False,
         path: WorkflowPath | None = None,
     ) -> list[list[WorkflowPathTypeHint]]:
-        # TODO: better way of determining range for infinite loop detection.
-        if depth >= max(len(self) * 5, 100):
-            err = (
-                "Aborting path calculation due to potential infinite loop: "
-                f"(depth: {depth})"
-            )
-            raise RecursionError(err)
-
-        if not initial and path not in self._steps[index].paths:
-            err = (
-                f"Failed to calculate workflow path from step {index}: "
-                f"exception not supported: {path}"
-            )
-            raise ValueError(err)
-
-        current_step = (path, index)
         paths: list[list[WorkflowPathTypeHint]] = []
 
-        next_index = index if initial else self._find_next_step(index, path)
+        if not initial:
+            if path is None:
+                err = (
+                    f"Failed to calculate workflow path from step {index}: "
+                    f"path cannot be null."
+                )
+                raise ValueError(err)
+
+            if path not in self._steps[index].paths:
+                err = (
+                    f"Failed to calculate workflow path from step {index}: "
+                    f"path not registered: {path}"
+                )
+                raise ValueError(err)
+
+            next_index = self._find_next_step(index, path)
+
+            if next_index <= index:
+                raise ReverseGoToError(
+                    "User attempted to go to an earlier step, which is not permitted."
+                )
+        else:
+            path = NextStepPath()
+            next_index = index
+
+        current_step = (path, index)
+
         if next_index >= len(self):
             paths.append([current_step])
             return paths
 
         for next_path in self._steps[next_index].paths:
-            paths += self._calculate_paths(next_index, depth + 1, path=next_path)
+            paths += self._calculate_paths(next_index, path=next_path)
 
         if not initial:
             paths = [[current_step, *next_path] for next_path in paths]
@@ -82,14 +91,16 @@ class Workflow:
         return paths
 
     def calculate_paths(self, index: int) -> list[list[WorkflowPathTypeHint]]:
-        return self._calculate_paths(index, depth=0, initial=True)
+        return self._calculate_paths(index, initial=True)
 
-    def _find_next_step(self, index: int, path: WorkflowPath | None) -> int:
+    def _find_next_step(self, index: int, path: WorkflowPath) -> int:
         if isinstance(path, GoToEndPath):
             return len(self)
 
         if isinstance(path, GoToStepPath):
-            return path.n if path.is_index else self.get_index_by_step_name(path.step_name)
+            return (
+                path.n if path.is_index else self.get_index_by_step_name(path.step_name)
+            )
 
         if isinstance(path, SkipNStepsPath):
             return index + 1 + path.n
