@@ -106,7 +106,13 @@ class JobRunner(Generic[JobType]):
                         steps_completed=job.steps_completed,
                         remaining_steps=remaining_steps,
                         total_steps=job.steps_completed + remaining_steps,
-                        next_step=exc.value
+                        next_step=exc.value,
+                        path_options=[
+                            (path[0][0], len(path))
+                            for path in paths
+                            if isinstance(path[0][0], GoToStepPath)
+                            and path[0][0].value == exc.value
+                        ],
                     )
                 )
 
@@ -134,7 +140,13 @@ class JobRunner(Generic[JobType]):
                         current_step=job.current_step,
                         steps_completed=job.steps_completed,
                         remaining_steps=remaining_steps,
-                        total_steps=job.steps_completed + remaining_steps
+                        total_steps=job.steps_completed + remaining_steps,
+                        path_options=[
+                            (path[0][0], len(path))
+                            for path in paths
+                            if isinstance(path[0][0], SkipNStepsPath)
+                            and path[0][0].n == exc.n
+                        ],
                     )
                 )
 
@@ -165,7 +177,12 @@ class JobRunner(Generic[JobType]):
                         current_step=job.current_step,
                         steps_completed=job.steps_completed,
                         remaining_steps=remaining_steps,
-                        total_steps=job.steps_completed + remaining_steps
+                        total_steps=job.steps_completed + remaining_steps,
+                        path_options=[
+                            (path[0][0], len(path))
+                            for path in paths
+                            if isinstance(path[0][0], NextStepPath)
+                        ],
                     )
                 )
 
