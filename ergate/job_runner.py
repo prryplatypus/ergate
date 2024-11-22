@@ -54,7 +54,7 @@ class JobRunner(Generic[JobType]):
                         current_step=job.current_step,
                         steps_completed=job.steps_completed,
                         remaining_steps=0,
-                        total_steps= job.steps_completed + 1
+                        total_steps=job.steps_completed + 1
                     )
                 )
                 job.mark_step_n_completed(
@@ -127,7 +127,7 @@ class JobRunner(Generic[JobType]):
                 )
 
                 print(
-                "===311.3===",
+                    "===311.3===",
                     "SkipNSteps",
                     dict(
                         step_val=exc.n + 1,
