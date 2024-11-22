@@ -27,13 +27,17 @@ class Workflow:
         self._step_names: dict[str, int] = {}
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
+        index = self.get_index_by_step_name(key) if isinstance(key, str) else key
+
+        print("===311.1===", dict(key=key, index=index))
+        print("===311.2===", self._steps)
         try:
-            index = self.get_index_by_step_name(key) if isinstance(key, str) else key
             return self._steps[index]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
-                f"- tried to access step #{key}"
+                f"- tried to access index {index}"
+                f' ("{key}")' if isinstance(key, str) else ""
             ) from None
 
     def __iter__(self) -> Iterator[WorkflowStep]:
@@ -70,7 +74,8 @@ class Workflow:
 
             if next_index <= index:
                 raise ReverseGoToError(
-                    "User attempted to go to an earlier step, which is not permitted."
+                    "User attempted to go to an earlier step, "
+                    "which is not permitted."
                 )
         else:
             path = NextStepPath()
