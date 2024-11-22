@@ -5,8 +5,8 @@ from contextlib import ExitStack, contextmanager
 from typing import TYPE_CHECKING, Any, Callable, Generic, ParamSpec, TypeVar
 
 from .depends_cache import DependsCache
-from .exceptions import ErgateError
 from .inspect import build_function_arg_info
+from .paths import NextStepPath, WorkflowPath
 
 if TYPE_CHECKING:
     from .workflow import Workflow
@@ -25,7 +25,8 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
-        self.paths: list[ErgateError | None] = [None]
+        # TODO: do we need this default value, or will get_type_hints inspection work?
+        self.paths: list[WorkflowPath] = [NextStepPath()]
 
     @property
     def name(self) -> str:

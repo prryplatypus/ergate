@@ -6,7 +6,9 @@ from .exceptions import (
     GoToEnd,
     GoToStep,
     InvalidDefinitionError,
+    ReverseGoToError,
     SkipNSteps,
+    UnknownStepNameError,
     ValidationError,
 )
 from .job import Job
@@ -25,7 +27,9 @@ __all__ = [
     "AbortJob",
     "GoToEnd",
     "GoToStep",
+    "ReverseGoToError",
     "SkipNSteps",
+    "UnknownStepNameError",
     "ValidationError",
     "Job",
     "StateStoreProtocol",

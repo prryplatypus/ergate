@@ -11,6 +11,14 @@ class InvalidDefinitionError(ErgateError):
     """Raised when a workflow/step definition is invalid."""
 
 
+class ReverseGoToError(ErgateError):
+    """Raised when a workflow/step attempts to `go to` an earlier step."""
+
+
+class UnknownStepNameError(ErgateError):
+    """Raised when a workflow/step attempts to `go to` an unknown step."""
+
+
 class AbortJob(ErgateError):  # noqa: N818
     """Raised from a step to abort a workflow.
     Should be interpreted as an expected failure.
