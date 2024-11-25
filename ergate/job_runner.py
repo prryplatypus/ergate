@@ -53,7 +53,7 @@ class JobRunner(Generic[JobType]):
                         step_val=job.steps_completed,
                         current_step=job.current_step,
                         steps_completed=job.steps_completed,
-                        remaining_steps=0,
+                        remaining_steps=1,
                         total_steps=job.steps_completed + 1
                     )
                 )
