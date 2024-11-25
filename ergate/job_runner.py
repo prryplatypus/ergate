@@ -46,17 +46,6 @@ class JobRunner(Generic[JobType]):
                 LOG.info("User requested to abort job: %s", exc)
                 job.mark_aborted(exc.message)
             except GoToEnd as exc:
-                print(
-                    "===311.1===",
-                    "GoToEnd",
-                    dict(
-                        step_val=job.steps_completed,
-                        current_step=job.current_step,
-                        steps_completed=job.steps_completed,
-                        remaining_steps=1,
-                        total_steps=job.steps_completed + 1
-                    )
-                )
                 job.mark_step_n_completed(
                     job.steps_completed, exc.retval, job.steps_completed + 1
                 )
@@ -97,25 +86,6 @@ class JobRunner(Generic[JobType]):
                     default=len(workflow) - job.current_step,
                 )
 
-                print(
-                    "===311.2===",
-                    "GoToStep",
-                    dict(
-                        step_val=index,
-                        current_step=job.current_step,
-                        steps_completed=job.steps_completed,
-                        remaining_steps=remaining_steps,
-                        total_steps=job.steps_completed + remaining_steps,
-                        next_step=exc.value,
-                        path_options=[
-                            (path[0][0], len(path))
-                            for path in paths
-                            if isinstance(path[0][0], GoToStepPath)
-                            and path[0][0].value == exc.value
-                        ],
-                    )
-                )
-
                 job.mark_step_n_completed(
                     index, exc.retval, job.steps_completed + remaining_steps
                 )
@@ -130,24 +100,6 @@ class JobRunner(Generic[JobType]):
                         and path[0][0].n == exc.n
                     ),
                     default=len(workflow) - job.current_step,
-                )
-
-                print(
-                    "===311.3===",
-                    "SkipNSteps",
-                    dict(
-                        step_val=exc.n + 1,
-                        current_step=job.current_step,
-                        steps_completed=job.steps_completed,
-                        remaining_steps=remaining_steps,
-                        total_steps=job.steps_completed + remaining_steps,
-                        path_options=[
-                            (path[0][0], len(path))
-                            for path in paths
-                            if isinstance(path[0][0], SkipNStepsPath)
-                            and path[0][0].n == exc.n
-                        ],
-                    )
                 )
 
                 job.mark_n_steps_completed(
@@ -169,23 +121,6 @@ class JobRunner(Generic[JobType]):
                     default=len(workflow) - job.current_step + 1,
                 )
 
-                print(
-                    "===311.4===",
-                    "return",
-                    dict(
-                        step_val=1,
-                        current_step=job.current_step,
-                        steps_completed=job.steps_completed,
-                        remaining_steps=remaining_steps,
-                        total_steps=job.steps_completed + remaining_steps,
-                        path_options=[
-                            (path[0][0], len(path))
-                            for path in paths
-                            if isinstance(path[0][0], NextStepPath)
-                        ],
-                    )
-                )
-
                 job.mark_n_steps_completed(
                     1, retval, job.steps_completed + remaining_steps
                 )
@@ -193,16 +128,6 @@ class JobRunner(Generic[JobType]):
             LOG.exception("Job raised an exception")
             job.mark_failed(exc)
             self.error_hook_handler.notify(job, exc)
-
-        print(
-            "===312.1===",
-            "state",
-            dict(
-                current_step=job.current_step,
-                steps_completed=job.steps_completed,
-                percent_completed=job.percent_completed
-            )
-        )
 
         self.state_store.update(job)
 

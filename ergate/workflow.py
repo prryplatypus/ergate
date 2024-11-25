@@ -29,8 +29,6 @@ class Workflow:
     def __getitem__(self, key: int | str) -> WorkflowStep:
         index = self.get_index_by_step_name(key) if isinstance(key, str) else key
 
-        print("===311.1===", dict(key=key, index=index))
-        print("===311.2===", self._steps)
         try:
             return self._steps[index]
         except IndexError:
