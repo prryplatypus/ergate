@@ -35,7 +35,9 @@ class Workflow:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
                 f"- tried to access index {index}"
-                f' ("{key}")' if isinstance(key, str) else ""
+                f' ("{key}")'
+                if isinstance(key, str)
+                else ""
             ) from None
 
     def __iter__(self) -> Iterator[WorkflowStep]:
