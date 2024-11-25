@@ -2,10 +2,12 @@
 
 Workflow steps may be manually ordered and redirected by use of `GoToStep` and step names.
 
-Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step function name or its numeric index.
+Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step 
+function name or its numeric index.
 
-Workflows may also be advanced directly to completion by raising the `GoToEnd` exceptions.
+Workflows may also be advanced directly to completion by raising the `GoToEnd` exception.
 
+Workflows may also be advanced by a set number of steps by raising the `SkipNSteps` exception.
 
 ## Defining manual workflow order
 
@@ -23,12 +25,7 @@ def step_1() -> None:
 @workflow.step
 def step_2() -> None:
     print("Hello, I am step 2")
-    raise GoToStep("step_3")
-
-@workflow.step
-def step_5() -> None:
-    print("Hello, I am step 5")
-    raise GoToEnd
+    raise GoToStep("step_4")
 
 @workflow.step
 def step_3() -> None:
@@ -38,33 +35,35 @@ def step_3() -> None:
 def step_4() -> None:
     print("Hello, I am step 4")
     raise GoToStep("step_5")
+
+@workflow.step
+def step_5() -> None:
+    print("Hello, I am step 5")
+    raise GoToEnd
 ```
 
-`step_1` and `step_2` execute in normal sequence order.  However, `step_2` raises the `GoToStep` exception for `step_3`,
-which redirects the execution order.  `step_3` executes and then proceeds to `step_4` by normal sequence order, but 
-`step_4` also raises `GoToStep` for `step_5`, redirecting the order back to that function.  Finally, `step_5` executes, 
-and then raises `GoToEnd` to complete the workflow and prevent `step_3` and `step_4` from being run again from the 
-normal function sequencing.
+`step_1` and `step_2` execute in normal sequence order.  However, `step_2` raises the `GoToStep` exception for `step_4`,
+which alters the execution order.  `step_3` is skipped, and the workflow proceeds directly to `step_4`.  `step_4` also 
+raises `GoToStep` for `step_5`, altering the order and proceeding to that function.  Finally, `step_5` executes, and 
+then raises `GoToEnd` to complete the workflow.
 
 The resulting order is:
 
 1. `step_1`
 2. `step_2`
-3. `step_3`
 4. `step_4`
 5. `step_5`
 
-Without the `GoToStep` and `GoToEnd` exceptions being utilised, this workflow would execute in the source ordering:
+Without the `GoToStep` exception being utilised, this workflow would execute in the source ordering:
 
 1. `step_1`
 2. `step_2`
-3. `step_5`
 4. `step_3`
 5. `step_4`
+3. `step_5`
 
-This trivial example may seem pointless, as one could readily move `step_5` to the end of the file and negate the need 
-for manual ordering with these exceptions.  However, these features allow for branching of workflows according to 
-arbitrary conditions.
+This trivial example may seem pointless, as one could readily omit `step_3` and negate the need for manual ordering 
+with these exceptions.  However, these features allow for branching of workflows according to arbitrary conditions.
 
 Consider the following bifurcated workflow.
 
@@ -82,6 +81,8 @@ def step_1(input_value) -> None:
             raise GoToStep("step_a2")
         case "b":
             raise GoToStep("step_b2")
+        case "c":
+            raise GoToStep("step_c2")
         case _:
             raise GoToStep("step_default2")
 
@@ -109,11 +110,21 @@ def step_b3() -> None:
     raise GoToStep("step_4")
 
 @workflow.step
+def step_c2() -> None:
+    print("Hello, I am step c.2")
+
+@workflow.step
+def step_c3() -> None:
+    print("Hello, I am step c.3")
+    # Skip remaining steps and complete workflow immediately.
+    raise GoToEnd()
+
+@workflow.step
 def step_4() -> None:
     print("Hello, I am step 4")
 ```
 
-In this case, there are three possible paths for the workflow to take, based on the value of `input_value`:
+In this case, there are four possible paths for the workflow to take, based on the value of `input_value`:
 
 If `input_value` is `a`, the workflow path is:
 
@@ -129,6 +140,13 @@ If `input_value` is `b`, the workflow path is:
 3. `step_b3`
 4. `step_4`
 
+If `input_value` is `c`, the workflow path is:
+
+1. `step_1`
+2. `step_c2`
+3. `step_c3`
+
+with `step_4` skipped by `GoToEnd` having been raised in `step_c3`.
 
 If `input_value` is anything else, the workflow path is:
 
@@ -136,11 +154,15 @@ If `input_value` is anything else, the workflow path is:
 2. `step_default2`
 4. `step_4`
 
-Note that the length of the workflows can vary.
+Note that the length of the workflows can vary when utilising rhese exceptions.
 
 ## Errata
 * Because of how the `percent_completed` and `total_steps` values are calculated, utilising manual step ordering with 
 the related exceptions can cause the percentage and total step calculations to be inaccurate.  It is recommended when 
-utilising this feature to define the `paths` each step may follow, to allow Ergate to better calculate and predict 
-values for `percent_completed` and `total_steps`.  Although they will still not always be fully accurate, they will be 
-progressive (never reducing back to a lower count of steps completed) and grow in accuracy as the workflow progresses. 
+utilising this feature to define the `paths` each step may follow in the `step()` decorator, to allow Ergate to better 
+calculate and predict values for `percent_completed` and `total_steps`.  Although they will still not always be fully 
+accurate, they will be progressive (never reducing back to a lower count of steps completed) and grow in accuracy as 
+the workflow progresses. 
+
+* _Nota bene_: it is currently not permitted to use `GoToStep` to go to a previous step in the workflow.  There is no 
+technical reason behind this limitation, and it may be added in a future release.
