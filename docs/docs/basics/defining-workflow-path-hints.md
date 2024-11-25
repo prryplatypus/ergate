@@ -105,7 +105,7 @@ def step_one() -> None:
     raise GoToStep("step_two")
 
 @workflow.step(paths=[GoToStepPath("weekday"), GoToStepPath("saturday")])
-def step_2() -> None:
+def step_two() -> None:
     print("Hello, I am step 2.")
 
     today = date.today()
@@ -114,7 +114,7 @@ def step_2() -> None:
         print("Today is a weekday.  Do a weekday task.")
         raise GoToStep("weekday")
     if today.weekday() == 5:
-        print("Today is a weekday.  Do a Saturday task.")
+        print("Today is Saturday.  Do a Saturday task.")
         raise GoToStep("saturday")
         
     print("Today is a Sunday.  Proceed to the next step.")

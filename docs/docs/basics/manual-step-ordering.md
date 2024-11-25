@@ -51,8 +51,8 @@ The resulting order is:
 
 1. `step_1`
 2. `step_2`
-4. `step_4`
-5. `step_5`
+3. `step_4`
+4. `step_5`
 
 Without the `GoToStep` exception being utilised, this workflow would execute in the source ordering:
 
