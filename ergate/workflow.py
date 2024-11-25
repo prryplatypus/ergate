@@ -1,11 +1,9 @@
-from types import NoneType
 from typing import (
     Callable,
     Iterator,
     ParamSpec,
     TypeAlias,
     TypeVar,
-    get_type_hints,
     overload,
 )
 
@@ -130,19 +128,8 @@ class Workflow:
         paths: list[WorkflowPath] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            step = WorkflowStep(self, func, len(self._steps))
-
+            step = WorkflowStep(self, func, len(self._steps), paths=paths)
             self._steps.append(step)
-
-            if paths:
-                step.paths = paths
-
-            hints = get_type_hints(func)
-            if hints["return"] is not NoneType and not any(
-                isinstance(path, NextStepPath) for path in step.paths
-            ):
-                step.paths.append(NextStepPath())
-
             return step
 
         if func is None:
