@@ -9,7 +9,7 @@ from typing import (
     overload,
 )
 
-from .exceptions import ReverseGoToError, UnknownStepNameError
+from .exceptions import ReverseGoToError, UnknownStepError
 from .paths import GoToEndPath, GoToStepPath, NextStepPath, SkipNStepsPath, WorkflowPath
 from .workflow_step import WorkflowStep
 
@@ -116,7 +116,7 @@ class Workflow:
         try:
             return self._step_names[step_name]
         except KeyError:
-            raise UnknownStepNameError(
+            raise UnknownStepError(
                 f'No step named "{step_name}" is registered in '
                 f'Workflow "{self.unique_name}"'
             )
