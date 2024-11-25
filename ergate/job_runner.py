@@ -129,7 +129,7 @@ class JobRunner(Generic[JobType]):
                         if isinstance(path[0][0], SkipNStepsPath)
                         and path[0][0].n == exc.n
                     ),
-                    default=len(workflow) - job.current_step + 1,
+                    default=len(workflow) - job.current_step,
                 )
 
                 print(
