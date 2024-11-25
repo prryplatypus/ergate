@@ -25,7 +25,6 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
-        # TODO: do we need this default value, or will get_type_hints inspection work?
         self.paths: list[WorkflowPath] = [NextStepPath()]
 
     @property
