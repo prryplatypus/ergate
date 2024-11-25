@@ -24,20 +24,14 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
-        self._step_names: dict[str, int] = {}
 
-    def __getitem__(self, key: int | str) -> WorkflowStep:
-        index = self.get_step_index_by_name(key) if isinstance(key, str) else key
-
+    def __getitem__(self, key: int) -> WorkflowStep:
         try:
-            return self._steps[index]
+            return self._steps[key]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
-                f"- tried to access index {index}"
-                f' ("{key}")'
-                if isinstance(key, str)
-                else ""
+                f"- tried to access index {key}"
             ) from None
 
     def __iter__(self) -> Iterator[WorkflowStep]:
@@ -120,13 +114,14 @@ class Workflow:
             )
 
     def get_step_index_by_name(self, step_name: str) -> int:
-        try:
-            return self._step_names[step_name]
-        except KeyError:
-            raise UnknownStepError(
-                f'No step named "{step_name}" is registered in '
-                f'Workflow "{self.unique_name}"'
-            )
+        for idx, step in enumerate(self._steps):
+            if step.name == step_name:
+                return idx
+
+        raise UnknownStepError(
+            f'No step named "{step_name}" is registered in '
+            f'Workflow "{self.unique_name}"'
+        )
 
     @overload
     def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
@@ -146,8 +141,6 @@ class Workflow:
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
             step = WorkflowStep(self, func)
-
-            self._step_names[step.name] = len(self)
 
             self._steps.append(step)
 
