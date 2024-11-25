@@ -53,7 +53,7 @@ class Job(BaseModel):
         return_value: Any,
         total_steps: int,
     ) -> None:
-        self.current_step = min(self.current_step + n, len(self))
+        self.current_step += n
         self.steps_completed = min(self.steps_completed + 1, total_steps)
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
         self.status = (
