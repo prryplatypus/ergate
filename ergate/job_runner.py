@@ -54,21 +54,14 @@ class JobRunner(Generic[JobType]):
                     exc.retval,
                 )
             except GoToStep as exc:
-                if exc.is_index:
-                    index = exc.n
-                    LOG.info(
-                        "User requested to go to step: %s - return value: %s",
-                        index,
-                        exc.retval,
-                    )
-                else:
-                    index = workflow.get_index_by_step_name(exc.step_name)
-                    LOG.info(
-                        "User requested to go to step: %s (%s) - return value: %s",
-                        exc.step_name,
-                        index,
-                        exc.retval,
-                    )
+                index = workflow.get_step_index(exc.step)
+
+                LOG.info(
+                    "User requested to go to step: %s (%s) - return value: %s",
+                    exc.step.name,
+                    index,
+                    exc.retval,
+                )
 
                 if index <= job.current_step:
                     raise ReverseGoToError(
@@ -81,7 +74,7 @@ class JobRunner(Generic[JobType]):
                         len(path)
                         for path in paths
                         if isinstance(path[0][0], GoToStepPath)
-                        and path[0][0].value == exc.value
+                        and path[0][0].step_name == exc.step_name
                     ),
                     default=len(workflow) - job.current_step,
                 )

@@ -9,26 +9,8 @@ class GoToEndPath(WorkflowPath):
 class GoToStepPath(WorkflowPath):
     """WorkflowPath class for the `GoToStep` exception."""
 
-    def __init__(self, value: int | str) -> None:
-        self.value = value
-
-    @property
-    def is_index(self) -> bool:
-        return isinstance(self.value, int)
-
-    @property
-    def n(self) -> int:
-        assert isinstance(self.value, int)
-        return self.value
-
-    @property
-    def is_step_name(self) -> bool:
-        return isinstance(self.value, str)
-
-    @property
-    def step_name(self) -> str:
-        assert isinstance(self.value, str)
-        return self.value
+    def __init__(self, step_name: str) -> None:
+        self.step_name = step_name
 
 
 class NextStepPath(WorkflowPath):

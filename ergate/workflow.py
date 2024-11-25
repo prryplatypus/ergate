@@ -103,9 +103,7 @@ class Workflow:
             return len(self)
 
         if isinstance(path, GoToStepPath):
-            return (
-                path.n if path.is_index else self.get_index_by_step_name(path.step_name)
-            )
+            return self.get_index_by_step_name(path.step_name)
 
         if isinstance(path, SkipNStepsPath):
             return index + 1 + path.n
