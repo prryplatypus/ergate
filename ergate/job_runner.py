@@ -94,7 +94,7 @@ class JobRunner(Generic[JobType]):
                         if isinstance(path[0][0], GoToStepPath)
                         and path[0][0].value == exc.value
                     ),
-                    default=len(workflow) - job.current_step + 1,
+                    default=len(workflow) - job.current_step,
                 )
 
                 print(
