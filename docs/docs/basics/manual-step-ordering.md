@@ -39,7 +39,7 @@ def step_4() -> None:
 @workflow.step
 def step_5() -> None:
     print("Hello, I am step 5")
-    raise GoToEnd
+    raise GoToEnd()
 ```
 
 `step_1` and `step_2` execute in normal sequence order.  However, `step_2` raises the `GoToStep` exception for `step_4`,
