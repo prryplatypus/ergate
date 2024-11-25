@@ -27,7 +27,7 @@ class Workflow:
         self._step_names: dict[str, int] = {}
 
     def __getitem__(self, key: int | str) -> WorkflowStep:
-        index = self.get_index_by_step_name(key) if isinstance(key, str) else key
+        index = self.get_step_index_by_name(key) if isinstance(key, str) else key
 
         try:
             return self._steps[index]
@@ -103,7 +103,7 @@ class Workflow:
             return len(self)
 
         if isinstance(path, GoToStepPath):
-            return self.get_index_by_step_name(path.step_name)
+            return self.get_step_index_by_name(path.step_name)
 
         if isinstance(path, SkipNStepsPath):
             return index + 1 + path.n
@@ -119,7 +119,7 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def get_index_by_step_name(self, step_name: str) -> int:
+    def get_step_index_by_name(self, step_name: str) -> int:
         try:
             return self._step_names[step_name]
         except KeyError:
