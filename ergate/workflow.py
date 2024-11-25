@@ -104,24 +104,14 @@ class Workflow:
 
         return index + 1
 
-    def get_step_index(self, step: WorkflowStep) -> int:
+    def get_step_index_by_name(self, step_name: str) -> int:
         try:
-            return self._steps.index(step)
-        except ValueError:
+            return next(step.index for step in self._steps if step.name == step_name)
+        except StopIteration:
             raise UnknownStepError(
-                f'No step named "{step.name}" is registered in '
+                f'No step named "{step_name}" is registered in '
                 f'Workflow "{self.unique_name}"'
             )
-
-    def get_step_index_by_name(self, step_name: str) -> int:
-        for idx, step in enumerate(self._steps):
-            if step.name == step_name:
-                return idx
-
-        raise UnknownStepError(
-            f'No step named "{step_name}" is registered in '
-            f'Workflow "{self.unique_name}"'
-        )
 
     @overload
     def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
@@ -140,7 +130,7 @@ class Workflow:
         paths: list[WorkflowPath] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            step = WorkflowStep(self, func)
+            step = WorkflowStep(self, func, len(self._steps))
 
             self._steps.append(step)
 

@@ -21,7 +21,9 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self,
         workflow: Workflow,
         callable: Callable[CallableSpec, CallableRetval],
+        index: int,
     ) -> None:
+        self.index = index
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)

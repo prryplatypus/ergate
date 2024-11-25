@@ -54,16 +54,14 @@ class JobRunner(Generic[JobType]):
                     job.steps_completed, exc.retval, job.steps_completed + 1
                 )
             except GoToStep as exc:
-                index = workflow.get_step_index(exc.step)
-
                 LOG.info(
                     "User requested to go to step: %s (%s) - return value: %s",
                     exc.step.name,
-                    index,
+                    exc.step.index,
                     exc.retval,
                 )
 
-                if index <= job.current_step:
+                if exc.step.index <= job.current_step:
                     raise ReverseGoToError(
                         "User attempted to go to an earlier step, "
                         "which is not permitted."
@@ -80,7 +78,7 @@ class JobRunner(Generic[JobType]):
                 )
 
                 job.mark_step_n_completed(
-                    index, exc.retval, job.steps_completed + remaining_steps
+                    exc.step.index, exc.retval, job.steps_completed + remaining_steps
                 )
             except SkipNSteps as exc:
                 LOG.info("User requested to skip %d steps", exc.n)
