@@ -112,6 +112,15 @@ class Workflow:
 
         return index + 1
 
+    def get_step_index(self, step: WorkflowStep) -> int:
+        try:
+            return self._steps.index(step)
+        except ValueError:
+            raise UnknownStepError(
+                f'No step named "{step.name}" is registered in '
+                f'Workflow "{self.unique_name}"'
+            )
+
     def get_index_by_step_name(self, step_name: str) -> int:
         try:
             return self._step_names[step_name]
