@@ -118,9 +118,8 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def register(self) -> "Workflow":
+    def register(self) -> None:
         self.update_paths()
-        return self
 
     @overload
     def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
