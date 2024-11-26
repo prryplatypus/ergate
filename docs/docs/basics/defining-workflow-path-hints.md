@@ -31,7 +31,7 @@ def step_1() -> int:
 @workflow.step(paths=[GoToStepPath("step_3")])
 def step_2(number: int) -> None:
     print("Hello, I am step 2")
-    raise GoToStep("step_3", retval=2)
+    raise GoToStep(step_3, retval=2)
 
 @workflow.step(path=[GoToEndPath()])
 def step_5() -> None:
@@ -47,7 +47,7 @@ def step_3(number: int) -> int:
 def step_4(number: int) -> int:
     print("Hello, I am step 4")
     if number % 2:
-        raise GoToStep("step_7", retval=4)
+        raise GoToStep(step_7, retval=4)
     if number > 6:
         raise GoToEnd()
     return 4
@@ -102,7 +102,7 @@ workflow = Workflow(unique_name="workflow_with_paths_2")
 @workflow.step(paths=[GoToStepPath("step_two")])
 def step_one() -> None:
     print("Hello, I am step 1.")
-    raise GoToStep("step_two")
+    raise GoToStep(step_two)
 
 @workflow.step(paths=[GoToStepPath("weekday"), GoToStepPath("saturday")])
 def step_two() -> None:
@@ -112,10 +112,10 @@ def step_two() -> None:
     
     if today.weekday() < 5:
         print("Today is a weekday.  Do a weekday task.")
-        raise GoToStep("weekday")
+        raise GoToStep(weekday)
     if today.weekday() == 5:
         print("Today is Saturday.  Do a Saturday task.")
-        raise GoToStep("saturday")
+        raise GoToStep(saturday)
         
     print("Today is a Sunday.  Proceed to the next step.")
     return None
@@ -123,17 +123,17 @@ def step_two() -> None:
 @workflow.step(paths=[GoToStepPath("step_three")])
 def sunday() -> None:
     print("Hello, I am Sunday step.")
-    raise GoToStep("step_three")
+    raise GoToStep(step_three)
 
 @workflow.step(paths=[GoToStepPath("step_three")])
 def weekday() -> None:
     print("Hello, I am the extra weekday step.")
-    raise GoToStep("step_three")
+    raise GoToStep(step_three)
 
 @workflow.step(paths=[GoToStepPath("step_three")])
 def saturday() -> None:
     print("Hello, I am the extra saturday step.")
-    raise GoToStep("step_three")
+    raise GoToStep(step_three)
 
 @workflow.step
 def step_three() -> None:

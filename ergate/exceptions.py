@@ -2,6 +2,8 @@ from typing import Any
 
 from pydantic import ValidationError  # noqa: F401
 
+from .workflow_step import WorkflowStep
+
 
 class ErgateError(Exception):
     """Base class for ergate exceptions."""
@@ -15,7 +17,7 @@ class ReverseGoToError(ErgateError):
     """Raised when a workflow/step attempts to `go to` an earlier step."""
 
 
-class UnknownStepNameError(ErgateError):
+class UnknownStepError(ErgateError):
     """Raised when a workflow/step attempts to `go to` an unknown step."""
 
 
@@ -38,27 +40,9 @@ class GoToEnd(ErgateError):  # noqa: N818
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
-    def __init__(self, value: int | str, *, retval: Any = None):
-        self.value = value
+    def __init__(self, step: WorkflowStep, *, retval: Any = None):
+        self.step = step
         self.retval = retval
-
-    @property
-    def is_index(self) -> bool:
-        return isinstance(self.value, int)
-
-    @property
-    def n(self) -> int:
-        assert isinstance(self.value, int)
-        return self.value
-
-    @property
-    def is_step_name(self) -> bool:
-        return isinstance(self.value, str)
-
-    @property
-    def step_name(self) -> str:
-        assert isinstance(self.value, str)
-        return self.value
 
 
 class SkipNSteps(ErgateError):  # noqa: N818

@@ -2,7 +2,16 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
-from typing import TYPE_CHECKING, Any, Callable, Generic, ParamSpec, TypeVar
+from types import NoneType
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Generic,
+    ParamSpec,
+    TypeVar,
+    get_type_hints,
+)
 
 from .depends_cache import DependsCache
 from .inspect import build_function_arg_info
@@ -21,11 +30,15 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self,
         workflow: Workflow,
         callable: Callable[CallableSpec, CallableRetval],
+        index: int,
+        *,
+        paths: list[WorkflowPath] | None = None,
     ) -> None:
+        self.index = index
         self.workflow = workflow
         self.callable = callable
         self.arg_info = build_function_arg_info(callable)
-        self.paths: list[WorkflowPath] = [NextStepPath()]
+        self.paths = self._prepare_paths(paths)
 
     @property
     def name(self) -> str:
@@ -42,6 +55,20 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
                 user_context,
                 last_return_value,
             )
+
+    def _prepare_paths(self, paths: list[WorkflowPath] | None) -> list[WorkflowPath]:
+        if paths is None:
+            return [NextStepPath()]
+
+        prepared = [*paths]
+
+        hints = get_type_hints(self.callable)
+        if hints["return"] is not NoneType and not any(
+            isinstance(path, NextStepPath) for path in prepared
+        ):
+            prepared.append(NextStepPath())
+
+        return prepared
 
     def __call__(
         self,

@@ -1,15 +1,13 @@
-from types import NoneType
 from typing import (
     Callable,
     Iterator,
     ParamSpec,
     TypeAlias,
     TypeVar,
-    get_type_hints,
     overload,
 )
 
-from .exceptions import ReverseGoToError, UnknownStepNameError
+from .exceptions import ReverseGoToError, UnknownStepError
 from .paths import GoToEndPath, GoToStepPath, NextStepPath, SkipNStepsPath, WorkflowPath
 from .workflow_step import WorkflowStep
 
@@ -24,20 +22,15 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
-        self._step_names: dict[str, int] = {}
+        self._paths: dict[int, list[list[WorkflowPathTypeHint]]] = {}
 
-    def __getitem__(self, key: int | str) -> WorkflowStep:
-        index = self.get_index_by_step_name(key) if isinstance(key, str) else key
-
+    def __getitem__(self, key: int) -> WorkflowStep:
         try:
-            return self._steps[index]
+            return self._steps[key]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
-                f"- tried to access index {index}"
-                f' ("{key}")'
-                if isinstance(key, str)
-                else ""
+                f"- tried to access index {key}"
             ) from None
 
     def __iter__(self) -> Iterator[WorkflowStep]:
@@ -45,6 +38,10 @@ class Workflow:
 
     def __len__(self) -> int:
         return len(self._steps)
+
+    @property
+    def paths(self):
+        return self._paths
 
     def _calculate_paths(
         self,
@@ -63,7 +60,7 @@ class Workflow:
                 )
                 raise ValueError(err)
 
-            if path not in self._steps[index].paths:
+            if path not in self[index].paths:
                 err = (
                     f"Failed to calculate workflow path from step {index}: "
                     f"path not registered: {path}"
@@ -87,7 +84,7 @@ class Workflow:
             paths.append([current_step])
             return paths
 
-        for next_path in self._steps[next_index].paths:
+        for next_path in self[next_index].paths:
             paths += self._calculate_paths(next_index, path=next_path)
 
         if not initial:
@@ -98,28 +95,33 @@ class Workflow:
     def calculate_paths(self, index: int) -> list[list[WorkflowPathTypeHint]]:
         return self._calculate_paths(index, initial=True)
 
+    def update_paths(self) -> None:
+        self._paths = {step.index: self.calculate_paths(step.index) for step in self}
+
     def _find_next_step(self, index: int, path: WorkflowPath) -> int:
         if isinstance(path, GoToEndPath):
             return len(self)
 
         if isinstance(path, GoToStepPath):
-            return (
-                path.n if path.is_index else self.get_index_by_step_name(path.step_name)
-            )
+            return self.get_step_index_by_name(path.step_name)
 
         if isinstance(path, SkipNStepsPath):
             return index + 1 + path.n
 
         return index + 1
 
-    def get_index_by_step_name(self, step_name: str) -> int:
+    def get_step_index_by_name(self, step_name: str) -> int:
         try:
-            return self._step_names[step_name]
-        except KeyError:
-            raise UnknownStepNameError(
+            return next(step.index for step in self if step.name == step_name)
+        except StopIteration:
+            raise UnknownStepError(
                 f'No step named "{step_name}" is registered in '
                 f'Workflow "{self.unique_name}"'
             )
+
+    def register(self) -> "Workflow":
+        self.update_paths()
+        return self
 
     @overload
     def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
@@ -138,21 +140,8 @@ class Workflow:
         paths: list[WorkflowPath] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            step = WorkflowStep(self, func)
-
-            self._step_names[step.name] = len(self)
-
+            step = WorkflowStep(self, func, len(self), paths=paths)
             self._steps.append(step)
-
-            if paths:
-                step.paths = paths
-
-            hints = get_type_hints(func)
-            if hints["return"] is not NoneType and not any(
-                isinstance(path, NextStepPath) for path in step.paths
-            ):
-                step.paths.append(NextStepPath())
-
             return step
 
         if func is None:
