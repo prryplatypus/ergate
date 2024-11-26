@@ -28,7 +28,7 @@ class Workflow:
         try:
             return self._steps[index]
         except IndexError:
-            raise IndexError(
+            raise UnknownStepError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
                 f"- tried to access step #{index}"
             ) from None
