@@ -123,6 +123,10 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
+    def register(self) -> "Workflow":
+        self.update_paths()
+        return self
+
     @overload
     def step(self, func: CallableTypeHint) -> WorkflowStepTypeHint: ...
 
@@ -142,7 +146,6 @@ class Workflow:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
             step = WorkflowStep(self, func, len(self), paths=paths)
             self._steps.append(step)
-            self.update_paths()
             return step
 
         if func is None:
