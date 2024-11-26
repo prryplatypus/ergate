@@ -22,6 +22,7 @@ class Workflow:
     def __init__(self, unique_name: str) -> None:
         self.unique_name = unique_name
         self._steps: list[WorkflowStep] = []
+        self._paths: dict[int, list[list[WorkflowPathTypeHint]]] = {}
 
     def __getitem__(self, key: int) -> WorkflowStep:
         try:
@@ -37,6 +38,10 @@ class Workflow:
 
     def __len__(self) -> int:
         return len(self._steps)
+
+    @property
+    def paths(self):
+        return self._paths
 
     def _calculate_paths(
         self,
@@ -94,6 +99,9 @@ class Workflow:
         )
         return self._calculate_paths(index, initial=True)
 
+    def update_paths(self) -> None:
+        self._paths = {step.index: self.calculate_paths(step.index) for step in self}
+
     def _find_next_step(self, index: int, path: WorkflowPath) -> int:
         if isinstance(path, GoToEndPath):
             return len(self)
@@ -108,7 +116,7 @@ class Workflow:
 
     def get_step_index_by_name(self, step_name: str) -> int:
         try:
-            return next(step.index for step in iter(self) if step.name == step_name)
+            return next(step.index for step in self if step.name == step_name)
         except StopIteration:
             raise UnknownStepError(
                 f'No step named "{step_name}" is registered in '
@@ -134,6 +142,7 @@ class Workflow:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
             step = WorkflowStep(self, func, len(self), paths=paths)
             self._steps.append(step)
+            self.update_paths()
             return step
 
         if func is None:
