@@ -55,7 +55,7 @@ class Workflow:
                 )
                 raise ValueError(err)
 
-            if path not in self._steps[index].paths:
+            if path not in self[index].paths:
                 err = (
                     f"Failed to calculate workflow path from step {index}: "
                     f"path not registered: {path}"
@@ -79,7 +79,7 @@ class Workflow:
             paths.append([current_step])
             return paths
 
-        for next_path in self._steps[next_index].paths:
+        for next_path in self[next_index].paths:
             paths += self._calculate_paths(next_index, path=next_path)
 
         if not initial:
@@ -90,7 +90,7 @@ class Workflow:
     def calculate_paths(self, index: int) -> list[list[WorkflowPathTypeHint]]:
         print(
             f"===411.1=== Calculating paths in workflow {self.unique_name} "
-            f"from step {self._steps[index]} ({index})"
+            f"from step {self[index]} ({index})"
         )
         return self._calculate_paths(index, initial=True)
 
@@ -108,7 +108,7 @@ class Workflow:
 
     def get_step_index_by_name(self, step_name: str) -> int:
         try:
-            return next(step.index for step in self._steps if step.name == step_name)
+            return next(step.index for step in iter(self) if step.name == step_name)
         except StopIteration:
             raise UnknownStepError(
                 f'No step named "{step_name}" is registered in '
@@ -132,7 +132,7 @@ class Workflow:
         paths: list[WorkflowPath] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            step = WorkflowStep(self, func, len(self._steps), paths=paths)
+            step = WorkflowStep(self, func, len(self), paths=paths)
             self._steps.append(step)
             return step
 
