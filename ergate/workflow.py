@@ -24,13 +24,13 @@ class Workflow:
         self._steps: list[WorkflowStep] = []
         self._paths: dict[int, list[list[WorkflowPathTypeHint]]] = {}
 
-    def __getitem__(self, key: int) -> WorkflowStep:
+    def __getitem__(self, index: int) -> WorkflowStep:
         try:
-            return self._steps[key]
+            return self._steps[index]
         except IndexError:
             raise IndexError(
                 f'Workflow "{self.unique_name}" has {len(self)} steps '
-                f"- tried to access index {key}"
+                f"- tried to access step #{index}"
             ) from None
 
     def __iter__(self) -> Iterator[WorkflowStep]:
