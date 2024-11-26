@@ -1,9 +1,9 @@
 # Using workflow step names for manual ordering
 
-Workflow steps may be manually ordered and redirected by use of `GoToStep` and step names.
+Workflow steps may be manually ordered and redirected by use of `GoToEnd`, GoToStep` and `SkipNSteps` exceptions.
 
-Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing either the workflow step 
-function name or its numeric index.
+Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing the workflow step 
+function along with the optional return value.
 
 Workflows may also be advanced directly to completion by raising the `GoToEnd` exception.
 
@@ -11,7 +11,8 @@ Workflows may also be advanced by a set number of steps by raising the `SkipNSte
 
 ## Defining manual workflow order
 
-The following workflow contains five steps in total, which are executed in a specific order as directed by the step names.
+The following workflow contains five steps in total, which are executed in a specific order as directed by the 
+exceptions.
 
 ```py title="my_ordered_workflow.py"
 from ergate import GoToEnd, GoToStep, Workflow
@@ -25,7 +26,7 @@ def step_1() -> None:
 @workflow.step
 def step_2() -> None:
     print("Hello, I am step 2")
-    raise GoToStep("step_4")
+    raise GoToStep(step_4)
 
 @workflow.step
 def step_3() -> None:
@@ -34,7 +35,7 @@ def step_3() -> None:
 @workflow.step
 def step_4() -> None:
     print("Hello, I am step 4")
-    raise GoToStep("step_5")
+    raise GoToStep(step_5)
 
 @workflow.step
 def step_5() -> None:
@@ -78,18 +79,18 @@ def step_1(input_value) -> None:
     
     match input_value:
         case "a":
-            raise GoToStep("step_a2")
+            raise GoToStep(step_a2)
         case "b":
-            raise GoToStep("step_b2")
+            raise GoToStep(step_b2)
         case "c":
-            raise GoToStep("step_c2")
+            raise GoToStep(step_c2)
         case _:
-            raise GoToStep("step_default2")
+            raise GoToStep(step_default2)
 
 @workflow.step
 def step_default2() -> None:
     print("Hello, I am step default.2")
-    raise GoToStep("step_4")
+    raise GoToStep(step_4)
 
 @workflow.step
 def step_a2() -> None:
@@ -98,7 +99,7 @@ def step_a2() -> None:
 @workflow.step
 def step_a3() -> None:
     print("Hello, I am step a.3")
-    raise GoToStep("step_4")
+    raise GoToStep(step_4)
 
 @workflow.step
 def step_b2() -> None:
@@ -107,7 +108,7 @@ def step_b2() -> None:
 @workflow.step
 def step_b3() -> None:
     print("Hello, I am step b.3")
-    raise GoToStep("step_4")
+    raise GoToStep(step_4)
 
 @workflow.step
 def step_c2() -> None:
@@ -146,7 +147,7 @@ If `input_value` is `c`, the workflow path is:
 2. `step_c2`
 3. `step_c3`
 
-with `step_4` skipped by `GoToEnd` having been raised in `step_c3`.
+with `step_4` skipped by the `GoToEnd` raised in `step_c3`.
 
 If `input_value` is anything else, the workflow path is:
 
