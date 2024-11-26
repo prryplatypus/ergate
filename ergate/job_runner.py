@@ -30,8 +30,8 @@ class JobRunner(Generic[JobType]):
         input_value = job.get_input_value()
 
         workflow = self.workflow_registry[job.workflow_name]
-        step_to_run = workflow[job.current_step]
         paths = workflow.paths[job.current_step]
+        step_to_run = workflow[job.current_step]
 
         job.mark_running(step_to_run)
         self.state_store.update(job)
