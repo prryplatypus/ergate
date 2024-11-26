@@ -50,8 +50,6 @@ class Workflow:
         initial: bool = False,
         path: WorkflowPath | None = None,
     ) -> list[list[WorkflowPathTypeHint]]:
-        paths: list[list[WorkflowPathTypeHint]] = []
-
         if not initial:
             if path is None:
                 err = (
@@ -79,6 +77,7 @@ class Workflow:
             next_index = index
 
         current_step = (path, index)
+        paths: list[list[WorkflowPathTypeHint]] = []
 
         if next_index >= len(self):
             paths.append([current_step])
