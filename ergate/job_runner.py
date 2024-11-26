@@ -36,7 +36,7 @@ class JobRunner(Generic[JobType]):
         for i, path in enumerate(paths):
             print(
                 f"===511.1=== {workflow.unique_name}.{job.current_step}.{i}: ",
-                [step[0].step_name for step in path]
+                [step[1] for step in path]
             )
 
         job.mark_running(step_to_run)
