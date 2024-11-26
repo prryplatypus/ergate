@@ -33,12 +33,6 @@ class JobRunner(Generic[JobType]):
         step_to_run = workflow[job.current_step]
         paths = workflow.paths[job.current_step]
 
-        for i, path in enumerate(paths):
-            print(
-                f"===511.1=== {workflow.unique_name}.{job.current_step}.{i}: ",
-                [step[1] for step in path]
-            )
-
         job.mark_running(step_to_run)
         self.state_store.update(job)
 
