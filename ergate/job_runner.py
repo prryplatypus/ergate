@@ -39,17 +39,20 @@ class JobRunner(Generic[JobType]):
         try:
             try:
                 LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
+
                 with step_to_run.build_args(job.user_context, input_value) as all_args:
                     args, kwargs = all_args
                     retval = step_to_run(*args, **kwargs)
             except AbortJob as exc:
                 LOG.info("User requested to abort job: %s", exc)
+
                 job.mark_aborted(exc.message)
             except GoToEnd as exc:
                 LOG.info(
                     "User requested to go to end of workflow - return value: %s",
                     exc.retval,
                 )
+
                 job.mark_step_n_completed(
                     job.steps_completed, exc.retval, job.steps_completed + 1
                 )
