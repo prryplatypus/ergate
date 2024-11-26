@@ -33,14 +33,14 @@ class AbortJob(ErgateError):  # noqa: N818
 class GoToEnd(ErgateError):  # noqa: N818
     """Raised from a step to immediately complete the job."""
 
-    def __init__(self, retval: Any = None):
+    def __init__(self, retval: Any = None) -> None:
         self.retval = retval
 
 
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
-    def __init__(self, step: WorkflowStep, *, retval: Any = None):
+    def __init__(self, step: WorkflowStep, *, retval: Any = None) -> None:
         self.retval = retval
         self.step = step
 
@@ -48,6 +48,6 @@ class GoToStep(ErgateError):  # noqa: N818
 class SkipNSteps(ErgateError):  # noqa: N818
     """Raised from a step to skip N steps."""
 
-    def __init__(self, n: int, retval: Any = None):
+    def __init__(self, n: int, retval: Any = None) -> None:
         self.n = n
         self.retval = retval

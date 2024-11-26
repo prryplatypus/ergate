@@ -40,7 +40,7 @@ class Workflow:
         return len(self._steps)
 
     @property
-    def paths(self):
+    def paths(self) -> dict[int, list[list[WorkflowPathTypeHint]]]:
         return self._paths
 
     def _calculate_paths(
