@@ -41,8 +41,8 @@ class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
     def __init__(self, step: WorkflowStep, *, retval: Any = None):
-        self.step = step
         self.retval = retval
+        self.step = step
 
 
 class SkipNSteps(ErgateError):  # noqa: N818
