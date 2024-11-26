@@ -88,6 +88,10 @@ class Workflow:
         return paths
 
     def calculate_paths(self, index: int) -> list[list[WorkflowPathTypeHint]]:
+        print(
+            f"===411.1=== Calculating paths in workflow {self.unique_name} "
+            f"from step {self._steps[index]} ({index})"
+        )
         return self._calculate_paths(index, initial=True)
 
     def _find_next_step(self, index: int, path: WorkflowPath) -> int:
