@@ -3,7 +3,15 @@ from __future__ import annotations
 from collections.abc import Generator
 from contextlib import ExitStack, contextmanager
 from types import NoneType
-from typing import TYPE_CHECKING, Any, Callable, Generic, ParamSpec, TypeVar, get_type_hints
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Generic,
+    ParamSpec,
+    TypeVar,
+    get_type_hints,
+)
 
 from .depends_cache import DependsCache
 from .inspect import build_function_arg_info
