@@ -118,7 +118,7 @@ class Workflow:
                 f'Workflow "{self.unique_name}"'
             )
 
-    def register(self) -> None:
+    def finalize(self) -> None:
         self.update_paths()
 
     @overload

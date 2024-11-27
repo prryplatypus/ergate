@@ -21,5 +21,5 @@ class WorkflowRegistry:
             err = f'A workflow named "{workflow.unique_name}" is already registered'
             raise ValueError(err)
 
-        workflow.register()
+        workflow.finalize()
         self._workflows[workflow.unique_name] = workflow
