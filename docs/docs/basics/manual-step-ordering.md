@@ -74,7 +74,7 @@ from ergate import GoToEnd, GoToStep, Workflow
 workflow = Workflow(unique_name="my_ordered_workflow_2")
 
 @workflow.step
-def step_1(input_value) -> None:
+def step_1(input_value: str) -> None:
     print("Hello, I am step 1")
     
     match input_value:
