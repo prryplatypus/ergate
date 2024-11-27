@@ -155,7 +155,7 @@ If `input_value` is anything else, the workflow path is:
 2. `step_default2`
 4. `step_4`
 
-Note that the length of the workflows can vary when utilising rhese exceptions.
+Note that the length of the workflows can vary when utilising these exceptions.
 
 ## Errata
 * Because of how the `percent_completed` and `total_steps` values are calculated, utilising manual step ordering with 
