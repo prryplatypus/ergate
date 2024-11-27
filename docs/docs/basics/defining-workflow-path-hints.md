@@ -94,7 +94,7 @@ the list of paths.
 For example:
 
 ```py title="workflow_with_paths_2.py"
-from ergate import GoToEnd, GoToEndPath, GoToStep, GoToStepPath, NextStepPath, Workflow
+from ergate import GoToEnd, GoToEndPath, GoToStep, GoToStepPath, Workflow
 from datetime import date
 
 workflow = Workflow(unique_name="workflow_with_paths_2")
