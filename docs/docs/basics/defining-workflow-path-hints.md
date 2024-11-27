@@ -4,7 +4,7 @@ In order to facilitate manually-ordered workflow steps with branching paths, spe
 the total number of steps for the workflow and thereby calculate the completion percentage.
 
 These may be seen as similar to Python type hints, in that they do not directly affect the flow and operation of the 
-workflow, but provide metadata allowing the engine to better determine information about the workflow operaion, viz. the
+workflow, but provide metadata allowing the engine to better determine information about the workflow operation, viz. the
 completion percentage and total steps.
 
 This logic may be enabled by specifying the `paths=` kwarg for a given `@workflow.step()` decorator.
