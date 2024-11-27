@@ -69,8 +69,7 @@ class Workflow:
 
             if next_index <= index:
                 raise ReverseGoToError(
-                    "User attempted to go to an earlier step, "
-                    "which is not permitted."
+                    "User attempted to go to an earlier step, which is not permitted."
                 )
         else:
             path = NextStepPath()
