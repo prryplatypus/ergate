@@ -74,7 +74,7 @@ paths:
 For calculating `percent_completed` and `total_steps`, it will use the longest of the potential branches.
 
 When `step_4` is reached and completed, it will then reevaluate the branches to determine which were not taken, and 
-discard them, leaving only the relevant branch(es) for recalcation and refinement of the `percent_completed` and 
+discard them, leaving only the relevant branch(es) for recalculation and refinement of the `percent_completed` and 
 `total_steps` values.
 
 The resulting workflow order from above is:
