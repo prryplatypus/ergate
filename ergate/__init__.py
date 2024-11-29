@@ -7,13 +7,12 @@ from .exceptions import (
     GoToStep,
     InvalidDefinitionError,
     ReverseGoToError,
-    SkipNSteps,
     UnknownStepError,
     ValidationError,
 )
 from .job import Job
 from .job_status import JobStatus
-from .paths import GoToEndPath, GoToStepPath, NextStepPath, SkipNStepsPath
+from .paths import GoToEndPath, GoToStepPath, NextStepPath
 from .queue import QueueProtocol
 from .state_store import StateStoreProtocol
 from .workflow import Workflow, WorkflowStep
@@ -35,8 +34,6 @@ __all__ = [
     "NextStepPath",
     "QueueProtocol",
     "ReverseGoToError",
-    "SkipNSteps",
-    "SkipNStepsPath",
     "StateStoreProtocol",
     "UnknownStepError",
     "ValidationError",

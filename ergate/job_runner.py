@@ -1,11 +1,11 @@
 from typing import Generic, TypeVar
 
-from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError, SkipNSteps
+from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
 from .handler import ErrorHookHandler
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
 from .log import LOG
-from .paths import GoToStepPath, NextStepPath, SkipNStepsPath
+from .paths import GoToStepPath, NextStepPath
 from .queue import QueueProtocol
 from .state_store import StateStoreProtocol
 from .workflow_registry import WorkflowRegistry
@@ -82,22 +82,6 @@ class JobRunner(Generic[JobType]):
 
                 job.mark_step_n_completed(
                     exc.step.index, exc.retval, job.steps_completed + remaining_steps
-                )
-            except SkipNSteps as exc:
-                LOG.info("User requested to skip %d steps", exc.n)
-
-                remaining_steps = max(
-                    (
-                        len(path)
-                        for path in paths
-                        if isinstance(path[0][0], SkipNStepsPath)
-                        and path[0][0].n == exc.n
-                    ),
-                    default=len(workflow) - job.current_step,
-                )
-
-                job.mark_n_steps_completed(
-                    exc.n + 1, exc.retval, job.steps_completed + remaining_steps
                 )
             except Exception as exc:
                 # Since `except GoToStep` potentially raises an exception, the logic

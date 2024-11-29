@@ -15,10 +15,3 @@ class GoToStepPath(WorkflowPath):
 
 class NextStepPath(WorkflowPath):
     """WorkflowPath class for the default `return` from function."""
-
-
-class SkipNStepsPath(WorkflowPath):
-    """WorkflowPath class for the `SkipNSteps` exception."""
-
-    def __init__(self, n: int) -> None:
-        self.n = n
