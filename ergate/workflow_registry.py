@@ -20,4 +20,6 @@ class WorkflowRegistry:
         if workflow.unique_name in self._workflows:
             err = f'A workflow named "{workflow.unique_name}" is already registered'
             raise ValueError(err)
+
+        workflow.finalize()
         self._workflows[workflow.unique_name] = workflow
