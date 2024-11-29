@@ -99,8 +99,8 @@ class JobRunner(Generic[JobType]):
                     default=len(workflow) - job.current_step + 1,
                 )
 
-                job.mark_n_steps_completed(
-                    1, retval, job.steps_completed + remaining_steps
+                job.mark_step_n_completed(
+                    job.current_step + 1, retval, job.steps_completed + remaining_steps
                 )
         except Exception as exc:
             LOG.exception("Job raised an exception")
