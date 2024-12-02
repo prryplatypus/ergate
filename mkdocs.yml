@@ -60,3 +60,5 @@ nav:
     - basics/input-values.md
     - basics/dependencies.md
     - basics/user-context.md
+    - basics/manual-step-ordering.md
+    - basics/workflow-path-hints.md
