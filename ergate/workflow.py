@@ -8,7 +8,7 @@ from typing import (
 )
 
 from .exceptions import ReverseGoToError, UnknownStepError
-from .paths import GoToEndPath, GoToStepPath, NextStepPath, SkipNStepsPath, WorkflowPath
+from .paths import GoToEndPath, GoToStepPath, NextStepPath, WorkflowPath
 from .workflow_step import WorkflowStep
 
 CallableSpec = ParamSpec("CallableSpec")
@@ -102,9 +102,6 @@ class Workflow:
 
         if isinstance(path, GoToStepPath):
             return self.get_step_index_by_name(path.step_name)
-
-        if isinstance(path, SkipNStepsPath):
-            return index + 1 + path.n
 
         return index + 1
 

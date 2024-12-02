@@ -10,7 +10,7 @@ completion percentage and total steps.
 This logic may be enabled by specifying the `paths=` kwarg for a given `@workflow.step()` decorator.
 
 * It is not necessary to specify `paths` for workflow steps which only return a value via `return`.
-* It is suggested to define `paths` for steps which utilise the `SkipNSteps` or `GoToEnd` exceptions. 
+* It is suggested to define `paths` for steps which utilise the `GoToEnd` exceptions. 
 * It is recommended to define `paths` for steps which utilise the `GoToStep` exception, or which have branching logic with multiple potential paths.
 
 `paths` may be freely defined alongside other kwargs in the `@workflow.step` decorator.

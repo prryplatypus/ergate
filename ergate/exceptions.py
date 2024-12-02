@@ -43,11 +43,3 @@ class GoToStep(ErgateError):  # noqa: N818
     def __init__(self, step: WorkflowStep, *, retval: Any = None) -> None:
         self.retval = retval
         self.step = step
-
-
-class SkipNSteps(ErgateError):  # noqa: N818
-    """Raised from a step to skip N steps."""
-
-    def __init__(self, n: int, retval: Any = None) -> None:
-        self.n = n
-        self.retval = retval
