@@ -1,13 +1,11 @@
 # Using workflow step names for manual ordering
 
-Workflow steps may be manually ordered and redirected by use of `GoToEnd`, `GoToStep` and `SkipNSteps` exceptions.
+Workflow steps may be manually ordered and redirected by use of `GoToEnd` and `GoToStep` exceptions.
 
 Workflow ordering can be preempted and redirected by raising the `GoToStep` exception, passing the workflow step 
 function along with the optional return value.
 
 Workflows may also be advanced directly to completion by raising the `GoToEnd` exception.
-
-Workflows may also be advanced by a set number of steps by raising the `SkipNSteps` exception.
 
 ## Defining manual workflow order
 

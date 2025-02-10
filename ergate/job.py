@@ -41,19 +41,7 @@ class Job(BaseModel):
         return_value: Any,
         total_steps: int,
     ) -> None:
-        self.mark_n_steps_completed(
-            n - self.current_step,
-            return_value,
-            total_steps,
-        )
-
-    def mark_n_steps_completed(
-        self,
-        n: int,
-        return_value: Any,
-        total_steps: int,
-    ) -> None:
-        self.current_step += n
+        self.current_step = n
         self.steps_completed = min(self.steps_completed + 1, total_steps)
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
         self.status = (
