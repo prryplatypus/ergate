@@ -59,4 +59,5 @@ class Job(BaseModel):
             JobStatus.ABORTED,
             JobStatus.COMPLETED,
             JobStatus.FAILED,
+            JobStatus.CANCELLED,
         )
