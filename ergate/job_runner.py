@@ -121,6 +121,9 @@ class JobRunner(Generic[JobType]):
             except KeyboardInterrupt:
                 return
 
+            if job.should_be_requeued:
+                return
+
             LOG.info("Job acquired")
             try:
                 with DelayedKeyboardInterrupt():
