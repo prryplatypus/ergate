@@ -54,6 +54,7 @@ class Job(BaseModel):
     def mark_aborted(self, message: str) -> None:
         self.status = JobStatus.ABORTED
 
+    @property
     def should_be_requeued(self) -> bool:
         return self.status not in (
             JobStatus.ABORTED,
