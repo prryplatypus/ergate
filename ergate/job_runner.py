@@ -109,7 +109,7 @@ class JobRunner(Generic[JobType]):
 
         self.state_store.update(job)
 
-        if job.should_be_requeued:
+        if job.should_be_requeued():
             LOG.info("Requeuing job")
             self.queue.put(job)
 
@@ -121,7 +121,7 @@ class JobRunner(Generic[JobType]):
             except KeyboardInterrupt:
                 return
 
-            if job.should_be_requeued:
+            if job.should_be_requeued():
                 return
 
             LOG.info("Job acquired")

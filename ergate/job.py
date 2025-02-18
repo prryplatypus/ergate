@@ -54,7 +54,6 @@ class Job(BaseModel):
         )
         self.last_return_value = return_value
 
-    @property
     def should_be_requeued(self) -> bool:
         return self.status not in (
             JobStatus.ABORTED,
