@@ -57,7 +57,7 @@ class Job(BaseModel):
     def should_be_requeued(self) -> bool:
         return self.status not in (
             JobStatus.ABORTED,
+            JobStatus.CANCELLED,
             JobStatus.COMPLETED,
             JobStatus.FAILED,
-            JobStatus.CANCELLED,
         )
