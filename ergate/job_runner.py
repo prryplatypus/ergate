@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar
 
-from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
+from .exceptions import AbortJob, CancelJob, GoToEnd, GoToStep, ReverseGoToError
 from .handler import ErrorHookHandler
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
@@ -102,6 +102,9 @@ class JobRunner(Generic[JobType]):
                 job.mark_step_n_completed(
                     job.current_step + 1, retval, job.steps_completed + remaining_steps
                 )
+        except CancelJob:
+            LOG.exception("Job was cancelled")
+            job.mark_cancelled()
         except Exception as exc:
             LOG.exception("Job raised an exception")
             job.mark_failed(exc)
