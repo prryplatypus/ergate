@@ -2,6 +2,7 @@ from .annotations import Context, Depends, Input
 from .app import Ergate
 from .exceptions import (
     AbortJob,
+    CancelJob,
     ErgateError,
     GoToEnd,
     GoToStep,
@@ -19,6 +20,7 @@ from .workflow import Workflow, WorkflowStep
 
 __all__ = [
     "AbortJob",
+    "CancelJob",
     "Context",
     "Depends",
     "Ergate",

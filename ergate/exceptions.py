@@ -30,6 +30,10 @@ class AbortJob(ErgateError):  # noqa: N818
         self.message = message
 
 
+class CancelJob(ErgateError):  # noqa: N818
+    """Raised when a workflow is detected as having been cancelled."""
+
+
 class GoToEnd(ErgateError):  # noqa: N818
     """Raised from a step to immediately complete the job."""
 
