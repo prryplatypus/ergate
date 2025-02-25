@@ -29,11 +29,17 @@ class Job(BaseModel):
 
         return copy.deepcopy(input_val)
 
-    def mark_running(self, step: WorkflowStep) -> None:
-        self.status = JobStatus.RUNNING
+    def mark_aborted(self, message: str) -> None:
+        self.status = JobStatus.ABORTED
+
+    def mark_cancelled(self) -> None:
+        self.status = JobStatus.CANCELLED
 
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
+
+    def mark_running(self, step: WorkflowStep) -> None:
+        self.status = JobStatus.RUNNING
 
     def mark_step_n_completed(
         self,
@@ -51,12 +57,10 @@ class Job(BaseModel):
         )
         self.last_return_value = return_value
 
-    def mark_aborted(self, message: str) -> None:
-        self.status = JobStatus.ABORTED
-
     def should_be_requeued(self) -> bool:
         return self.status not in (
             JobStatus.ABORTED,
+            JobStatus.CANCELLED,
             JobStatus.COMPLETED,
             JobStatus.FAILED,
         )
