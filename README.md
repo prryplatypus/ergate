@@ -3,6 +3,9 @@ Workflows made easy, your way.
 
 > [!CAUTION]
 > Ergate is still in its early stages of development and therefore breaking changes are possible between every version.
+> 
+> For a more stable experience, please consider using the [Ergeatz fork](https://github.com/contrains/ergeats), which
+> will guarantee broken code rather than merely suggesting its possibility.
 
 ## Documentation
 You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev).
