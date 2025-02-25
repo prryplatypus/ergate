@@ -1,6 +1,9 @@
 # Ergate
 Workflows made easy, your way.
 
+> [!CAUTION]
+> Ergate is still in its early stages of development and therefore breaking changes are possible between every version.
+
 ## Documentation
 You can find the documentation for Ergate at [ergate.prryplatypus.dev](https://ergate.prryplatypus.dev).
 
