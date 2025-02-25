@@ -13,6 +13,7 @@ from .exceptions import (
 from .job import Job
 from .job_status import JobStatus
 from .paths import GoToEndPath, GoToStepPath, NextStepPath
+from .publisher import Publisher
 from .queue import QueueProtocol
 from .state_store import StateStoreProtocol
 from .workflow import Workflow, WorkflowStep
@@ -32,6 +33,7 @@ __all__ = [
     "Job",
     "JobStatus",
     "NextStepPath",
+    "Publisher",
     "QueueProtocol",
     "ReverseGoToError",
     "StateStoreProtocol",
