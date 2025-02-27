@@ -30,6 +30,8 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.scripts]
+ergate = "ergate.cli.entrypoint:run"
 
 [tool.setuptools]
 packages = ["ergate"]
