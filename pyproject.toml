@@ -33,9 +33,8 @@ dynamic = ["version"]
 [project.scripts]
 ergate = "ergate.cli.entrypoint:run"
 
-[tool.setuptools]
-packages = ["ergate"]
-
+[tool.setuptools.packages.find]
+include = ["ergate*"]
 
 [project.urls]
 Repository = "https://github.com/prryplatypus/ergate"
@@ -52,9 +51,6 @@ test = [
 
 [tool.setuptools.dynamic]
 version = {attr = "ergate.__version__.VERSION"}
-
-[tool.setuptools.packages.find]
-include = ["ergate*"]
 
 [tool.ruff]
 preview = true
