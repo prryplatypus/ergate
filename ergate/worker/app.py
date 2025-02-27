@@ -4,24 +4,25 @@ from collections.abc import Callable
 from contextlib import ExitStack
 from typing import Generic, TypeVar
 
-from .handler import ErrorHookHandler
-from .job import Job
-from .job_runner import JobRunner
-from .queue import QueueProtocol
-from .state_store import StateStoreProtocol
-from .types import ExceptionHook, Lifespan
+from ..common.job import Job
+from ..common.types import Lifespan
+from .error_hook_handler import ErrorHookHandler
+from .queue import WorkerQueueProtocol
+from .runner import JobRunner
+from .state_store import WorkerStateStoreProtocol
+from .types import ExceptionHook
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
 
 JobType = TypeVar("JobType", bound=Job)
 
 
-class Ergate(Generic[JobType]):
+class Worker(Generic[JobType]):
     def __init__(
         self,
-        queue: QueueProtocol[JobType],
-        state_store: StateStoreProtocol[JobType],
-        lifespan: Lifespan[Ergate[JobType]] | None = None,
+        queue: WorkerQueueProtocol[JobType],
+        state_store: WorkerStateStoreProtocol[JobType],
+        lifespan: Lifespan[Worker[JobType]] | None = None,
         error_hook_handler: ErrorHookHandler[JobType] | None = None,
     ) -> None:
         self.lifespan = lifespan

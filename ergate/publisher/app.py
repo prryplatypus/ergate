@@ -4,9 +4,9 @@ from contextlib import ExitStack
 from time import sleep
 from typing import Generic, TypeVar
 
-from ..interrupt import DelayedKeyboardInterrupt
-from ..job import Job
-from ..types import Lifespan
+from ..common.interrupt import DelayedKeyboardInterrupt
+from ..common.job import Job
+from ..common.types import Lifespan
 from .queue import PublisherQueueProtocol
 from .state_store import PublisherStateStoreProtocol
 

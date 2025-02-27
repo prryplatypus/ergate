@@ -1,7 +1,7 @@
 from typing import Any, Generic, TypeVar
 
-from .job import Job
-from .log import LOG
+from ..common.job import Job
+from ..common.log import LOG
 from .types import ExceptionHook
 
 JobType = TypeVar("JobType", bound=Job)

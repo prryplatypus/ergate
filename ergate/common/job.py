@@ -1,20 +1,20 @@
 import copy
 from datetime import datetime
-from typing import Any
+from typing import Annotated, Any
 
 from pydantic import BaseModel, Field
 
+from ..worker.workflow import WorkflowStep
 from .job_status import JobStatus
-from .workflow import WorkflowStep
 
 
 class Job(BaseModel):
     id: Any = None
     workflow_name: str
-    status: JobStatus = JobStatus.QUEUED
-    current_step: int = Field(default=0, ge=0)
-    steps_completed: int = Field(default=0, ge=0)
-    percent_completed: float = Field(default=0.0, ge=0.0, le=100.0)
+    status: JobStatus = JobStatus.PENDING
+    current_step: Annotated[int, Field(ge=0)] = 0
+    steps_completed: Annotated[int, Field(ge=0)] = 0
+    percent_completed: Annotated[float, Field(ge=0.0, le=100.0)] = 0.0
     initial_input_value: Any = None
     last_return_value: Any = None
     user_context: Any = None
@@ -47,7 +47,7 @@ class Job(BaseModel):
         self.status = (
             JobStatus.COMPLETED
             if self.steps_completed == total_steps
-            else JobStatus.QUEUED
+            else JobStatus.PENDING
         )
         self.last_return_value = return_value
 

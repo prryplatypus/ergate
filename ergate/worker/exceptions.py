@@ -1,16 +1,7 @@
 from typing import Any
 
-from pydantic import ValidationError  # noqa: F401
-
+from ..common.exceptions import ErgateError
 from .workflow_step import WorkflowStep
-
-
-class ErgateError(Exception):
-    """Base class for ergate exceptions."""
-
-
-class InvalidDefinitionError(ErgateError):
-    """Raised when a workflow/step definition is invalid."""
 
 
 class ReverseGoToError(ErgateError):

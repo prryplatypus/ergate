@@ -1,9 +1,9 @@
 from typing import Protocol, TypeVar
 
-from .job import Job
+from ..common.job import Job
 
 JobType = TypeVar("JobType", bound=Job, contravariant=True)
 
 
-class StateStoreProtocol(Protocol[JobType]):
+class WorkerStateStoreProtocol(Protocol[JobType]):
     def update(self, job: JobType) -> None: ...

@@ -1,13 +1,13 @@
 from typing import Generic, TypeVar
 
+from ..common.interrupt import DelayedKeyboardInterrupt
+from ..common.job import Job
+from ..common.log import LOG
+from .error_hook_handler import ErrorHookHandler
 from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
-from .handler import ErrorHookHandler
-from .interrupt import DelayedKeyboardInterrupt
-from .job import Job
-from .log import LOG
 from .paths import GoToStepPath, NextStepPath
-from .queue import QueueProtocol
-from .state_store import StateStoreProtocol
+from .queue import WorkerQueueProtocol
+from .state_store import WorkerStateStoreProtocol
 from .workflow_registry import WorkflowRegistry
 
 JobType = TypeVar("JobType", bound=Job)
@@ -16,9 +16,9 @@ JobType = TypeVar("JobType", bound=Job)
 class JobRunner(Generic[JobType]):
     def __init__(
         self,
-        queue: QueueProtocol[JobType],
+        queue: WorkerQueueProtocol[JobType],
         workflow_registry: WorkflowRegistry,
-        state_store: StateStoreProtocol[JobType],
+        state_store: WorkerStateStoreProtocol[JobType],
         error_hook_handler: ErrorHookHandler[JobType],
     ) -> None:
         self.queue = queue
@@ -108,10 +108,6 @@ class JobRunner(Generic[JobType]):
             self.error_hook_handler.notify(job, exc)
 
         self.state_store.update(job)
-
-        if job.should_be_requeued():
-            LOG.info("Requeuing job")
-            self.queue.put(job)
 
     def run(self) -> None:
         while True:
