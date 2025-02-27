@@ -53,6 +53,9 @@ test = [
 [tool.setuptools.dynamic]
 version = {attr = "ergate.__version__.VERSION"}
 
+[tool.setuptools.packages.find]
+include = ["ergate*"]
+
 [tool.ruff]
 preview = true
 
