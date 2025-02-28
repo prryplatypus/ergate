@@ -2,8 +2,11 @@ from enum import IntEnum, auto
 
 
 class JobStatus(IntEnum):
+    SCHEDULED = auto()
+    """Job is scheduled to be run at a later time"""
+
     PENDING = auto()
-    """Job has not been queued yet"""
+    """Job is waiting to be queued"""
 
     QUEUED = auto()
     """Job is in the queue, awaiting processing"""
