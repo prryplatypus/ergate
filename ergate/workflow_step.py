@@ -63,7 +63,7 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         prepared = [*paths]
 
         hints = get_type_hints(self.callable)
-        if hints["return"] is not NoneType and not any(
+        if hints.get("return") is not NoneType and not any(
             isinstance(path, NextStepPath) for path in prepared
         ):
             prepared.append(NextStepPath())
