@@ -4,12 +4,14 @@ from collections.abc import Callable
 from contextlib import ExitStack
 from typing import Generic, TypeVar
 
-from .handler import ErrorHookHandler
 from .job import Job
 from .job_runner import JobRunner
 from .queue import QueueProtocol
+from .signals.enum import ErgateSignal
+from .signals.handler import SignalHandler
 from .state_store import StateStoreProtocol
-from .types import ExceptionHook, Lifespan
+from .types import Lifespan
+from .types import SignalHandler as SignalHandlerType
 from .workflow import Workflow
 from .workflow_registry import WorkflowRegistry
 
@@ -22,27 +24,24 @@ class Ergate(Generic[JobType]):
         queue: QueueProtocol[JobType],
         state_store: StateStoreProtocol[JobType],
         lifespan: Lifespan[Ergate[JobType]] | None = None,
-        error_hook_handler: ErrorHookHandler[JobType] | None = None,
+        signal_handler: SignalHandler[JobType] | None = None,
     ) -> None:
         self.lifespan = lifespan
-        self.error_hook_handler: ErrorHookHandler[JobType] = (
-            error_hook_handler or ErrorHookHandler()
-        )
+        self.signal_handler: SignalHandler[JobType] = signal_handler or SignalHandler()
 
         self.workflow_registry = WorkflowRegistry()
         self.job_runner: JobRunner[JobType] = JobRunner(
             queue,
             self.workflow_registry,
             state_store,
-            self.error_hook_handler,
+            self.signal_handler,
         )
 
-    def exception_hook(
-        self, *exceptions: type[Exception]
-    ) -> Callable[[ExceptionHook[JobType]], ExceptionHook[JobType]]:
-        def decorator(func: ExceptionHook[JobType]) -> ExceptionHook[JobType]:
-            for exception in exceptions:
-                self.error_hook_handler.register(exception, func)
+    def signal(
+        self, signal: ErgateSignal
+    ) -> Callable[[SignalHandlerType[JobType]], SignalHandlerType[JobType]]:
+        def decorator(func: SignalHandlerType[JobType]) -> SignalHandlerType[JobType]:
+            self.signal_handler.register(signal, func)
             return func
 
         return decorator
