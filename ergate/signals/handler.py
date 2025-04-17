@@ -1,19 +1,19 @@
 from collections import defaultdict
 from logging import getLogger
-from typing import Any, Callable, Generic
+from typing import Generic
 
 from ..types import JobType
+from ..types import SignalHandler as SignalHandlerType
 from .enum import ErgateSignal
 
 LOG = getLogger(__name__)
-_HANDLER = Callable[[JobType], Any]
 
 
 class SignalHandler(Generic[JobType]):
     def __init__(self) -> None:
-        self._handlers: dict[ErgateSignal, list[_HANDLER]] = defaultdict(list)
+        self._handlers: dict[ErgateSignal, list[SignalHandlerType]] = defaultdict(list)
 
-    def register(self, signal: ErgateSignal, handler: _HANDLER) -> None:
+    def register(self, signal: ErgateSignal, handler: SignalHandlerType) -> None:
         self._handlers[signal].append(handler)
 
     def trigger(self, signal: ErgateSignal, job: JobType) -> None:
