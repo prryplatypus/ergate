@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import ContextManager, TypeVar
+from typing import Any, ContextManager, TypeVar
 
 from .annotations import Context, Depends, Input
 
@@ -8,6 +8,6 @@ JobType = TypeVar("JobType")
 
 Lifespan = Callable[[AppType], ContextManager[None]] | None
 
-ExceptionHook = Callable[[JobType, Exception], None]
+SignalHandler = Callable[[JobType], Any]
 
 Annotation = Input | Depends | Context

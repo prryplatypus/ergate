@@ -1,12 +1,13 @@
 from typing import Generic, TypeVar
 
 from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
-from .handler import ErrorHookHandler
 from .interrupt import DelayedKeyboardInterrupt
 from .job import Job
 from .log import LOG
 from .paths import GoToStepPath, NextStepPath
 from .queue import QueueProtocol
+from .signals.enum import ErgateSignal
+from .signals.handler import SignalHandler
 from .state_store import StateStoreProtocol
 from .workflow_registry import WorkflowRegistry
 
@@ -19,14 +20,16 @@ class JobRunner(Generic[JobType]):
         queue: QueueProtocol[JobType],
         workflow_registry: WorkflowRegistry,
         state_store: StateStoreProtocol[JobType],
-        error_hook_handler: ErrorHookHandler[JobType],
+        signal_handler: SignalHandler[JobType],
     ) -> None:
         self.queue = queue
         self.workflow_registry = workflow_registry
         self.state_store = state_store
-        self.error_hook_handler = error_hook_handler
+        self.signal_handler = signal_handler
 
     def _run_job(self, job: JobType) -> None:
+        self.signal_handler.trigger(ErgateSignal.JOB_RUN_START, job)
+
         input_value = job.get_input_value()
 
         workflow = self.workflow_registry[job.workflow_name]
@@ -105,13 +108,15 @@ class JobRunner(Generic[JobType]):
         except Exception as exc:
             LOG.exception("Job raised an exception")
             job.mark_failed(exc)
-            self.error_hook_handler.notify(job, exc)
+            self.signal_handler.trigger(ErgateSignal.JOB_RUN_FAIL, job)
 
         self.state_store.update(job)
 
         if job.should_be_requeued():
             LOG.info("Requeuing job")
             self.queue.put(job)
+
+        self.signal_handler.trigger(ErgateSignal.JOB_RUN_END, job)
 
     def run(self) -> None:
         while True:

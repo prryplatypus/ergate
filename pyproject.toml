@@ -31,9 +31,11 @@ dependencies = [
 dynamic = ["version"]
 
 
-[tool.setuptools]
-packages = ["ergate"]
+[project.scripts]
+ergate = "ergate.cli.entrypoint:run"
 
+[tool.setuptools.packages.find]
+include = ["ergate*"]
 
 [project.urls]
 Repository = "https://github.com/prryplatypus/ergate"
