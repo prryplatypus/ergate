@@ -31,8 +31,8 @@ dependencies = [
 dynamic = ["version"]
 
 
-[project.scripts]
-ergate = "ergate.cli.entrypoint:run"
+# [project.scripts]
+# ergate = "ergate.cli.entrypoint:run"
 
 [tool.setuptools.packages.find]
 include = ["ergate*"]

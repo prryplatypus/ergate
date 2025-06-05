@@ -1,5 +1,4 @@
 from .annotations import Context, Depends, Input
-from .app import Ergate
 from .exceptions import (
     AbortJob,
     ErgateError,
@@ -13,15 +12,12 @@ from .exceptions import (
 from .job import Job
 from .job_status import JobStatus
 from .paths import GoToEndPath, GoToStepPath, NextStepPath
-from .queue import QueueProtocol
-from .state_store import StateStoreProtocol
 from .workflow import Workflow, WorkflowStep
 
 __all__ = [
     "AbortJob",
     "Context",
     "Depends",
-    "Ergate",
     "ErgateError",
     "GoToEnd",
     "GoToEndPath",
@@ -32,9 +28,7 @@ __all__ = [
     "Job",
     "JobStatus",
     "NextStepPath",
-    "QueueProtocol",
     "ReverseGoToError",
-    "StateStoreProtocol",
     "UnknownStepError",
     "ValidationError",
     "Workflow",
