@@ -1,15 +1,14 @@
 from typing import Generic, TypeVar
 
-from .exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
-from .interrupt import DelayedKeyboardInterrupt
-from .job import Job
-from .log import LOG
-from .paths import GoToStepPath, NextStepPath
+from ..exceptions import AbortJob, GoToEnd, GoToStep, ReverseGoToError
+from ..interrupt import DelayedKeyboardInterrupt
+from ..job import Job
+from ..log import LOG
+from ..paths import GoToStepPath, NextStepPath
+from ..workflow_registry import WorkflowRegistry
 from .queue import QueueProtocol
-from .signals.enum import ErgateSignal
-from .signals.handler import SignalHandler
+from .signals import ErgateSignal, SignalHandler
 from .state_store import StateStoreProtocol
-from .workflow_registry import WorkflowRegistry
 
 JobType = TypeVar("JobType", bound=Job)
 

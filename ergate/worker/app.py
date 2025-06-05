@@ -4,26 +4,25 @@ from collections.abc import Callable
 from contextlib import ExitStack
 from typing import Generic, TypeVar
 
-from .job import Job
+from ..job import Job
+from ..types import Lifespan
+from ..types import SignalHandler as SignalHandlerType
+from ..workflow import Workflow
+from ..workflow_registry import WorkflowRegistry
 from .job_runner import JobRunner
 from .queue import QueueProtocol
-from .signals.enum import ErgateSignal
-from .signals.handler import SignalHandler
+from .signals import ErgateSignal, SignalHandler
 from .state_store import StateStoreProtocol
-from .types import Lifespan
-from .types import SignalHandler as SignalHandlerType
-from .workflow import Workflow
-from .workflow_registry import WorkflowRegistry
 
 JobType = TypeVar("JobType", bound=Job)
 
 
-class Ergate(Generic[JobType]):
+class ErgateWorker(Generic[JobType]):
     def __init__(
         self,
         queue: QueueProtocol[JobType],
         state_store: StateStoreProtocol[JobType],
-        lifespan: Lifespan[Ergate[JobType]] | None = None,
+        lifespan: Lifespan[ErgateWorker[JobType]] | None = None,
         signal_handler: SignalHandler[JobType] | None = None,
     ) -> None:
         self.lifespan = lifespan

@@ -2,8 +2,8 @@ from collections import defaultdict
 from logging import getLogger
 from typing import Generic
 
-from ..types import JobType
-from ..types import SignalHandler as SignalHandlerType
+from ...types import JobType
+from ...types import SignalHandler as SignalHandlerType
 from .enum import ErgateSignal
 
 LOG = getLogger(__name__)
