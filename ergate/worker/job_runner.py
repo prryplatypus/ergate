@@ -110,11 +110,6 @@ class JobRunner(Generic[JobType]):
             self.signal_handler.trigger(ErgateSignal.JOB_RUN_FAIL, job)
 
         self.state_store.update(job)
-
-        if job.should_be_requeued():
-            LOG.info("Requeuing job")
-            self.queue.put(job)
-
         self.signal_handler.trigger(ErgateSignal.JOB_RUN_END, job)
 
     def run(self) -> None:
