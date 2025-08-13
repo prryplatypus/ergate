@@ -11,7 +11,7 @@ from .workflow import WorkflowStep
 class Job(BaseModel):
     id: Any = None
     workflow_name: str
-    status: JobStatus = JobStatus.QUEUED
+    status: JobStatus = JobStatus.PENDING
     current_step: int = Field(default=0, ge=0)
     steps_completed: int = Field(default=0, ge=0)
     percent_completed: float = Field(default=0.0, ge=0.0, le=100.0)
@@ -50,15 +50,6 @@ class Job(BaseModel):
         self.status = (
             JobStatus.COMPLETED
             if self.steps_completed == total_steps
-            else JobStatus.QUEUED
+            else JobStatus.PENDING
         )
         self.last_return_value = return_value
-
-    def should_be_requeued(self) -> bool:
-        return self.status not in (
-            JobStatus.ABORTED,
-            JobStatus.CANCELLED,
-            JobStatus.CANCELLING,
-            JobStatus.COMPLETED,
-            JobStatus.FAILED,
-        )
