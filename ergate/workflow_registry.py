@@ -1,5 +1,6 @@
-from typing import Iterator
+from collections.abc import Iterator
 
+from .exceptions import UnknownWorkflowError
 from .workflow import Workflow
 
 
@@ -11,7 +12,9 @@ class WorkflowRegistry:
         try:
             return self._workflows[unique_name]
         except KeyError:
-            raise KeyError(f'No workflow named "{unique_name}" is registered') from None
+            raise UnknownWorkflowError(
+                f'No workflow named "{unique_name}" is registered'
+            ) from None
 
     def __iter__(self) -> Iterator[Workflow]:
         return iter(self._workflows.values())
