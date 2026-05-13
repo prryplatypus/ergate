@@ -67,5 +67,5 @@ class ErgatePublisher(Generic[JobType]):
 
         try:
             self.queue.publish_job(job)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             generator.throw(exc)
