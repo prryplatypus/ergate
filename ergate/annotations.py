@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Generator
 from contextlib import ExitStack, contextmanager
-from typing import TYPE_CHECKING, Any, Callable, Generator, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from .depends_cache import DependsCache
 

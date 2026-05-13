@@ -1,8 +1,9 @@
 import copy
+from collections.abc import Callable
 from contextlib import ExitStack
 from inspect import Parameter
 from inspect import signature as get_signature
-from typing import Annotated, Any, Callable, get_args, get_origin
+from typing import Annotated, Any, get_args, get_origin
 
 from .annotations import Context, Depends, Input
 from .depends_cache import DependsCache

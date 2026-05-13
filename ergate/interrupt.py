@@ -1,6 +1,7 @@
 import signal
+from collections.abc import Callable
 from types import FrameType
-from typing import Any, Callable
+from typing import Any
 
 from .log import LOG
 
