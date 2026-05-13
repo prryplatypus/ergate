@@ -1,9 +1,11 @@
+from datetime import datetime, timedelta, timezone
 from typing import Generic, TypeVar
 
 from ..exceptions import (
     AbortJob,
     GoToEnd,
     GoToStep,
+    RetryStepAfterSeconds,
     ReverseGoToError,
     UnknownStepError,
     UnknownWorkflowError,
@@ -46,6 +48,17 @@ class JobRunner(Generic[JobType]):
             LOG.info("User requested to abort job: %s", exc)
 
             job.mark_aborted(exc.message)
+        except RetryStepAfterSeconds as exc:
+            LOG.info(
+                "User requested to retry step after %s seconds - return value: %s",
+                exc.seconds,
+                exc.retval,
+            )
+
+            job.mark_scheduled(
+                datetime.now(timezone.utc) + timedelta(seconds=exc.seconds),
+                exc.retval,
+            )
         except GoToEnd as exc:
             LOG.info("User requested to go to end of workflow - retval: %s", exc.retval)
 

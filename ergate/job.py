@@ -38,6 +38,18 @@ class Job(BaseModel):
     def mark_running(self, step: WorkflowStep) -> None:
         self.status = JobStatus.RUNNING
 
+    def mark_scheduled(
+        self,
+        requested_start_time: datetime,
+        modified_input_value: Any,
+    ) -> None:
+        self.status = JobStatus.SCHEDULED
+        self.requested_start_time = requested_start_time
+        if self.steps_completed == 0:
+            self.initial_input_value = modified_input_value
+            return
+        self.last_return_value = modified_input_value
+
     def mark_step_n_completed(
         self,
         n: int,
