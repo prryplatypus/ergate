@@ -3,8 +3,8 @@ from typing import Protocol, TypeVar
 
 from ...job import Job
 
-JobType = TypeVar("JobType", bound=Job, covariant=True)
+JobType_co = TypeVar("JobType_co", bound=Job, covariant=True)
 
 
-class PublisherDriverProtocol(Protocol[JobType]):
-    def generate_jobs(self) -> Generator[JobType, None, None]: ...
+class PublisherDriverProtocol(Protocol[JobType_co]):
+    def generate_jobs(self) -> Generator[JobType_co, None, None]: ...

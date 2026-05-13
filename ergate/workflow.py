@@ -1,6 +1,5 @@
+from collections.abc import Callable, Iterator
 from typing import (
-    Callable,
-    Iterator,
     ParamSpec,
     TypeAlias,
     TypeVar,
