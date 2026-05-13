@@ -104,7 +104,7 @@ class JobRunner(Generic[JobType]):
                 job.mark_step_n_completed(
                     job.current_step + 1, retval, job.steps_completed + remaining_steps
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             LOG.exception("Job raised an exception")
             job.mark_failed(exc)
             self.signal_handler.trigger(ErgateSignal.JOB_RUN_FAIL, job)
