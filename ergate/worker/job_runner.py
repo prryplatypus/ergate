@@ -85,10 +85,10 @@ class JobRunner(Generic[JobType]):
                 job.mark_step_n_completed(
                     exc.step.index, exc.retval, job.steps_completed + remaining_steps
                 )
-            except Exception as exc:
+            except Exception:
                 # Since `except GoToStep` potentially raises an exception, the logic
                 # for handling exceptions had to be moved to a higher scope.
-                raise exc
+                raise
             else:
                 LOG.info("Step completed successfully - return value: %s", retval)
 
