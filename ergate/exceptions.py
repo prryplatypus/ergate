@@ -17,6 +17,10 @@ class ReverseGoToError(ErgateError):
     """Raised when a workflow/step attempts to `go to` an earlier step."""
 
 
+class UnknownWorkflowError(ErgateError):
+    """Raised when a job attempts to run an unknown workflow."""
+
+
 class UnknownStepError(ErgateError):
     """Raised when a workflow/step attempts to `go to` an unknown step."""
 
