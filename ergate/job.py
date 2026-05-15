@@ -23,7 +23,7 @@ class Job(BaseModel):
     def get_input_value(self) -> Any:
         input_val = (
             self.initial_input_value
-            if self.steps_completed == 0
+            if self.steps_completed == 0 and not self.last_return_value
             else self.last_return_value
         )
 
@@ -37,6 +37,15 @@ class Job(BaseModel):
 
     def mark_running(self, step: WorkflowStep) -> None:
         self.status = JobStatus.RUNNING
+
+    def mark_scheduled(
+        self,
+        requested_start_time: datetime,
+        modified_input_value: Any,
+    ) -> None:
+        self.status = JobStatus.SCHEDULED
+        self.requested_start_time = requested_start_time
+        self.last_return_value = modified_input_value
 
     def mark_step_n_completed(
         self,

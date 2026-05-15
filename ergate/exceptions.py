@@ -47,3 +47,11 @@ class GoToStep(ErgateError):  # noqa: N818
     def __init__(self, step: WorkflowStep, *, retval: Any = None) -> None:
         self.retval = retval
         self.step = step
+
+
+class RetryStepAfterSeconds(ErgateError):  # noqa: N818
+    """Raised from a step to retry the current step after a delay in seconds."""
+
+    def __init__(self, seconds: int, *, retval: Any = None) -> None:
+        self.seconds = seconds
+        self.retval = retval
