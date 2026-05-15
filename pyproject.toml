@@ -8,7 +8,7 @@ name = "ergate"
 requires-python = ">=3.10"
 description = "Workflows made easy, your way"
 readme = { file = "README.md", content-type = "text/markdown" }
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 authors = [{ name = "prryplatypus" }]
 keywords = ["workflow", "worker"]
 classifiers = [
