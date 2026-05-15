@@ -51,7 +51,7 @@ class JobRunner(Generic[JobType]):
             job.mark_aborted(exc.message)
         except RetryStepAfterSeconds as exc:
             LOG.info(
-                "User requested to retry step after %s seconds - return value: %s",
+                "User requested to retry step after %d seconds - return value: %s",
                 exc.seconds,
                 exc.retval,
             )
@@ -70,7 +70,7 @@ class JobRunner(Generic[JobType]):
             )
         except GoToStep as exc:
             LOG.info(
-                "User requested to go to step: %s (%s) - return value: %s",
+                "User requested to go to step: %s (%d) - return value: %s",
                 exc.step.name,
                 exc.step.index,
                 exc.retval,
