@@ -39,6 +39,7 @@ class JobRunner(Generic[JobType]):
 
         try:
             LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
+
             with step_to_run.build_args(job.user_context, input_value) as all_args:
                 args, kwargs = all_args
                 retval = step_to_run(*args, **kwargs)
@@ -107,11 +108,18 @@ class JobRunner(Generic[JobType]):
             workflow = self.workflow_registry[job.workflow_name]
             step_to_run = workflow[job.current_step]
         except UnknownWorkflowError as uwe:
-            LOG.exception("Job makes reference to an unknown workflow")
+            LOG.exception(
+                "Job makes reference to an unknown workflow ('%s')",
+                job.workflow_name,
+            )
             job.mark_failed(uwe)
             self.signal_handler.trigger(ErgateSignal.JOB_RUN_FAIL, job)
         except UnknownStepError as use:
-            LOG.exception("Job has invalid data")
+            LOG.exception(
+                "Job makes reference to an unknown step (#%d) in workflow '%s'",
+                job.current_step,
+                job.workflow_name,
+            )
             job.mark_failed(use)
             self.signal_handler.trigger(ErgateSignal.JOB_RUN_FAIL, job)
         else:
