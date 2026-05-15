@@ -37,9 +37,9 @@ class JobRunner(Generic[JobType]):
     def _run_job(self, job: JobType, step_to_run: WorkflowStep) -> None:
         input_value = job.get_input_value()
 
-        try:
-            LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
+        LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
 
+        try:
             with step_to_run.build_args(job.user_context, input_value) as all_args:
                 args, kwargs = all_args
                 retval = step_to_run(*args, **kwargs)
