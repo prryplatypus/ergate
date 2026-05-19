@@ -13,7 +13,8 @@ from typing import (
 )
 
 from .depends_cache import DependsCache
-from .inspect import build_function_arg_info
+from .inspect import Inspector
+from .job import Job
 from .paths import NextStepPath, WorkflowPath
 
 if TYPE_CHECKING:
@@ -22,9 +23,10 @@ if TYPE_CHECKING:
 
 CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
+JobType = TypeVar("JobType", bound=Job)
 
 
-class WorkflowStep(Generic[CallableSpec, CallableRetval]):
+class WorkflowStep(Generic[CallableSpec, CallableRetval, JobType]):
     def __init__(
         self,
         workflow: Workflow,
@@ -36,7 +38,7 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
         self.index = index
         self.workflow = workflow
         self.callable = callable
-        self.arg_info = build_function_arg_info(callable)
+        self.arg_info = Inspector[JobType].build_function_arg_info(callable)
         self.paths = self._prepare_paths(paths)
 
     @property
@@ -45,13 +47,13 @@ class WorkflowStep(Generic[CallableSpec, CallableRetval]):
 
     @contextmanager
     def build_args(
-        self, user_context: Any, last_return_value: Any
+        self, job: JobType, last_return_value: Any
     ) -> Generator[tuple[list[Any], dict[str, Any]], None, None]:
         with ExitStack() as stack:
             yield self.arg_info.build_args(
                 stack,
                 DependsCache(),
-                user_context,
+                job,
                 last_return_value,
             )
 

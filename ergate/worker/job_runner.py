@@ -42,7 +42,7 @@ class JobRunner(Generic[JobType]):
         LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
 
         try:
-            with step_to_run.build_args(job.user_context, input_value) as all_args:
+            with step_to_run.build_args(job, input_value) as all_args:
                 args, kwargs = all_args
                 retval = step_to_run(*args, **kwargs)
         except AbortJob as exc:

@@ -7,13 +7,16 @@ from typing import (
 )
 
 from .exceptions import ReverseGoToError, UnknownStepError
+from .job import Job
 from .paths import GoToEndPath, GoToStepPath, NextStepPath, WorkflowPath
 from .workflow_step import WorkflowStep
 
 CallableSpec = ParamSpec("CallableSpec")
 CallableRetval = TypeVar("CallableRetval")
+JobType = TypeVar("JobType", bound=Job)
+
 CallableTypeHint: TypeAlias = Callable[CallableSpec, CallableRetval]
-WorkflowStepTypeHint: TypeAlias = WorkflowStep[CallableSpec, CallableRetval]
+WorkflowStepTypeHint: TypeAlias = WorkflowStep[CallableSpec, CallableRetval, JobType]
 WorkflowPathTypeHint: TypeAlias = tuple[WorkflowPath, int]
 
 
@@ -133,7 +136,12 @@ class Workflow:
         paths: list[WorkflowPath] | None = None,
     ) -> CallableTypeHint | WorkflowStepTypeHint:
         def _decorate(func: CallableTypeHint) -> WorkflowStepTypeHint:
-            step = WorkflowStep(self, func, len(self), paths=paths)
+            step: WorkflowStepTypeHint = WorkflowStep(
+                self,
+                func,
+                len(self),
+                paths=paths,
+            )
             self._steps.append(step)
             return step
 

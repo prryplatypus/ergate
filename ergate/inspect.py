@@ -3,14 +3,17 @@ from collections.abc import Callable
 from contextlib import ExitStack
 from inspect import Parameter
 from inspect import signature as get_signature
-from typing import Annotated, Any, get_args, get_origin
+from typing import Annotated, Any, Generic, TypeVar, get_args, get_origin
 
-from .annotations import Context, Depends, Input
+from .annotations import Context, Depends, Input, JobObject
 from .depends_cache import DependsCache
+from .job import Job
 from .types import Annotation
 
+JobType = TypeVar("JobType", bound=Job)
 
-class FunctionArgumentInfo:
+
+class FunctionArgumentInfo(Generic[JobType]):
     def __init__(self) -> None:
         self._args_types: list[Annotation] = []
         self._kwarg_types: dict[str, Annotation] = {}
@@ -34,7 +37,7 @@ class FunctionArgumentInfo:
         type_: Annotation,
         stack: ExitStack,
         depends_cache: DependsCache,
-        user_context: Any,
+        job: JobType,
         input_value: Any,
     ) -> Any:
         if isinstance(type_, Input):
@@ -45,19 +48,24 @@ class FunctionArgumentInfo:
                 type_.create(
                     stack,
                     depends_cache,
-                    user_context,
+                    job,
                     input_value,
                 )
             )
 
-        assert isinstance(type_, Context)
-        return user_context
+        if isinstance(type_, Context):
+            return job.user_context
+
+        if isinstance(type_, JobObject):
+            return job
+
+        raise ValueError(f"Unsupported annotation type: {type_}")
 
     def build_args(
         self,
         stack: ExitStack,
         depends_cache: DependsCache,
-        user_context: Any,
+        job: JobType,
         input_value: Any,
     ) -> tuple[list[Any], dict[str, Any]]:
         args: list[Any] = []
@@ -69,7 +77,7 @@ class FunctionArgumentInfo:
                     type_,
                     stack,
                     depends_cache,
-                    user_context,
+                    job,
                     input_value,
                 )
             )
@@ -79,50 +87,57 @@ class FunctionArgumentInfo:
                 type_,
                 stack,
                 depends_cache,
-                user_context,
+                job,
                 input_value,
             )
 
         return args, kwargs
 
 
-def get_param_info(param: Parameter) -> Input | Depends | Context:
-    origin = get_origin(param.annotation)
-    if origin is not Annotated:
-        return Input()
+class Inspector(Generic[JobType]):
+    @staticmethod
+    def get_param_info(param: Parameter) -> Input | Depends | Context | JobObject:
+        origin = get_origin(param.annotation)
+        if origin is not Annotated:
+            return Input()
 
-    arguments = get_args(param.annotation)
-    ergate_annotations = [
-        argument
-        for argument in arguments
-        if isinstance(argument, (Input, Depends, Context))
-    ]
+        arguments = get_args(param.annotation)
+        ergate_annotations = [
+            argument
+            for argument in arguments
+            if isinstance(argument, (Input, Depends, Context, JobObject))
+        ]
 
-    if not ergate_annotations:
-        return Input()
+        if not ergate_annotations:
+            return Input()
 
-    if len(ergate_annotations) > 1:
-        raise ValueError(
-            "Parameter annotations must contain no more than one dependency "
-            f"or one context marker ({param.name=})"
-        )
+        if len(ergate_annotations) > 1:
+            raise ValueError(
+                "Parameter annotations must contain no more than one dependency "
+                f"or one context marker ({param.name=})"
+            )
 
-    return ergate_annotations[0]
+        return ergate_annotations[0]
 
+    @classmethod
+    def build_function_arg_info(
+        cls,
+        function: Callable[..., Any],
+    ) -> FunctionArgumentInfo[JobType]:
+        signature = get_signature(function)
+        function_wrapper: FunctionArgumentInfo[JobType] = FunctionArgumentInfo()
 
-def build_function_arg_info(function: Callable[..., Any]) -> FunctionArgumentInfo:
-    signature = get_signature(function)
-    function_wrapper = FunctionArgumentInfo()
+        for param in signature.parameters.values():
+            param_info = cls.get_param_info(param)
 
-    for param in signature.parameters.values():
-        param_info = get_param_info(param)
+            if isinstance(param_info, Depends):
+                depends_copy = copy.copy(param_info)
+                dependency_arg_info = cls.build_function_arg_info(
+                    depends_copy.dependency
+                )
+                depends_copy.initialize(dependency_arg_info)
+                param_info = depends_copy
 
-        if isinstance(param_info, Depends):
-            depends_copy = copy.copy(param_info)
-            dependency_arg_info = build_function_arg_info(depends_copy.dependency)
-            depends_copy.initialize(dependency_arg_info)
-            param_info = depends_copy
+            function_wrapper.add_param(param, param_info)
 
-        function_wrapper.add_param(param, param_info)
-
-    return function_wrapper
+        return function_wrapper
