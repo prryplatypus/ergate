@@ -1,11 +1,13 @@
 import copy
 from datetime import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 
 from .job_status import JobStatus
-from .workflow import WorkflowStep
+
+if TYPE_CHECKING:
+    from .workflow import WorkflowStep
 
 
 class Job(BaseModel):
@@ -35,7 +37,7 @@ class Job(BaseModel):
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
 
-    def mark_running(self, step: WorkflowStep) -> None:
+    def mark_running(self, step: "WorkflowStep") -> None:
         self.status = JobStatus.RUNNING
 
     def mark_scheduled(

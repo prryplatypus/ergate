@@ -5,14 +5,16 @@ from contextlib import ExitStack, contextmanager
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from .depends_cache import DependsCache
+from .job import Job
 
 if TYPE_CHECKING:
     from .inspect import FunctionArgumentInfo
 
 DependencyReturn = TypeVar("DependencyReturn")
+JobType = TypeVar("JobType", bound=Job)
 
 
-class Depends(Generic[DependencyReturn]):
+class Depends(Generic[DependencyReturn, JobType]):
     def __init__(
         self,
         dependency: Callable[..., Generator[DependencyReturn, None, None]],
@@ -28,7 +30,7 @@ class Depends(Generic[DependencyReturn]):
         self,
         stack: ExitStack,
         depends_cache: DependsCache,
-        user_context: Any,
+        job: JobType,
         input_value: Any,
     ) -> Generator[DependencyReturn, None, None]:
         assert self.argument_info is not None, "Depends not initialized"
@@ -40,7 +42,7 @@ class Depends(Generic[DependencyReturn]):
         args, kwargs = self.argument_info.build_args(
             stack,
             depends_cache,
-            user_context,
+            job,
             input_value,
         )
 
@@ -56,4 +58,8 @@ class Input:
 
 
 class Context:
+    pass
+
+
+class JobObject:
     pass
