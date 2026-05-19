@@ -1,10 +1,11 @@
-from .annotations import Context, Depends, Input
+from .annotations import Context, Depends, Input, JobObject
 from .exceptions import (
     AbortJob,
     ErgateError,
     GoToEnd,
     GoToStep,
     InvalidDefinitionError,
+    RetryStepAfterSeconds,
     ReverseGoToError,
     UnknownStepError,
     ValidationError,
@@ -26,8 +27,10 @@ __all__ = [
     "Input",
     "InvalidDefinitionError",
     "Job",
+    "JobObject",
     "JobStatus",
     "NextStepPath",
+    "RetryStepAfterSeconds",
     "ReverseGoToError",
     "UnknownStepError",
     "ValidationError",
