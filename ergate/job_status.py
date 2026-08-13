@@ -67,6 +67,6 @@ class JobStatus(IntEnum):
 
     TERMINATED = auto()
     """
-    Job was terminated externally and outside of the control 
+    Job was terminated externally and outside of the control
     of the publisher.
     """
