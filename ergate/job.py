@@ -54,13 +54,20 @@ class Job(BaseModel):
         n: int,
         return_value: Any,
         total_steps: int,
+        *,
+        requested_start_time: datetime | None = None,
     ) -> None:
         self.current_step = n
         self.steps_completed = min(self.steps_completed + 1, total_steps)
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
-        self.status = (
-            JobStatus.COMPLETED
-            if self.steps_completed == total_steps
-            else JobStatus.PENDING
-        )
+
+        if requested_start_time:
+            self.mark_scheduled(requested_start_time, return_value)
+            return
+
+        if self.steps_completed == total_steps:
+            self.status = JobStatus.COMPLETED
+        else:
+            self.status = JobStatus.PENDING
+
         self.last_return_value = return_value
