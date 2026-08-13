@@ -49,9 +49,11 @@ class GoToStep(ErgateError):  # noqa: N818
         step: WorkflowStep,
         *,
         retval: Any = None,
+        delay: int | None = None,
     ) -> None:
         self.retval = retval
         self.step = step
+        self.seconds = delay
 
 
 class RetryStepAfterSeconds(ErgateError):  # noqa: N818
