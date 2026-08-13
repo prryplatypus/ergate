@@ -91,11 +91,11 @@ class JobRunner(Generic[JobType]):
                 default=len(step_to_run.workflow) - job.current_step,
             )
 
-            requested_start_time = None
-            if exc.seconds:
-                requested_start_time = datetime.now(timezone.utc) + timedelta(
-                    seconds=exc.seconds
-                )
+            requested_start_time = (
+                datetime.now(timezone.utc) + timedelta(seconds=exc.seconds)
+                if exc.seconds
+                else None
+            )
 
             job.mark_step_n_completed(
                 exc.step.index,
