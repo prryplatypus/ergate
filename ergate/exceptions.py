@@ -44,7 +44,12 @@ class GoToEnd(ErgateError):  # noqa: N818
 class GoToStep(ErgateError):  # noqa: N818
     """Raised from a step to go to a specific step by its index or string label."""
 
-    def __init__(self, step: WorkflowStep, *, retval: Any = None) -> None:
+    def __init__(
+        self,
+        step: WorkflowStep,
+        *,
+        retval: Any = None,
+    ) -> None:
         self.retval = retval
         self.step = step
 
@@ -52,6 +57,11 @@ class GoToStep(ErgateError):  # noqa: N818
 class RetryStepAfterSeconds(ErgateError):  # noqa: N818
     """Raised from a step to retry the current step after a delay in seconds."""
 
-    def __init__(self, seconds: int, *, retval: Any = None) -> None:
+    def __init__(
+        self,
+        seconds: int,
+        *,
+        retval: Any = None,
+    ) -> None:
         self.seconds = seconds
         self.retval = retval
