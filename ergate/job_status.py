@@ -64,3 +64,9 @@ class JobStatus(IntEnum):
     Job was marked for cancellation and has now reached
     a state where no further steps will run.
     """
+
+    KILLED = auto()
+    """
+    Job was killed externally and outside of the control of
+    the publisher.
+    """
