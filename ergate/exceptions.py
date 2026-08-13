@@ -49,7 +49,7 @@ class GoToStep(ErgateError):  # noqa: N818
         step: WorkflowStep,
         *,
         retval: Any = None,
-        delay: int | None = None,
+        delay: int = 0,
     ) -> None:
         self.retval = retval
         self.step = step
