@@ -39,7 +39,7 @@ A `Job` can have any of the following statuses:
 - `JobStatus.PENDING`
 - `JobStatus.CANCELLING`
 - `JobStatus.CANCELLED`
-- `JobStatus.KILLED`
+- `JobStatus.TERMINATED`
 
 
 ## Triggering/creating a job
