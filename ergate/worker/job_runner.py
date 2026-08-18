@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, timezone
 from typing import Generic, TypeVar
 
 from ..exceptions import (
@@ -52,14 +51,11 @@ class JobRunner(Generic[JobType]):
         except RetryStepAfterSeconds as exc:
             LOG.info(
                 "User requested to retry step after %d seconds - return value: %s",
-                exc.seconds,
+                exc.delay.total_seconds(),
                 exc.retval,
             )
 
-            job.mark_scheduled(
-                datetime.now(timezone.utc) + timedelta(seconds=exc.seconds),
-                exc.retval,
-            )
+            job.mark_scheduled(exc.delay, exc.retval)
         except GoToEnd as exc:
             LOG.info("User requested to go to end of workflow - retval: %s", exc.retval)
 
@@ -91,17 +87,11 @@ class JobRunner(Generic[JobType]):
                 default=len(step_to_run.workflow) - job.current_step,
             )
 
-            requested_start_time = (
-                datetime.now(timezone.utc) + timedelta(seconds=exc.seconds)
-                if exc.seconds
-                else None
-            )
-
             job.mark_step_n_completed(
                 exc.step.index,
                 exc.retval,
                 job.steps_completed + remaining_steps,
-                requested_start_time=requested_start_time,
+                requested_start_time=exc.delay if exc.delay else None,
             )
         else:
             LOG.info("Step completed successfully - return value: %s", retval)

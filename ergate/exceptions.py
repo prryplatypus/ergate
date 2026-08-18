@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Any
 
 from pydantic import ValidationError  # noqa: F401
@@ -53,7 +54,7 @@ class GoToStep(ErgateError):  # noqa: N818
     ) -> None:
         self.retval = retval
         self.step = step
-        self.seconds = delay
+        self.delay = timedelta(seconds=delay)
 
 
 class RetryStepAfterSeconds(ErgateError):  # noqa: N818
@@ -65,5 +66,5 @@ class RetryStepAfterSeconds(ErgateError):  # noqa: N818
         *,
         retval: Any = None,
     ) -> None:
-        self.seconds = seconds
+        self.delay = timedelta(seconds=seconds)
         self.retval = retval
