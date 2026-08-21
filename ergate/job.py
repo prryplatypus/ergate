@@ -69,9 +69,10 @@ class Job(BaseModel):
             self.mark_scheduled(requested_start_time, return_value)
             return
 
-        if self.steps_completed == total_steps:
-            self.status = JobStatus.COMPLETED
-        else:
-            self.status = JobStatus.PENDING
+        self.status = (
+            JobStatus.COMPLETED
+            if self.steps_completed == total_steps
+            else JobStatus.PENDING
+        )
 
         self.last_return_value = return_value
