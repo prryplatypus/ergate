@@ -1,5 +1,5 @@
 import copy
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
@@ -42,22 +42,33 @@ class Job(BaseModel):
 
     def mark_scheduled(
         self,
-        requested_start_time: datetime,
+        requested_start_time: datetime | timedelta,
         modified_input_value: Any,
     ) -> None:
         self.status = JobStatus.SCHEDULED
-        self.requested_start_time = requested_start_time
         self.last_return_value = modified_input_value
+
+        if isinstance(requested_start_time, timedelta):
+            requested_start_time = datetime.now(timezone.utc) + requested_start_time
+
+        self.requested_start_time = requested_start_time
 
     def mark_step_n_completed(
         self,
         n: int,
         return_value: Any,
         total_steps: int,
+        *,
+        requested_start_time: datetime | timedelta | None = None,
     ) -> None:
         self.current_step = n
         self.steps_completed = min(self.steps_completed + 1, total_steps)
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
+
+        if requested_start_time:
+            self.mark_scheduled(requested_start_time, return_value)
+            return
+
         self.status = (
             JobStatus.COMPLETED
             if self.steps_completed == total_steps
