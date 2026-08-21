@@ -74,5 +74,4 @@ class Job(BaseModel):
             if self.steps_completed == total_steps
             else JobStatus.PENDING
         )
-
         self.last_return_value = return_value
