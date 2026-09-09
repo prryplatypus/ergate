@@ -65,8 +65,8 @@ class JobStatus(IntEnum):
     a state where no further steps will run.
     """
 
-    TERMINATED = auto()
+    INTERRUPTED = auto()
     """
-    Job was terminated externally and outside of the control
+    Job was interrupted externally and outside of the control
     of the publisher.
     """
