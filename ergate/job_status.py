@@ -64,3 +64,9 @@ class JobStatus(IntEnum):
     Job was marked for cancellation and has now reached
     a state where no further steps will run.
     """
+
+    INTERRUPTED = auto()
+    """
+    Job was interrupted externally and outside of the control
+    of the publisher.
+    """
