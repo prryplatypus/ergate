@@ -39,7 +39,7 @@ class JobRunner(Generic[JobType]):
     def _run_job(self, job: JobType, step_to_run: WorkflowStep) -> None:
         input_value = job.get_input_value()
 
-        LOG.info("Running %s - input value: %s", str(step_to_run), input_value)
+        LOG.info("Running %s - input value: %s", step_to_run, input_value)
 
         try:
             with step_to_run.build_args(job, input_value) as all_args:
@@ -52,7 +52,7 @@ class JobRunner(Generic[JobType]):
         except RetryStepAfterSeconds as exc:
             LOG.info(
                 "User requested to retry step %s - return value: %s",
-                str(step_to_run),
+                step_to_run,
                 exc.retval,
             )
 
