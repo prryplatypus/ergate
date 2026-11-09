@@ -140,6 +140,8 @@ class JobRunner(Generic[JobType]):
                 job.steps_completed + remaining_steps,
                 self.workflow_registry[job.workflow_name],
             )
+        finally:
+            self.state_store.update(job)
 
     def _handle_job_lifetime(self, job: JobType) -> None:
         self.signal_handler.trigger(ErgateSignal.JOB_RUN_START, job)
