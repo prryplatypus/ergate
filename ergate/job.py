@@ -77,9 +77,9 @@ class Job(BaseModel):
             )
             return
 
-        self.status = (
-            JobStatus.COMPLETED
-            if self.steps_completed == total_steps
-            else JobStatus.PENDING
-        )
+        if self.steps_completed == total_steps:
+            self.mark_completed()
+        else:
+            self.mark_pending(workflow[self.current_step])
+
         self.last_return_value = return_value
