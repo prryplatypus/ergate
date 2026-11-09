@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from .job_status import JobStatus
 
 if TYPE_CHECKING:
-    from .workflow import WorkflowStep
+    from .workflow import Workflow, WorkflowStep
 
 
 class Job(BaseModel):
@@ -60,6 +60,7 @@ class Job(BaseModel):
         n: int,
         return_value: Any,
         total_steps: int,
+        workflow: "Workflow",
         *,
         requested_start_time: datetime | None = None,
     ) -> None:
