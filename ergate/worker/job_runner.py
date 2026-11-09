@@ -50,17 +50,14 @@ class JobRunner(Generic[JobType]):
         )
 
         try:
-            print("===333.0===")
             with step_to_run.build_args(job, input_value) as all_args:
                 args, kwargs = all_args
                 retval = step_to_run(*args, **kwargs)
         except AbortJob as exc:
-            print("===333.1===")
             LOG.info("User requested to abort job: %s", exc)
 
             job.mark_aborted(exc.message)
         except RetryStepAfterSeconds as exc:
-            print("===333.2===")
             LOG.info(
                 "User requested to retry step %s - return value: %s",
                 step_to_run,
@@ -73,14 +70,12 @@ class JobRunner(Generic[JobType]):
                     exc.delay.total_seconds(),
                 )
 
-            print("===445.x===", step_to_run)
             job.mark_scheduled(
                 datetime.now(timezone.utc) + exc.delay,
                 exc.retval,
                 step_to_run,
             )
         except GoToEnd as exc:
-            print("===333.3===")
             LOG.info("User requested to go to end of workflow - retval: %s", exc.retval)
 
             job.mark_step_n_completed(
@@ -90,7 +85,6 @@ class JobRunner(Generic[JobType]):
                 self.workflow_registry[job.workflow_name],
             )
         except GoToStep as exc:
-            print("===333.4===")
             LOG.info(
                 "User requested to go to step %s (%d) - return value: %s",
                 exc.step.name,
@@ -129,7 +123,6 @@ class JobRunner(Generic[JobType]):
                 ),
             )
         else:
-            print("===333.5===")
             LOG.info("Step completed successfully - return value: %s", retval)
 
             remaining_steps = max(
@@ -148,7 +141,6 @@ class JobRunner(Generic[JobType]):
                 self.workflow_registry[job.workflow_name],
             )
         finally:
-            print("===333.6===")
             self.state_store.update(job)
 
     def _handle_job_lifetime(self, job: JobType) -> None:
