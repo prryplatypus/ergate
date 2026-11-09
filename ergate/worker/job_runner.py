@@ -69,6 +69,7 @@ class JobRunner(Generic[JobType]):
             job.mark_scheduled(
                 datetime.now(timezone.utc) + exc.delay,
                 exc.retval,
+                step_to_run,
             )
         except GoToEnd as exc:
             LOG.info("User requested to go to end of workflow - retval: %s", exc.retval)

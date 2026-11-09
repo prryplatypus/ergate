@@ -50,6 +50,7 @@ class Job(BaseModel):
         self,
         requested_start_time: datetime,
         modified_input_value: Any,
+        step: "WorkflowStep",
     ) -> None:
         self.status = JobStatus.SCHEDULED
         self.requested_start_time = requested_start_time
@@ -69,7 +70,11 @@ class Job(BaseModel):
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
 
         if requested_start_time:
-            self.mark_scheduled(requested_start_time, return_value)
+            self.mark_scheduled(
+                requested_start_time,
+                return_value,
+                workflow[self.current_step],
+            )
             return
 
         self.status = (
