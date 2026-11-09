@@ -40,6 +40,9 @@ class Job(BaseModel):
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
 
+    def mark_pending(self, step: "WorkflowStep") -> None:
+        self.status = JobStatus.PENDING
+
     def mark_running(self, step: "WorkflowStep") -> None:
         self.status = JobStatus.RUNNING
 
