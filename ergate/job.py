@@ -54,6 +54,7 @@ class Job(BaseModel):
         modified_input_value: Any,
         step: "WorkflowStep",
     ) -> None:
+        print("===446.0===", step)
         self.status = JobStatus.SCHEDULED
         self.requested_start_time = requested_start_time
         self.last_return_value = modified_input_value
@@ -72,6 +73,7 @@ class Job(BaseModel):
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
 
         if requested_start_time:
+            print("===445.0===", workflow)
             self.mark_scheduled(
                 requested_start_time,
                 return_value,
@@ -85,5 +87,7 @@ class Job(BaseModel):
         else:
             print("===445.2===", workflow)
             self.mark_pending(workflow[self.current_step])
+
+        print("===445.3===", workflow)
 
         self.last_return_value = return_value
