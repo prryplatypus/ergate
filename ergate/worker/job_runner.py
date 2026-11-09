@@ -36,7 +36,11 @@ class JobRunner(Generic[JobType]):
         self.state_store = state_store
         self.signal_handler = signal_handler
 
-    def _run_job(self, job: JobType, step_to_run: WorkflowStep) -> None:
+    def _run_job(
+        self,
+        job: JobType,
+        step_to_run: WorkflowStep,
+    ) -> None:
         input_value = job.get_input_value()
 
         LOG.info(
@@ -69,6 +73,7 @@ class JobRunner(Generic[JobType]):
             job.mark_scheduled(
                 datetime.now(timezone.utc) + exc.delay,
                 exc.retval,
+                step_to_run,
             )
         except GoToEnd as exc:
             LOG.info("User requested to go to end of workflow - retval: %s", exc.retval)
@@ -77,6 +82,7 @@ class JobRunner(Generic[JobType]):
                 job.steps_completed,
                 exc.retval,
                 job.steps_completed + 1,
+                self.workflow_registry[job.workflow_name],
             )
         except GoToStep as exc:
             LOG.info(
@@ -111,6 +117,7 @@ class JobRunner(Generic[JobType]):
                 exc.step.index,
                 exc.retval,
                 job.steps_completed + remaining_steps,
+                self.workflow_registry[job.workflow_name],
                 requested_start_time=(
                     datetime.now(timezone.utc) + exc.delay if exc.delay else None
                 ),
@@ -131,7 +138,10 @@ class JobRunner(Generic[JobType]):
                 job.current_step + 1,
                 retval,
                 job.steps_completed + remaining_steps,
+                self.workflow_registry[job.workflow_name],
             )
+        finally:
+            self.state_store.update(job)
 
     def _handle_job_lifetime(self, job: JobType) -> None:
         self.signal_handler.trigger(ErgateSignal.JOB_RUN_START, job)

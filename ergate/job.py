@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from .job_status import JobStatus
 
 if TYPE_CHECKING:
-    from .workflow import WorkflowStep
+    from .workflow import Workflow, WorkflowStep
 
 
 class Job(BaseModel):
@@ -34,8 +34,14 @@ class Job(BaseModel):
     def mark_aborted(self, message: str) -> None:
         self.status = JobStatus.ABORTED
 
+    def mark_completed(self) -> None:
+        self.status = JobStatus.COMPLETED
+
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
+
+    def mark_pending(self, step: "WorkflowStep") -> None:
+        self.status = JobStatus.PENDING
 
     def mark_running(self, step: "WorkflowStep") -> None:
         self.status = JobStatus.RUNNING
@@ -44,6 +50,7 @@ class Job(BaseModel):
         self,
         requested_start_time: datetime,
         modified_input_value: Any,
+        step: "WorkflowStep",
     ) -> None:
         self.status = JobStatus.SCHEDULED
         self.requested_start_time = requested_start_time
@@ -54,6 +61,7 @@ class Job(BaseModel):
         n: int,
         return_value: Any,
         total_steps: int,
+        workflow: "Workflow",
         *,
         requested_start_time: datetime | None = None,
     ) -> None:
@@ -62,12 +70,16 @@ class Job(BaseModel):
         self.percent_completed = float((self.steps_completed / total_steps) * 100)
 
         if requested_start_time:
-            self.mark_scheduled(requested_start_time, return_value)
+            self.mark_scheduled(
+                requested_start_time,
+                return_value,
+                workflow[self.current_step],
+            )
             return
 
-        self.status = (
-            JobStatus.COMPLETED
-            if self.steps_completed == total_steps
-            else JobStatus.PENDING
-        )
+        if self.steps_completed == total_steps:
+            self.mark_completed()
+        else:
+            self.mark_pending(workflow[self.current_step])
+
         self.last_return_value = return_value
