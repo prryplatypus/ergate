@@ -35,12 +35,14 @@ class Job(BaseModel):
         self.status = JobStatus.ABORTED
 
     def mark_completed(self) -> None:
+        print("===446.1===")
         self.status = JobStatus.COMPLETED
 
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
 
     def mark_pending(self, step: "WorkflowStep") -> None:
+        print("===446.2===", step)
         self.status = JobStatus.PENDING
 
     def mark_running(self, step: "WorkflowStep") -> None:
@@ -78,8 +80,10 @@ class Job(BaseModel):
             return
 
         if self.steps_completed == total_steps:
+            print("===445.1===", workflow)
             self.mark_completed()
         else:
+            print("===445.2===", workflow)
             self.mark_pending(workflow[self.current_step])
 
         self.last_return_value = return_value
