@@ -36,7 +36,11 @@ class JobRunner(Generic[JobType]):
         self.state_store = state_store
         self.signal_handler = signal_handler
 
-    def _run_job(self, job: JobType, step_to_run: WorkflowStep) -> None:
+    def _run_job(
+        self,
+        job: JobType,
+        step_to_run: WorkflowStep,
+    ) -> None:
         input_value = job.get_input_value()
 
         LOG.info(
