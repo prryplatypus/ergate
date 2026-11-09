@@ -34,6 +34,9 @@ class Job(BaseModel):
     def mark_aborted(self, message: str) -> None:
         self.status = JobStatus.ABORTED
 
+    def mark_completed(self) -> None:
+        self.status = JobStatus.COMPLETED
+
     def mark_failed(self, exception: Exception) -> None:
         self.status = JobStatus.FAILED
 
